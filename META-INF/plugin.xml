@@ -1,8 +1,10 @@
 <idea-plugin version="2">
   <id>ool.idea.macro</id>
-  <name>Plugin display name here</name>
+  <name>My plugin</name>
   <version>0.1</version>
   <vendor email="p.mayr@oxyonline.cz" url="http://www.oxyonline.cz">OxyOnline</vendor>
+
+    <depends>com.intellij.modules.ultimate</depends>
 
   <description><![CDATA[
       Enter short description for your plugin here.<br>
@@ -25,7 +27,11 @@
   -->
 
   <extensions defaultExtensionNs="com.intellij">
-      <fileTypeFactory implementation="ool.idea.macro.MacroSupportFileTypeFactory"/>
+      <fileTypeFactory implementation="ool.idea.macro.file.MacroSupportFileTypeFactory"/>
+      <lang.parserDefinition language="MacroSupport"
+                             implementationClass="ool.idea.macro.MacroSupportParserDefinition"/>
+      <lang.fileViewProviderFactory language="MacroSupport"
+                                    implementationClass="ool.idea.macro.file.MacroSupportFileViewProviderFactory"/>
   </extensions>
 
   <application-components>

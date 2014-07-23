@@ -1,0 +1,24 @@
+{
+  parserClass="ool.idea.macro.parser.MacroSupportParser"
+  parserUtilClass="ool.idea.macro.MacroSupportParserUtil"
+  stubParserClass="ool.idea.macro.MacroSupportParserUtil"
+
+  extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
+
+  psiClassPrefix="MacroSupport"
+  psiImplClassSuffix="Impl"
+  psiPackage="ool.idea.macro.psi"
+  psiImplPackage="ool.idea.macro.psi.impl"
+
+  elementTypeHolderClass="ool.idea.macro.psi.MacroSupportTypes"
+  elementTypeClass="ool.idea.macro.psi.MacroSupportElementType"
+  tokenTypeClass="ool.idea.macro.psi.MacroSupportTokenType"
+//  psiImplUtilClass="ool.idea.macro.psi.impl.MacroSupportPsiImplUtil"
+}
+
+macroFile ::= item_*
+
+private item_ ::= (COMMENT|CRLF|TEMPLATE_HTML_TEXT|TEMPLATE_JAVASCRIPT_TEXT|T_MACRO_CLOSE_TAG|T_MACRO_OPEN_TAG|T_MACRO_OPEN_TAG_EQ|BAD_CHARACTER)
+
+block_statement ::= ()
+

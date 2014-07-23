@@ -1,3 +1,7 @@
 .idea/
 out/
+gen/
 macro-support-plugin.jar
+*.java~
+jFlex.jar
+idea-flex.skeleton

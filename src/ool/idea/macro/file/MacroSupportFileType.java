@@ -1,8 +1,9 @@
-package ool.idea.macro;
+package ool.idea.macro.file;
 
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.util.IconLoader;
 import javax.swing.Icon;
+import ool.idea.macro.MacroSupport;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

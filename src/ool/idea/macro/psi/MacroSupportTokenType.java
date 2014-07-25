@@ -18,7 +18,7 @@ public class MacroSupportTokenType extends IElementType {
 
     @Override
     public String toString() {
-        return "MacroSupportTokenType." + super.toString();
+        return "[MacroSupportTokenType] " + super.toString();
     }
 
 }

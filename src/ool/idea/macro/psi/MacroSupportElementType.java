@@ -10,9 +10,11 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Petr Mayr <p.mayr@oxyonline.cz>
  */
-public class MacroSupportElementType extends IElementType {
+public class MacroSupportElementType extends IElementType
+{
 
-    public MacroSupportElementType(@NotNull @NonNls String debugName) {
+    public MacroSupportElementType(@NotNull @NonNls String debugName)
+    {
         super(debugName, MacroSupport.getInstance());
     }
 

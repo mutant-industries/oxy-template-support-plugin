@@ -4,7 +4,9 @@
   <version>0.1</version>
   <vendor email="p.mayr@oxyonline.cz" url="http://www.oxyonline.cz">OxyOnline</vendor>
 
-    <depends>com.intellij.modules.ultimate</depends>
+  <depends>com.intellij.modules.ultimate</depends>
+  <depends>com.intellij.modules.lang</depends>
+  <depends>JavaScript</depends>
 
   <description><![CDATA[
       Enter short description for your plugin here.<br>

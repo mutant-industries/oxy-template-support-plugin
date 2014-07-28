@@ -11,9 +11,11 @@ import com.intellij.psi.PsiManager;
  *
  * @author Petr Mayr <p.mayr@oxyonline.cz>
  */
-public class MacroSupportFileViewProviderFactory implements FileViewProviderFactory {
+public class MacroSupportFileViewProviderFactory implements FileViewProviderFactory
+{
     @Override
-    public FileViewProvider createFileViewProvider(VirtualFile virtualFile, Language language, PsiManager psiManager, boolean physical) {
+    public FileViewProvider createFileViewProvider(VirtualFile virtualFile, Language language, PsiManager psiManager, boolean physical)
+    {
         return new MacroSupportFileViewProvider(psiManager, virtualFile, physical);
     }
 }

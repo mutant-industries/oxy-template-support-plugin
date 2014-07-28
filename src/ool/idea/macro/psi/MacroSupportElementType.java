@@ -15,7 +15,7 @@ public class MacroSupportElementType extends IElementType
 
     public MacroSupportElementType(@NotNull @NonNls String debugName)
     {
-        super(debugName, MacroSupport.getInstance());
+        super(debugName, MacroSupport.INSTANCE);
     }
 
 }

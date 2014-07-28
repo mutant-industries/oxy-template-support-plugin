@@ -22,7 +22,8 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Created by mayrp on 7/23/14.
  */
-public class MacroSupportParserDefinition implements ParserDefinition{
+public class MacroSupportParserDefinition implements ParserDefinition
+{
     public static final TokenSet WHITE_SPACES = TokenSet.create(TokenType.WHITE_SPACE);
     public static final TokenSet HTML = TokenSet.create(MacroSupportTypes.TEMPLATE_HTML_TEXT);
     public static final TokenSet COMMENTS = TokenSet.create(MacroSupportTypes.COMMENT);
@@ -30,45 +31,54 @@ public class MacroSupportParserDefinition implements ParserDefinition{
 
     @NotNull
     @Override
-    public Lexer createLexer(Project project) {
+    public Lexer createLexer(Project project)
+    {
         return new FlexAdapter(new MacroSupportLexer((Reader) null));
     }
 
     @NotNull
-    public TokenSet getWhitespaceTokens() {
+    public TokenSet getWhitespaceTokens()
+    {
         return WHITE_SPACES;
     }
 
     @NotNull
-    public TokenSet getCommentTokens() {
+    public TokenSet getCommentTokens()
+    {
         return COMMENTS;
     }
 
     @NotNull
-    public TokenSet getStringLiteralElements() {
+    public TokenSet getStringLiteralElements()
+    {
         return TokenSet.EMPTY;
     }
 
     @NotNull
-    public PsiParser createParser(final Project project) {
+    public PsiParser createParser(final Project project)
+    {
         return new MacroSupportParser();
     }
 
     @Override
-    public IFileElementType getFileNodeType() {
+    public IFileElementType getFileNodeType()
+    {
         return FILE;
     }
 
-    public PsiFile createFile(FileViewProvider viewProvider) {
+    public PsiFile createFile(FileViewProvider viewProvider)
+    {
         return new MacroSupportFile(viewProvider);
     }
 
-    public SpaceRequirements spaceExistanceTypeBetweenTokens(ASTNode left, ASTNode right) {
+    public SpaceRequirements spaceExistanceTypeBetweenTokens(ASTNode left, ASTNode right)
+    {
         return SpaceRequirements.MAY;
     }
 
     @NotNull
-    public PsiElement createElement(ASTNode node) {
+    public PsiElement createElement(ASTNode node)
+    {
         return MacroSupportTypes.Factory.createElement(node);
     }
 }

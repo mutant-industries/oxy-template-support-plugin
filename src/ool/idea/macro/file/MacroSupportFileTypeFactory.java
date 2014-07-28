@@ -14,7 +14,7 @@ public class MacroSupportFileTypeFactory extends FileTypeFactory
     @Override
     public void createFileTypes(@NotNull FileTypeConsumer consumer)
     {
-        consumer.consume(MacroSupportFileType.getInstance(), MacroSupportFileType.DEFAULT_EXTENSION);
+        consumer.consume(MacroSupportFileType.INSTANCE, MacroSupportFileType.DEFAULT_EXTENSION);
     }
 
 }

@@ -1,6 +1,5 @@
 {
   parserClass="ool.idea.macro.parser.MacroSupportParser"
-  stubParserClass="ool.idea.macro.MacroSupportParserUtil"
 
   extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
 
@@ -17,9 +16,11 @@
 
 macroFile ::= item_*
 
-private item_ ::= (COMMENT|TEMPLATE_HTML_TEXT|TEMPLATE_JAVASCRIPT_TEXT|
+private item_ ::= (COMMENT|block_statement|block_open_statement|block_close_statement|
+    TEMPLATE_HTML_TEXT|TEMPLATE_JAVASCRIPT_TEXT|
     INNER_TEMPLATE_ELEMENT|OUTER_TEMPLATE_ELEMENT|
     T_MACRO_CLOSE_TAG|T_MACRO_OPEN_TAG|T_MACRO_OPEN_TAG_EQ|BAD_CHARACTER)
 
-block_statement ::= ()
-
+block_open_statement ::= T_MACRO_OPEN_TAG | T_MACRO_OPEN_TAG_EQ
+block_close_statement ::= T_MACRO_CLOSE_TAG
+block_statement ::= (block_open_statement TEMPLATE_JAVASCRIPT_TEXT block_close_statement)

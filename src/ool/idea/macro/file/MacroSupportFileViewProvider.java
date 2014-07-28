@@ -76,7 +76,7 @@ public class MacroSupportFileViewProvider extends MultiplePsiFilesPerDocumentFil
     @Override
     public Language getBaseLanguage()
     {
-        return MacroSupport.getInstance();
+        return MacroSupport.INSTANCE;
     }
 
     @NotNull
@@ -97,7 +97,7 @@ public class MacroSupportFileViewProvider extends MultiplePsiFilesPerDocumentFil
     public Set<Language> getLanguages()
     {
         return new THashSet<Language>(Arrays.asList(new Language[]{
-                        MacroSupport.getInstance(),
+                        MacroSupport.INSTANCE,
                         JavascriptLanguage.INSTANCE,
                         getTemplateDataLanguage(myManager, myVirtualFile)}
         ));
@@ -116,7 +116,7 @@ public class MacroSupportFileViewProvider extends MultiplePsiFilesPerDocumentFil
         if (lang == templateDataLanguage)
         {
             PsiFileImpl file = (PsiFileImpl) parserDefinition.createFile(this);
-            file.setContentElementType(new TemplateDataElementType("MACRO_TEMPLATE_DATA", MacroSupport.getInstance(), MacroSupportTypes.TEMPLATE_HTML_TEXT, MacroSupportTypes.OUTER_TEMPLATE_ELEMENT));
+            file.setContentElementType(new TemplateDataElementType("MACRO_TEMPLATE_DATA", MacroSupport.INSTANCE, MacroSupportTypes.TEMPLATE_HTML_TEXT, MacroSupportTypes.OUTER_TEMPLATE_ELEMENT));
             return file;
         }
         if (lang == JavascriptLanguage.INSTANCE)
@@ -128,12 +128,14 @@ public class MacroSupportFileViewProvider extends MultiplePsiFilesPerDocumentFil
 
                 private final ThreadLocal<LinkedList<Integer>> ourOffsets = new ThreadLocal();
 
+                @Override
                 protected CharSequence createTemplateText(CharSequence buf, Lexer lexer)
                 {
                     ourOffsets.set(new LinkedList());
                     return super.createTemplateText(buf, lexer);
                 }
 
+                @Override
                 protected void appendCurrentTemplateToken(StringBuilder result, CharSequence buf, Lexer lexer)
                 {
                     super.appendCurrentTemplateToken(result, buf, lexer);
@@ -152,6 +154,7 @@ public class MacroSupportFileViewProvider extends MultiplePsiFilesPerDocumentFil
                         result.append("\n");
                 }
 
+                @Override
                 protected void prepareParsedTemplateFile(final FileElement root)
                 {
                     final LinkedList offsets = (LinkedList) ourOffsets.get();
@@ -159,11 +162,13 @@ public class MacroSupportFileViewProvider extends MultiplePsiFilesPerDocumentFil
                     {
                         private int shift = 0;
 
+                        @Override
                         protected boolean visitNode(TreeElement element)
                         {
                             return true;
                         }
 
+                        @Override
                         public void visitLeaf(LeafElement leaf)
                         {
                             if ((offsets.isEmpty()) || (this.shift + leaf.getTextOffset() + leaf.getTextLength() < ((Integer) offsets.peekFirst()).intValue()))
@@ -215,6 +220,7 @@ public class MacroSupportFileViewProvider extends MultiplePsiFilesPerDocumentFil
                     ourOffsets.set(null);
                 }
 
+                @Override
                 protected Language getTemplateFileLanguage(TemplateLanguageFileViewProvider viewProvider)
                 {
                     return getLanguage();
@@ -222,7 +228,7 @@ public class MacroSupportFileViewProvider extends MultiplePsiFilesPerDocumentFil
             });
             return file;
         }
-        if (lang == MacroSupport.getInstance())
+        if (lang == MacroSupport.INSTANCE)
         {
             return parserDefinition.createFile(this);
         }

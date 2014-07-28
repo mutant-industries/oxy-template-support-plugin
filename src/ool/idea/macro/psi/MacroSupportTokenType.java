@@ -10,14 +10,17 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Petr Mayr <p.mayr@oxyonline.cz>
  */
-public class MacroSupportTokenType extends IElementType {
+public class MacroSupportTokenType extends IElementType
+{
 
-    public MacroSupportTokenType(@NotNull @NonNls String debugName) {
-        super(debugName, MacroSupport.getInstance());
+    public MacroSupportTokenType(@NotNull @NonNls String debugName)
+    {
+        super(debugName, MacroSupport.INSTANCE);
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "[MacroSupportTokenType] " + super.toString();
     }
 

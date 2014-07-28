@@ -10,21 +10,17 @@ import com.intellij.psi.templateLanguages.TemplateLanguage;
  *
  * @author Petr Mayr <p.mayr@oxyonline.cz>
  */
-public class MacroSupport  extends Language implements TemplateLanguage
+public class MacroSupport extends Language implements TemplateLanguage
 {
-    private static final MacroSupport INSTANCE = new MacroSupport();
+    public static final MacroSupport INSTANCE = new MacroSupport();
 
     private MacroSupport()
     {
         super("MacroSupport", "application/x-oxy-template");
     }
 
-    public static MacroSupport getInstance()
+    public static LanguageFileType getDefaultTemplateLang()
     {
-        return INSTANCE;
-    }
-
-    public static LanguageFileType getDefaultTemplateLang() {
         return StdFileTypes.HTML;
     }
 

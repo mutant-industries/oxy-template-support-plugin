@@ -1,7 +1,4 @@
 .idea/
-out/
-gen/
-macro-support-plugin.jar
+target/
 *.java~
 jFlex.jar
-idea-flex.skeleton

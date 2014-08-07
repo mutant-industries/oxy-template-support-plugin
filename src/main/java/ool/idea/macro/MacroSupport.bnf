@@ -24,3 +24,4 @@ private item_ ::= (COMMENT|block_statement|block_open_statement|block_close_stat
 block_open_statement ::= T_MACRO_OPEN_TAG | T_MACRO_OPEN_TAG_EQ
 block_close_statement ::= T_MACRO_CLOSE_TAG
 block_statement ::= (block_open_statement TEMPLATE_JAVASCRIPT_TEXT block_close_statement)
+

@@ -26,7 +26,7 @@ public class MacroSupportFileType extends LanguageFileType
     private static final Icon DEFAULT_ICON = IconLoader.getIcon("/ool/idea/macro/icons/default.png");
 
     @NonNls
-    public static final String DEFAULT_EXTENSION = "jsm";
+    public static final String DEFAULT_EXTENSION = "jsm;jst";
 
     public static final MacroSupportFileType INSTANCE = new MacroSupportFileType();
 

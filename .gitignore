@@ -2,3 +2,5 @@
 target/
 *.java~
 jFlex.jar
+out/
+gen/

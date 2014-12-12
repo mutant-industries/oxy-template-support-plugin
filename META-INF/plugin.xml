@@ -34,6 +34,7 @@
                                implementationClass="ool.idea.macro.MacroSupportParserDefinition"/>
         <lang.fileViewProviderFactory language="MacroSupport"
                                       implementationClass="ool.idea.macro.file.MacroSupportFileViewProviderFactory"/>
+        <colorSettingsPage implementation="ool.idea.macro.highlighter.MacroSupportColorSettingsPage"/>
     </extensions>
 
     <application-components>

@@ -23,6 +23,7 @@ import com.intellij.psi.templateLanguages.ConfigurableTemplateLanguageFileViewPr
 import com.intellij.psi.templateLanguages.TemplateDataElementType;
 import com.intellij.psi.templateLanguages.TemplateDataLanguageMappings;
 import com.intellij.psi.templateLanguages.TemplateLanguageFileViewProvider;
+import com.intellij.psi.tree.ILazyParseableElementType;
 import gnu.trove.THashSet;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -119,7 +120,11 @@ public class MacroSupportFileViewProvider extends MultiplePsiFilesPerDocumentFil
             file.setContentElementType(new TemplateDataElementType("MACRO_TEMPLATE_DATA", MacroSupport.INSTANCE, MacroSupportTypes.TEMPLATE_HTML_CODE, MacroSupportTypes.OUTER_TEMPLATE_ELEMENT));
             return file;
         }
-        if (lang == JavascriptLanguage.INSTANCE)
+        else if (lang == MacroSupport.INSTANCE)
+        {
+            return parserDefinition.createFile(this);
+        }
+        else if (lang == JavascriptLanguage.INSTANCE)
         {
             PsiFileImpl file = (PsiFileImpl) parserDefinition.createFile(this);
             file.setContentElementType(new TemplateDataElementType("MACRO_TEMPLATE", JavascriptLanguage.INSTANCE, MacroSupportTypes.TEMPLATE_JAVASCRIPT_CODE, MacroSupportTypes.INNER_TEMPLATE_ELEMENT)
@@ -227,10 +232,6 @@ public class MacroSupportFileViewProvider extends MultiplePsiFilesPerDocumentFil
                 }
             });
             return file;
-        }
-        if (lang == MacroSupport.INSTANCE)
-        {
-            return parserDefinition.createFile(this);
         }
 
         return null;

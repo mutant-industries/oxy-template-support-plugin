@@ -27,7 +27,7 @@ public class MacroSupportTemplateHighlighter extends LayeredLexerEditorHighlight
 {
     public MacroSupportTemplateHighlighter(@Nullable Project project, @Nullable VirtualFile virtualFile, @NotNull EditorColorsScheme colors)
     {
-        super(new MacroSupportHighlighter(project), colors);
+        super(new MacroSupportHighlighter(/*project*/), colors);
 
         FileType type = null;
         if ((project == null) || (virtualFile == null))
@@ -40,9 +40,12 @@ public class MacroSupportTemplateHighlighter extends LayeredLexerEditorHighlight
             if (language != null) type = language.getAssociatedFileType();
             if (type == null) type = MacroSupport.getDefaultTemplateLang();
         }
+
+        SyntaxHighlighter customHighlighter = SyntaxHighlighterFactory.getSyntaxHighlighter(MacroSupport.INSTANCE, project, virtualFile);
         SyntaxHighlighter outerHighlighter = SyntaxHighlighterFactory.getSyntaxHighlighter(type, project, virtualFile);
         SyntaxHighlighter innerHighlighter = SyntaxHighlighterFactory.getSyntaxHighlighter(StdFileTypes.JS, project, virtualFile);
 
+        registerLayer(MacroSupportTypes.TEMPLATE_OXY_CODE, new LayerDescriptor(customHighlighter, ""));
         registerLayer(MacroSupportTypes.TEMPLATE_HTML_CODE, new LayerDescriptor(outerHighlighter, ""));
         registerLayer(MacroSupportTypes.TEMPLATE_JAVASCRIPT_CODE, new LayerDescriptor(innerHighlighter, ""));
     }

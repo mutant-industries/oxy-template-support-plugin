@@ -33,6 +33,11 @@ public class MacroSupportParserDefinition implements ParserDefinition
     @Override
     public Lexer createLexer(Project project)
     {
+        return createLexer();
+    }
+
+    public Lexer createLexer()
+    {
         return new FlexAdapter(new MacroSupportLexer((Reader) null));
     }
 

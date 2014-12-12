@@ -1,6 +1,6 @@
 <idea-plugin version="2">
     <id>ool.idea.macro</id>
-    <name>My plugin</name>
+    <name>Oxy template support</name>
     <version>0.1</version>
     <vendor email="p.mayr@oxyonline.cz" url="http://www.oxyonline.cz">OxyOnline</vendor>
 

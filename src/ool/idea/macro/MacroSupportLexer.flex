@@ -11,7 +11,7 @@ import com.intellij.util.containers.Stack;
     private Stack<Integer> stack = new Stack<Integer>();
 
     public MacroSupportLexer() {
-        this((java.io.Reader)null);
+        // dummy
     }
 
     public void yypushstate(int newState) {
@@ -32,27 +32,65 @@ import com.intellij.util.containers.Stack;
 %type IElementType
 %unicode
 
-%state MACRO_CONTENT
+%state BLOCK
+//%state DIRECTIVE_BLOCK
+%state JAVASCRIPT_BLOCK
 
-MACRO_OPEN_TAG_EQ = <%=
-MACRO_OPEN_TAG = <%
-MACRO_CLOSE_TAG = %>
+OPEN_BLOCK_MARKER_PRINT = <%=
+//OPEN_BLOCK_MARKER_DIRECTIVE = <%@
+OPEN_BLOCK_MARKER = <%
+CLOSE_BLOCK_MARKER = %>
+
+LINE_TERMINATOR = \r|\n|\r\n
+WHITE_SPACE     = {LINE_TERMINATOR} | [ \t\f]
 
 %%
+
 <YYINITIAL> {
-    !([^]*({MACRO_OPEN_TAG})[^]*) {MACRO_OPEN_TAG}  {
-            yypushback(2);
-            yypushstate(MACRO_CONTENT);
-            return TEMPLATE_HTML_TEXT;
-       }
-    !([^]*({MACRO_OPEN_TAG})[^]*) { return TEMPLATE_HTML_TEXT; }
+    !([^]*({OPEN_BLOCK_MARKER})[^]*){OPEN_BLOCK_MARKER} {
+        yypushback(2);
+        yypushstate(BLOCK);
+        return TEMPLATE_HTML_CODE;
+    }
+    !([^]*({OPEN_BLOCK_MARKER})[^]*) {
+        return TEMPLATE_HTML_CODE;
+    }
+    {OPEN_BLOCK_MARKER} {
+        yypushback(2);
+        yypushstate(BLOCK);
+    }
 }
-<MACRO_CONTENT> {
-    {MACRO_OPEN_TAG_EQ}            { return T_MACRO_OPEN_TAG_EQ; }
-    {MACRO_OPEN_TAG}            { return T_MACRO_OPEN_TAG; }
-    {MACRO_CLOSE_TAG}             { yypopstate(); return T_MACRO_CLOSE_TAG; }
-    !([^]*({MACRO_OPEN_TAG})[^]*)%>  { yypushback(2); return TEMPLATE_JAVASCRIPT_TEXT; }
+<BLOCK> {
+//    {OPEN_BLOCK_MARKER_DIRECTIVE}    { yypushstate(DIRECTIVE_BLOCK); return OPEN_TAG_DIRECTIVE; }
+    {OPEN_BLOCK_MARKER} {
+        yypushstate(JAVASCRIPT_BLOCK);
+        return OPEN_BLOCK_MARKER;
+    }
+    {OPEN_BLOCK_MARKER_PRINT} {
+        yypushstate(JAVASCRIPT_BLOCK);
+        return OPEN_BLOCK_MARKER_PRINT;
+    }
+    {CLOSE_BLOCK_MARKER} {
+        yypopstate();
+        return CLOSE_BLOCK_MARKER;
+    }
+}
+<JAVASCRIPT_BLOCK> {
+    !([^]*({CLOSE_BLOCK_MARKER})[^]*){CLOSE_BLOCK_MARKER} {
+        yypushback(2);
+        yypopstate();
+
+        if(yytext().toString().trim().length() == 0) {
+            return TokenType.WHITE_SPACE;
+        }
+
+        return TEMPLATE_JAVASCRIPT_CODE;
+    }
 }
 
-//{WHITE_SPACE}                      { return TokenType.WHITE_SPACE; }
-.                                        { return BAD_CHARACTER; }
+{WHITE_SPACE} {
+    return TokenType.WHITE_SPACE;
+}
+. {
+    return TokenType.BAD_CHARACTER;
+}

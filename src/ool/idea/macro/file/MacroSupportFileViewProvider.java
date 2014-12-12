@@ -116,13 +116,13 @@ public class MacroSupportFileViewProvider extends MultiplePsiFilesPerDocumentFil
         if (lang == templateDataLanguage)
         {
             PsiFileImpl file = (PsiFileImpl) parserDefinition.createFile(this);
-            file.setContentElementType(new TemplateDataElementType("MACRO_TEMPLATE_DATA", MacroSupport.INSTANCE, MacroSupportTypes.TEMPLATE_HTML_TEXT, MacroSupportTypes.OUTER_TEMPLATE_ELEMENT));
+            file.setContentElementType(new TemplateDataElementType("MACRO_TEMPLATE_DATA", MacroSupport.INSTANCE, MacroSupportTypes.TEMPLATE_HTML_CODE, MacroSupportTypes.OUTER_TEMPLATE_ELEMENT));
             return file;
         }
         if (lang == JavascriptLanguage.INSTANCE)
         {
             PsiFileImpl file = (PsiFileImpl) parserDefinition.createFile(this);
-            file.setContentElementType(new TemplateDataElementType("MACRO_TEMPLATE", JavascriptLanguage.INSTANCE, MacroSupportTypes.TEMPLATE_JAVASCRIPT_TEXT, MacroSupportTypes.INNER_TEMPLATE_ELEMENT)
+            file.setContentElementType(new TemplateDataElementType("MACRO_TEMPLATE", JavascriptLanguage.INSTANCE, MacroSupportTypes.TEMPLATE_JAVASCRIPT_CODE, MacroSupportTypes.INNER_TEMPLATE_ELEMENT)
             {
                 private final Logger LOG = Logger.getInstance(getClass());
 

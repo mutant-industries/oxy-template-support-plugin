@@ -33,7 +33,8 @@ public class MacroSupportTemplateHighlighter extends LayeredLexerEditorHighlight
         if ((project == null) || (virtualFile == null))
         {
             type = FileTypes.PLAIN_TEXT;
-        } else
+        }
+        else
         {
             Language language = TemplateDataLanguageMappings.getInstance(project).getMapping(virtualFile);
             if (language != null) type = language.getAssociatedFileType();
@@ -42,7 +43,7 @@ public class MacroSupportTemplateHighlighter extends LayeredLexerEditorHighlight
         SyntaxHighlighter outerHighlighter = SyntaxHighlighterFactory.getSyntaxHighlighter(type, project, virtualFile);
         SyntaxHighlighter innerHighlighter = SyntaxHighlighterFactory.getSyntaxHighlighter(StdFileTypes.JS, project, virtualFile);
 
-        registerLayer(MacroSupportTypes.TEMPLATE_HTML_TEXT, new LayerDescriptor(outerHighlighter, ""));
-        registerLayer(MacroSupportTypes.TEMPLATE_JAVASCRIPT_TEXT, new LayerDescriptor(innerHighlighter, ""));
+        registerLayer(MacroSupportTypes.TEMPLATE_HTML_CODE, new LayerDescriptor(outerHighlighter, ""));
+        registerLayer(MacroSupportTypes.TEMPLATE_JAVASCRIPT_CODE, new LayerDescriptor(innerHighlighter, ""));
     }
 }

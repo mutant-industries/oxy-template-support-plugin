@@ -8,21 +8,41 @@ import com.intellij.util.containers.Stack;
 %%
 
 %{
-    private Stack<Integer> stack = new Stack<Integer>();
+    private Stack<Integer> stack = new Stack();
 
-    public MacroSupportLexer() {
+    public MacroSupportLexer()
+    {
         // dummy
     }
 
-    public void yypushstate(int newState) {
+    private void yypushstate(int newState)
+    {
         stack.push(yystate());
         yybegin(newState);
     }
 
-    public void yypopstate() {
+    private void yypopstate()
+    {
         yybegin(stack.pop());
     }
 
+    private void yyresetstate()
+    {
+        while( ! stack.isEmpty())
+        {
+            yybegin(stack.pop());
+        }
+    }
+
+    private IElementType trimElement(IElementType element)
+    {
+        String text = yytext().toString();
+
+        if(text.trim().length() > 0) return element;
+        if(text.length() > 0) return TokenType.WHITE_SPACE;
+
+        return null;
+    }
 %}
 
 %public
@@ -32,122 +52,298 @@ import com.intellij.util.containers.Stack;
 %type IElementType
 %unicode
 
-%state BLOCK
-%state DIRECTIVE_BLOCK
-%state JAVASCRIPT_BLOCK
-%state DIRECTIVE_PARAMETER
+%state S_BLOCK
+%state S_DIRECTIVE_BLOCK
+%state S_JAVASCRIPT_BLOCK
+%state S_DIRECTIVE_PARAMETER
+%state S_MACRO_OPEN_OR_UNPAIRED_TAG
+%state S_MACRO_CLOSE_TAG
+%state S_MACRO_PARAM_ASIGNMENT
+%state S_MACRO_NAME
+%state S_MACRO_PARAMETER
+%state S_MACRO_PARAMETER_EXPRESSION
 
-OPEN_BLOCK_MARKER_PRINT = <%=
-OPEN_BLOCK_MARKER_DIRECTIVE = <%@
 OPEN_BLOCK_MARKER = <%
+OPEN_BLOCK_MARKER_PRINT = <%=
 CLOSE_BLOCK_MARKER = %>
-DIRECTIVE_PARAM_BOUNDARY = \"
+
+OPEN_BLOCK_MARKER_DIRECTIVE = <%@
+
+MACRO_NAME = [A-Za-z][A-Za-z0-9_]+(\.[A-Za-z][A-Za-z0-9_]+)*\.{0,1}
+MACRO_XML_PREFIX = m:
+MACRO_PARAM_EXPRESSION_STATEMENT_START = expr:
+XML_TAG_START = <
+XML_CLOSE_TAG_START = <\/
+XML_TAG_END = >
+XML_UNPAIRED_TAG_END = \/>
 
 LINE_TERMINATOR = \r|\n|\r\n
-WHITE_SPACE     = {LINE_TERMINATOR} | [ \t\f]
-SPECIAL_CHARS   = [<>%\"\\@:/=\.]
+CHARS = [^ \t\f\r\n\r\n\"]
+WHITE_CHARS = [\t \f]
+WHITE_SPACE = {LINE_TERMINATOR} | {WHITE_CHARS}
+SPECIAL_CHARS = [<|>|%|\"|\\|@|:|\/|=|\.]+
+NON_SPECIAL_CHARS = !([^]*({SPECIAL_CHARS}|{WHITE_SPACE})[^]*)
 
 %%
 
-<YYINITIAL> {
-    !([^]*({OPEN_BLOCK_MARKER})[^]*){OPEN_BLOCK_MARKER} {
+// html block
+<YYINITIAL>
+{
+    // ...<%
+    !([^]*({OPEN_BLOCK_MARKER}|{XML_TAG_START}{MACRO_XML_PREFIX}|{XML_CLOSE_TAG_START}{MACRO_XML_PREFIX})[^]*){OPEN_BLOCK_MARKER}
+    {
+        final IElementType el;
+
         yypushback(2);
-        yypushstate(BLOCK);
+        yypushstate(S_BLOCK);
 
-        if(yytext().toString().trim().length() == 0) {
-            return TokenType.WHITE_SPACE;
-        }
-        return TEMPLATE_HTML_CODE;
+        if((el = trimElement(TEMPLATE_HTML_CODE)) != null) return el;
     }
-    !([^]*({OPEN_BLOCK_MARKER})[^]*) {
+    // ...<m:
+    !([^]*({OPEN_BLOCK_MARKER}|{XML_TAG_START}{MACRO_XML_PREFIX}|{XML_CLOSE_TAG_START}{MACRO_XML_PREFIX})[^]*){XML_TAG_START}{MACRO_XML_PREFIX}
+    {
+        final IElementType el;
 
-        if(yytext().toString().trim().length() == 0) {
-            return TokenType.WHITE_SPACE;
-        }
+        yypushback(3);
+        yypushstate(S_MACRO_OPEN_OR_UNPAIRED_TAG);
 
-        return TEMPLATE_HTML_CODE;
+        if((el = trimElement(TEMPLATE_HTML_CODE)) != null) return el;
     }
-    {OPEN_BLOCK_MARKER} {
-        yypushback(2);
-        yypushstate(BLOCK);
+    // ...</m:
+    !([^]*({OPEN_BLOCK_MARKER}|{XML_TAG_START}{MACRO_XML_PREFIX}|{XML_CLOSE_TAG_START}{MACRO_XML_PREFIX})[^]*){XML_CLOSE_TAG_START}{MACRO_XML_PREFIX}
+    {
+        final IElementType el;
+
+        yypushback(4);
+        yypushstate(S_MACRO_CLOSE_TAG);
+
+        if((el = trimElement(TEMPLATE_HTML_CODE)) != null) return el;
+    }
+    !([^]*({OPEN_BLOCK_MARKER}|{XML_TAG_START}{MACRO_XML_PREFIX}|{XML_CLOSE_TAG_START}{MACRO_XML_PREFIX})[^]*)
+    {
+        return trimElement(TEMPLATE_HTML_CODE);
     }
 }
-<BLOCK> {
-    {OPEN_BLOCK_MARKER_DIRECTIVE} {
-        yypushstate(DIRECTIVE_BLOCK);
+// <%, %>, <%=, <%@
+<S_BLOCK>
+{
+    {OPEN_BLOCK_MARKER_DIRECTIVE}
+    {
+        yypushstate(S_DIRECTIVE_BLOCK);
         return OPEN_BLOCK_MARKER_DIRECTIVE;
     }
-    {OPEN_BLOCK_MARKER} {
-        yypushstate(JAVASCRIPT_BLOCK);
+    {OPEN_BLOCK_MARKER}
+    {
+        yypushstate(S_JAVASCRIPT_BLOCK);
         return OPEN_BLOCK_MARKER;
     }
-    {OPEN_BLOCK_MARKER_PRINT} {
-        yypushstate(JAVASCRIPT_BLOCK);
+    {OPEN_BLOCK_MARKER_PRINT}
+    {
+        yypushstate(S_JAVASCRIPT_BLOCK);
         return OPEN_BLOCK_MARKER_PRINT;
     }
-    {CLOSE_BLOCK_MARKER} {
+    {CLOSE_BLOCK_MARKER}
+    {
         yypopstate();
         return CLOSE_BLOCK_MARKER;
     }
 }
-<JAVASCRIPT_BLOCK> {
-
-    !([^]*({CLOSE_BLOCK_MARKER})[^]*){CLOSE_BLOCK_MARKER} {
+// javascript block
+<S_JAVASCRIPT_BLOCK>
+{
+    !([^]*({CLOSE_BLOCK_MARKER})[^]*){CLOSE_BLOCK_MARKER}
+    {
+        final IElementType el;
 
         yypushback(2);
         yypopstate();
 
-        if(yytext().toString().trim().length() == 0) {
-            return TokenType.WHITE_SPACE;
-        }
+        if((el = trimElement(TEMPLATE_JAVASCRIPT_CODE)) != null) return el;
+    }
+    !([^]*({CLOSE_BLOCK_MARKER})[^]*)
+    {
+        if(yytext().toString().trim().length() == 0) return TokenType.WHITE_SPACE;
 
         return TEMPLATE_JAVASCRIPT_CODE;
-    }
-    !([^]*({CLOSE_BLOCK_MARKER})[^]*) {
-
-        if(yytext().toString().trim().length() == 0) {
-            return TokenType.WHITE_SPACE;
-        }
-
-        return TEMPLATE_JAVASCRIPT_CODE;
-    }
-    {CLOSE_BLOCK_MARKER} {
-        yypopstate();
     }
 }
-<DIRECTIVE_BLOCK> {
-    !([^]*({WHITE_SPACE}|{SPECIAL_CHARS})[^]*) {
+// <%@ directive "paramX" "paramY" %>
+<S_DIRECTIVE_BLOCK>
+{
+    !([^]*({WHITE_SPACE}|{SPECIAL_CHARS})[^]*)
+    {
         return DIRECTIVE;
     }
-    {DIRECTIVE_PARAM_BOUNDARY} {
-        yypushstate(DIRECTIVE_PARAMETER);
+    \"
+    {
+        yypushstate(S_DIRECTIVE_PARAMETER);
         return DIRECTIVE_PARAM_BOUNDARY;
     }
-    {CLOSE_BLOCK_MARKER} {
+    {CLOSE_BLOCK_MARKER}
+    {
         yypushback(2);
         yypopstate();
     }
-}
-<DIRECTIVE_PARAMETER> {
-    !([^]*({CLOSE_BLOCK_MARKER}|{DIRECTIVE_PARAM_BOUNDARY}|{WHITE_SPACE})[^]*) {
-        return DIRECTIVE_PARAM;
-    }
-    {DIRECTIVE_PARAM_BOUNDARY} {
-        yypopstate();
-        return DIRECTIVE_PARAM_BOUNDARY;
-    }
-    {CLOSE_BLOCK_MARKER} {
-        yypushback(2);
-        yypopstate();
-    }
-    {WHITE_SPACE}+ {
+    {CHARS}|{LINE_TERMINATOR}
+    {
+        yyresetstate();
         return TokenType.BAD_CHARACTER;
     }
 }
 
-{WHITE_SPACE}+ {
+<S_DIRECTIVE_PARAMETER>
+{
+    !([^]*(\"|{LINE_TERMINATOR})[^]*)
+    {
+        return DIRECTIVE_PARAM;
+    }
+    \"
+    {
+        yypopstate();
+        return DIRECTIVE_PARAM_BOUNDARY;
+    }
+    {LINE_TERMINATOR}
+    {
+        yyresetstate();
+        return TokenType.BAD_CHARACTER;
+    }
+}
+// <m:foo.bar param_name="[expr:]param" [/]>
+<S_MACRO_OPEN_OR_UNPAIRED_TAG>
+{
+    {XML_TAG_START}
+    {
+        return XML_TAG_START;
+    }
+    {MACRO_XML_PREFIX}
+    {
+        yypushstate(S_MACRO_NAME);
+        return MACRO_XML_PREFIX;
+    }
+    {NON_SPECIAL_CHARS}+
+    {
+        yypushstate(S_MACRO_PARAM_ASIGNMENT);
+        return MACRO_PARAM_NAME;
+    }
+    {XML_TAG_END}
+    {
+        yypopstate();
+        return XML_TAG_END;
+    }
+    {XML_UNPAIRED_TAG_END}
+    {
+        yypopstate();
+        return XML_UNPAIRED_TAG_END;
+    }
+    {WHITE_SPACE}+
+    {
+        return TokenType.WHITE_SPACE;
+    }
+    .
+    {
+        yypushback(1);
+        yypopstate();
+        return TokenType.BAD_CHARACTER;
+    }
+}
+
+<S_MACRO_NAME>
+{
+    {MACRO_NAME}
+    {
+        yypopstate();
+        return MACRO_NAME;
+    }
+    .
+    {
+        yypushback(1);
+        yypopstate();
+        return TokenType.BAD_CHARACTER;
+    }
+}
+
+<S_MACRO_PARAM_ASIGNMENT>
+{
+    \=
+    {
+        return MACRO_PARAM_ASSIGNMENT;
+    }
+    \"
+    {
+        yypushstate(S_MACRO_PARAMETER);
+        return MACRO_PARAM_BOUNDARY;
+    }
+    .
+    {
+        yyresetstate();
+        return TokenType.BAD_CHARACTER;
+    }
+}
+
+<S_MACRO_PARAMETER>
+{
+    !([^]*({MACRO_PARAM_EXPRESSION_STATEMENT_START}|\")[^]*)
+    {
+        return MACRO_PARAM;
+    }
+    {MACRO_PARAM_EXPRESSION_STATEMENT_START}
+    {
+        yypushstate(S_MACRO_PARAMETER_EXPRESSION);
+        return MACRO_PARAM_EXPRESSION_STATEMENT;
+    }
+    \"
+    {
+        yypopstate(); yypopstate();
+        return MACRO_PARAM_BOUNDARY;
+    }
+}
+
+<S_MACRO_PARAMETER_EXPRESSION>
+{
+    !([^]*(\")[^]*)
+    {
+        return MACRO_PARAM_EXPRESSION;
+    }
+    \"
+    {
+        yypopstate(); yypopstate(); yypopstate();
+        return MACRO_PARAM_BOUNDARY;
+    }
+}
+//</m:foo.bar>
+<S_MACRO_CLOSE_TAG>
+{
+    {XML_CLOSE_TAG_START}
+    {
+        return XML_CLOSE_TAG_START;
+    }
+    {MACRO_XML_PREFIX}
+    {
+        yypushstate(S_MACRO_NAME);
+        return MACRO_XML_PREFIX;
+    }
+    {XML_TAG_END}
+    {
+        yypopstate();
+        return XML_TAG_END;
+    }
+    {WHITE_SPACE}+
+    {
+        return TokenType.WHITE_SPACE;
+    }
+    .
+    {
+        yypushback(1);
+        yypopstate();
+        return TokenType.BAD_CHARACTER;
+    }
+}
+
+{WHITE_SPACE}+
+{
     return TokenType.WHITE_SPACE;
 }
-. {
+.
+{
     return TokenType.BAD_CHARACTER;
 }

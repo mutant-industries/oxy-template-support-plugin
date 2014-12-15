@@ -6,3 +6,4 @@ out/
 gen/
 rebel.xml
 idea-flex.skeleton
+*.dot

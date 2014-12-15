@@ -21,6 +21,12 @@ public class MacroSupportColorSettingsPage implements ColorSettingsPage
     private static final AttributesDescriptor[] DESCRIPTORS = new AttributesDescriptor[]{
             new AttributesDescriptor("Directive", MacroSupportHighlighter.KEY),
             new AttributesDescriptor("Directive param", MacroSupportHighlighter.VALUE),
+            new AttributesDescriptor("Macro tag boundary", MacroSupportHighlighter.MACRO_TAG_BOUNDARY),
+            new AttributesDescriptor("Macro name xml namespace", MacroSupportHighlighter.MACRO_NAME_PREFIX),
+            new AttributesDescriptor("Macro name", MacroSupportHighlighter.MACRO_NAME),
+            new AttributesDescriptor("Macro parameter name", MacroSupportHighlighter.MACRO_PARAM_NAME),
+            new AttributesDescriptor("Macro parameter value", MacroSupportHighlighter.MACRO_PARAM_VALUE),
+            new AttributesDescriptor("Macro parameter expression statement", MacroSupportHighlighter.MACRO_PARAM_EXPRESSION_STATEMENT),
     };
 
     @Nullable
@@ -41,17 +47,9 @@ public class MacroSupportColorSettingsPage implements ColorSettingsPage
         return "<%@ layout \"_layout.jst\" %>\n" +
                 "<%@ include_once \"../macros/redesign/layout/layout.jsm\" %>\n" +
                 "\n" +
-                "<div>\n" +
-                "    <ul>\n" +
-                "        <% for(var i=0; i<supplies.length; i++) { %>\n" +
-                "            <li class=\"li\">\n" +
-                "                <a href=\"neco\" title=\"nevim\">\n" +
-                "                    <% supplies[i] %>\n" +
-                "                </a>\n" +
-                "            </li>\n" +
-                "        <% } %>\n" +
-                "    </ul>\n" +
-                "</div>\n";
+                "<m:foo.bar asdf=\"expr: __js__\">\n" +
+                "    <m:bar.baz param_key=\"value\" />\n" +
+                "</m:foo.bar>\n";
     }
 
     @Nullable

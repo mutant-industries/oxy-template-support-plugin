@@ -9,13 +9,22 @@
     <depends>JavaScript</depends>
 
     <description><![CDATA[
-      Enter short description for your plugin here.<br>
-      <em>most HTML tags may be used</em>
+      Podpora šablonovacího systému oxy.
     ]]></description>
 
     <change-notes><![CDATA[
-      Add change notes here.<br>
-      <em>most HTML tags may be used</em>
+        <b>0.1</b> - první stabilní verze
+        <ul>
+            <li>
+                lexer - rozlišení js / html bloku, direktiv a maker
+            </li>
+            <li>
+                stránka s nastavením barev
+            </li>
+            <li>
+                samostatné syntaktické stromy pro jednotlivé jazyky, zvyrazňovač syntaxe
+            </li>
+        </ul>
     ]]>
     </change-notes>
 

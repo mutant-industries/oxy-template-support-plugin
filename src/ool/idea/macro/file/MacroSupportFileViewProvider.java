@@ -3,6 +3,7 @@ package ool.idea.macro.file;
 import com.intellij.lang.Language;
 import com.intellij.lang.LanguageParserDefinitions;
 import com.intellij.lang.ParserDefinition;
+import com.intellij.lang.StdLanguages;
 import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.diagnostic.Logger;
@@ -100,7 +101,7 @@ public class MacroSupportFileViewProvider extends MultiplePsiFilesPerDocumentFil
         return new THashSet<Language>(Arrays.asList(new Language[]{
                         MacroSupport.INSTANCE,
                         JavascriptLanguage.INSTANCE,
-                        getTemplateDataLanguage(myManager, myVirtualFile)}
+                        StdLanguages.HTML}
         ));
     }
 
@@ -146,16 +147,16 @@ public class MacroSupportFileViewProvider extends MultiplePsiFilesPerDocumentFil
                     super.appendCurrentTemplateToken(result, buf, lexer);
                     ((LinkedList) ourOffsets.get()).add(Integer.valueOf(result.length()));
 
-                    int i = lexer.getTokenStart();
-                    char c = lexer.getBufferSequence().charAt(i);
-                    while ((i >= 0) && (c != '=') && (c != '%'))
-                    {
-                        i--;
-                        c = lexer.getBufferSequence().charAt(i);
-                    }
-                    if (c == '=')
-                        result.append(";");
-                    else
+//                    int i = lexer.getTokenStart();
+//                    char c = lexer.getBufferSequence().charAt(i);
+//                    while ((i >= 0) && (c != '=') && (c != '%'))
+//                    {
+//                        i--;
+//                        c = lexer.getBufferSequence().charAt(i);
+//                    }
+//                    if (c == '=')
+//                        result.append(";");
+//                    else
                         result.append("\n");
                 }
 
@@ -231,6 +232,7 @@ public class MacroSupportFileViewProvider extends MultiplePsiFilesPerDocumentFil
                     return getLanguage();
                 }
             });
+
             return file;
         }
 

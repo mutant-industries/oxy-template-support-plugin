@@ -45,7 +45,8 @@ public class MacroSupportTemplateHighlighter extends LayeredLexerEditorHighlight
         SyntaxHighlighter outerHighlighter = SyntaxHighlighterFactory.getSyntaxHighlighter(type, project, virtualFile);
         SyntaxHighlighter innerHighlighter = SyntaxHighlighterFactory.getSyntaxHighlighter(StdFileTypes.JS, project, virtualFile);
 
-        registerLayer(MacroSupportTypes.TEMPLATE_OXY_CODE, new LayerDescriptor(customHighlighter, ""));
+        registerLayer(MacroSupportTypes.DIRECTIVE_STATEMENT, new LayerDescriptor(customHighlighter, ""));
+        registerLayer(MacroSupportTypes.MACRO_TAG, new LayerDescriptor(customHighlighter, ""));
         registerLayer(MacroSupportTypes.TEMPLATE_HTML_CODE, new LayerDescriptor(outerHighlighter, ""));
         registerLayer(MacroSupportTypes.TEMPLATE_JAVASCRIPT_CODE, new LayerDescriptor(innerHighlighter, ""));
     }

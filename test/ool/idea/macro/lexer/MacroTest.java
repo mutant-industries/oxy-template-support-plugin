@@ -1,82 +1,72 @@
 package ool.idea.macro.lexer;
 
 import java.io.IOException;
-import ool.idea.macro.MacroSupportLexer;
 import ool.idea.macro.psi.MacroSupportTypes;
 import static com.intellij.psi.TokenType.*;
 import static org.junit.Assert.assertEquals;
-import org.junit.Before;
 import org.junit.Test;
 
 /**
  * Created by mayrp on 12/13/14.
  */
-public class MacroTest
+public class MacroTest extends AbstractLexerTest
 {
-    private MacroSupportLexer lexer;
-
-    @Before
-    public void initLexer()
-    {
-        lexer = new MacroSupportLexer();
-    }
-
     @Test
     public void macroCloseTagTest() throws IOException
     {
         String input = "</m:foo.bar>";
-        lexer.reset(input, 0, input.length(), 0);
+        lexer.start(input);
 
-        assertEquals(MacroSupportTypes.XML_CLOSE_TAG_START, lexer.advance());
-        assertEquals(MacroSupportTypes.MACRO_XML_NAMESPACE, lexer.advance());
-        assertEquals(MacroSupportTypes.XML_NAMESPACE_DELIMITER, lexer.advance());
-        assertEquals(MacroSupportTypes.MACRO_NAME, lexer.advance());
-        assertEquals(MacroSupportTypes.XML_TAG_END, lexer.advance());
+        assertEquals(MacroSupportTypes.XML_CLOSE_TAG_START, nextToken());
+        assertEquals(MacroSupportTypes.MACRO_XML_NAMESPACE, nextToken());
+        assertEquals(MacroSupportTypes.XML_NAMESPACE_DELIMITER, nextToken());
+        assertEquals(MacroSupportTypes.MACRO_NAME, nextToken());
+        assertEquals(MacroSupportTypes.XML_TAG_END, nextToken());
 
-        assertEquals(null, lexer.advance());
+        assertEquals(null, nextToken());
     }
 
     @Test
     public void macroWithParamTest() throws IOException
     {
         String input = "<m:foo.bar param_name=\"param_value\">";
-        lexer.reset(input, 0, input.length(), 0);
+        lexer.start(input);
 
-        assertEquals(MacroSupportTypes.XML_TAG_START, lexer.advance());
-        assertEquals(MacroSupportTypes.MACRO_XML_NAMESPACE, lexer.advance());
-        assertEquals(MacroSupportTypes.XML_NAMESPACE_DELIMITER, lexer.advance());
-        assertEquals(MacroSupportTypes.MACRO_NAME, lexer.advance());
-        assertEquals(WHITE_SPACE, lexer.advance());
-        assertEquals(MacroSupportTypes.MACRO_PARAM_NAME, lexer.advance());
-        assertEquals(MacroSupportTypes.MACRO_PARAM_ASSIGNMENT, lexer.advance());
-        assertEquals(MacroSupportTypes.MACRO_PARAM_BOUNDARY, lexer.advance());
-        assertEquals(MacroSupportTypes.MACRO_PARAM, lexer.advance());
-        assertEquals(MacroSupportTypes.MACRO_PARAM_BOUNDARY, lexer.advance());
-        assertEquals(MacroSupportTypes.XML_TAG_END, lexer.advance());
+        assertEquals(MacroSupportTypes.XML_TAG_START, nextToken());
+        assertEquals(MacroSupportTypes.MACRO_XML_NAMESPACE, nextToken());
+        assertEquals(MacroSupportTypes.XML_NAMESPACE_DELIMITER, nextToken());
+        assertEquals(MacroSupportTypes.MACRO_NAME, nextToken());
+        assertEquals(WHITE_SPACE, nextToken());
+        assertEquals(MacroSupportTypes.MACRO_PARAM_NAME, nextToken());
+        assertEquals(MacroSupportTypes.MACRO_PARAM_ASSIGNMENT, nextToken());
+        assertEquals(MacroSupportTypes.MACRO_PARAM_BOUNDARY, nextToken());
+        assertEquals(MacroSupportTypes.MACRO_PARAM, nextToken());
+        assertEquals(MacroSupportTypes.MACRO_PARAM_BOUNDARY, nextToken());
+        assertEquals(MacroSupportTypes.XML_TAG_END, nextToken());
 
-        assertEquals(null, lexer.advance());
+        assertEquals(null, nextToken());
     }
 
     @Test
     public void unpairedMacroWithParamTest() throws IOException
     {
         String input = "<m:foo.bar param_name=\"param_value\" />";
-        lexer.reset(input, 0, input.length(), 0);
+        lexer.start(input);
 
-        assertEquals(MacroSupportTypes.XML_TAG_START, lexer.advance());
-        assertEquals(MacroSupportTypes.MACRO_XML_NAMESPACE, lexer.advance());
-        assertEquals(MacroSupportTypes.XML_NAMESPACE_DELIMITER, lexer.advance());
-        assertEquals(MacroSupportTypes.MACRO_NAME, lexer.advance());
-        assertEquals(WHITE_SPACE, lexer.advance());
-        assertEquals(MacroSupportTypes.MACRO_PARAM_NAME, lexer.advance());
-        assertEquals(MacroSupportTypes.MACRO_PARAM_ASSIGNMENT, lexer.advance());
-        assertEquals(MacroSupportTypes.MACRO_PARAM_BOUNDARY, lexer.advance());
-        assertEquals(MacroSupportTypes.MACRO_PARAM, lexer.advance());
-        assertEquals(MacroSupportTypes.MACRO_PARAM_BOUNDARY, lexer.advance());
-        assertEquals(WHITE_SPACE, lexer.advance());
-        assertEquals(MacroSupportTypes.XML_UNPAIRED_TAG_END, lexer.advance());
+        assertEquals(MacroSupportTypes.XML_TAG_START, nextToken());
+        assertEquals(MacroSupportTypes.MACRO_XML_NAMESPACE, nextToken());
+        assertEquals(MacroSupportTypes.XML_NAMESPACE_DELIMITER, nextToken());
+        assertEquals(MacroSupportTypes.MACRO_NAME, nextToken());
+        assertEquals(WHITE_SPACE, nextToken());
+        assertEquals(MacroSupportTypes.MACRO_PARAM_NAME, nextToken());
+        assertEquals(MacroSupportTypes.MACRO_PARAM_ASSIGNMENT, nextToken());
+        assertEquals(MacroSupportTypes.MACRO_PARAM_BOUNDARY, nextToken());
+        assertEquals(MacroSupportTypes.MACRO_PARAM, nextToken());
+        assertEquals(MacroSupportTypes.MACRO_PARAM_BOUNDARY, nextToken());
+        assertEquals(WHITE_SPACE, nextToken());
+        assertEquals(MacroSupportTypes.XML_UNPAIRED_TAG_END, nextToken());
 
-        assertEquals(null, lexer.advance());
+        assertEquals(null, nextToken());
     }
 
     @Test
@@ -84,25 +74,25 @@ public class MacroTest
     {
         String input = "<m:oxy.ifTrue value=\"expr: true\" />";
 
-        lexer.reset(input, 0, input.length(), 0);
+        lexer.start(input);
 
-        assertEquals(MacroSupportTypes.XML_TAG_START, lexer.advance());
-        assertEquals(MacroSupportTypes.MACRO_XML_NAMESPACE, lexer.advance());
-        assertEquals(MacroSupportTypes.XML_NAMESPACE_DELIMITER, lexer.advance());
-        assertEquals(MacroSupportTypes.MACRO_NAME, lexer.advance());
-        assertEquals(WHITE_SPACE, lexer.advance());
-        assertEquals(MacroSupportTypes.MACRO_PARAM_NAME, lexer.advance());
-        assertEquals(MacroSupportTypes.MACRO_PARAM_ASSIGNMENT, lexer.advance());
-        assertEquals(MacroSupportTypes.MACRO_PARAM_BOUNDARY, lexer.advance());
+        assertEquals(MacroSupportTypes.XML_TAG_START, nextToken());
+        assertEquals(MacroSupportTypes.MACRO_XML_NAMESPACE, nextToken());
+        assertEquals(MacroSupportTypes.XML_NAMESPACE_DELIMITER, nextToken());
+        assertEquals(MacroSupportTypes.MACRO_NAME, nextToken());
+        assertEquals(WHITE_SPACE, nextToken());
+        assertEquals(MacroSupportTypes.MACRO_PARAM_NAME, nextToken());
+        assertEquals(MacroSupportTypes.MACRO_PARAM_ASSIGNMENT, nextToken());
+        assertEquals(MacroSupportTypes.MACRO_PARAM_BOUNDARY, nextToken());
 
-        assertEquals(MacroSupportTypes.MACRO_PARAM_EXPRESSION_STATEMENT, lexer.advance());
-        assertEquals(MacroSupportTypes.TEMPLATE_JAVASCRIPT_CODE, lexer.advance());
+        assertEquals(MacroSupportTypes.MACRO_PARAM_EXPRESSION_STATEMENT, nextToken());
+        assertEquals(MacroSupportTypes.TEMPLATE_JAVASCRIPT_CODE, nextToken());
 
-        assertEquals(MacroSupportTypes.MACRO_PARAM_BOUNDARY, lexer.advance());
-        assertEquals(WHITE_SPACE, lexer.advance());
-        assertEquals(MacroSupportTypes.XML_UNPAIRED_TAG_END, lexer.advance());
+        assertEquals(MacroSupportTypes.MACRO_PARAM_BOUNDARY, nextToken());
+        assertEquals(WHITE_SPACE, nextToken());
+        assertEquals(MacroSupportTypes.XML_UNPAIRED_TAG_END, nextToken());
 
-        assertEquals(null, lexer.advance());
+        assertEquals(null, nextToken());
     }
 
     @Test
@@ -117,35 +107,35 @@ public class MacroTest
                 "    </m:bar.baz>\n" +
                 "</div>\n";
 
-        lexer.reset(input, 0, input.length(), 0);
+        lexer.start(input);
 
-        assertEquals(MacroSupportTypes.TEMPLATE_HTML_CODE, lexer.advance());
-        assertEquals(MacroSupportTypes.XML_TAG_START, lexer.advance());
-        assertEquals(MacroSupportTypes.MACRO_XML_NAMESPACE, lexer.advance());
-        assertEquals(MacroSupportTypes.XML_NAMESPACE_DELIMITER, lexer.advance());
-        assertEquals(MacroSupportTypes.MACRO_NAME, lexer.advance());
-        assertEquals(MacroSupportTypes.XML_TAG_END, lexer.advance());
+        assertEquals(MacroSupportTypes.TEMPLATE_HTML_CODE, nextToken());
+        assertEquals(MacroSupportTypes.XML_TAG_START, nextToken());
+        assertEquals(MacroSupportTypes.MACRO_XML_NAMESPACE, nextToken());
+        assertEquals(MacroSupportTypes.XML_NAMESPACE_DELIMITER, nextToken());
+        assertEquals(MacroSupportTypes.MACRO_NAME, nextToken());
+        assertEquals(MacroSupportTypes.XML_TAG_END, nextToken());
 
-        assertEquals(MacroSupportTypes.TEMPLATE_HTML_CODE, lexer.advance());
+        assertEquals(MacroSupportTypes.TEMPLATE_HTML_CODE, nextToken());
 
-        assertEquals(MacroSupportTypes.XML_TAG_START, lexer.advance());
-        assertEquals(MacroSupportTypes.MACRO_XML_NAMESPACE, lexer.advance());
-        assertEquals(MacroSupportTypes.XML_NAMESPACE_DELIMITER, lexer.advance());
-        assertEquals(MacroSupportTypes.MACRO_NAME, lexer.advance());
-        assertEquals(WHITE_SPACE, lexer.advance());
-        assertEquals(MacroSupportTypes.XML_UNPAIRED_TAG_END, lexer.advance());
+        assertEquals(MacroSupportTypes.XML_TAG_START, nextToken());
+        assertEquals(MacroSupportTypes.MACRO_XML_NAMESPACE, nextToken());
+        assertEquals(MacroSupportTypes.XML_NAMESPACE_DELIMITER, nextToken());
+        assertEquals(MacroSupportTypes.MACRO_NAME, nextToken());
+        assertEquals(WHITE_SPACE, nextToken());
+        assertEquals(MacroSupportTypes.XML_UNPAIRED_TAG_END, nextToken());
 
-        assertEquals(MacroSupportTypes.TEMPLATE_HTML_CODE, lexer.advance());
+        assertEquals(MacroSupportTypes.TEMPLATE_HTML_CODE, nextToken());
 
-        assertEquals(MacroSupportTypes.XML_CLOSE_TAG_START, lexer.advance());
-        assertEquals(MacroSupportTypes.MACRO_XML_NAMESPACE, lexer.advance());
-        assertEquals(MacroSupportTypes.XML_NAMESPACE_DELIMITER, lexer.advance());
-        assertEquals(MacroSupportTypes.MACRO_NAME, lexer.advance());
-        assertEquals(MacroSupportTypes.XML_TAG_END, lexer.advance());
+        assertEquals(MacroSupportTypes.XML_CLOSE_TAG_START, nextToken());
+        assertEquals(MacroSupportTypes.MACRO_XML_NAMESPACE, nextToken());
+        assertEquals(MacroSupportTypes.XML_NAMESPACE_DELIMITER, nextToken());
+        assertEquals(MacroSupportTypes.MACRO_NAME, nextToken());
+        assertEquals(MacroSupportTypes.XML_TAG_END, nextToken());
 
-        assertEquals(MacroSupportTypes.TEMPLATE_HTML_CODE, lexer.advance());
+        assertEquals(MacroSupportTypes.TEMPLATE_HTML_CODE, nextToken());
 
-        assertEquals(null, lexer.advance());
+        assertEquals(null, nextToken());
     }
 
 }

@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Created by mayrp on 12/15/14.
  */
-public class MacroSupportTypeHandler extends XmlGtTypedHandler
+public class MacroSupportBlockMarkerTypeHandler extends XmlGtTypedHandler
 {
     @Override
     public TypedHandlerDelegate.Result charTyped(char c, Project project, @NotNull Editor editor, @NotNull PsiFile file)

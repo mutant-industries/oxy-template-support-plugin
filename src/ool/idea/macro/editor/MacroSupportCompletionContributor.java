@@ -35,5 +35,20 @@ public class MacroSupportCompletionContributor extends CompletionContributor
                     }
                 }
         );
+
+        extend(CompletionType.BASIC, PlatformPatterns.psiElement(MacroSupportTypes.MACRO_PARAM).withLanguage(MacroSupport.INSTANCE),
+                new CompletionProvider<CompletionParameters>()
+                {
+
+                    @Override
+                    public void addCompletions(@NotNull CompletionParameters parameters,
+                                               ProcessingContext context,
+                                               @NotNull CompletionResultSet resultSet)
+                    {
+
+                        resultSet.addElement(LookupElementBuilder.create("expr: "));
+                    }
+                }
+        );
     }
 }

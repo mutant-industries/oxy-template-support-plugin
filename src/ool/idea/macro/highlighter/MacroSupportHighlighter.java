@@ -25,8 +25,9 @@ public class MacroSupportHighlighter extends SyntaxHighlighterBase
     // ------------------------------------------
     public static final TextAttributesKey KEY = createTextAttributesKey("SIMPLE_KEY", DefaultLanguageHighlighterColors.LABEL);
     public static final TextAttributesKey VALUE = createTextAttributesKey("SIMPLE_VALUE", DefaultLanguageHighlighterColors.STRING);
+    public static final TextAttributesKey BLOCK = createTextAttributesKey("SIMPLE_BLOCK", DefaultLanguageHighlighterColors.MARKUP_TAG);
     public static final TextAttributesKey MACRO_TAG_BOUNDARY = createTextAttributesKey("SIMPLE_NEVIM", DefaultLanguageHighlighterColors.MARKUP_TAG);
-    public static final TextAttributesKey MACRO_NAME_PREFIX = createTextAttributesKey("SIMPLE_NECO", DefaultLanguageHighlighterColors.MARKUP_ENTITY);
+    public static final TextAttributesKey MACRO_XML_NAMESPACE = createTextAttributesKey("SIMPLE_NECO", DefaultLanguageHighlighterColors.MARKUP_ENTITY);
     public static final TextAttributesKey MACRO_NAME = createTextAttributesKey("SIMPLE_COSI", DefaultLanguageHighlighterColors.MARKUP_TAG);
     public static final TextAttributesKey MACRO_PARAM_NAME = createTextAttributesKey("SIMPLE_NO", DefaultLanguageHighlighterColors.MARKUP_ENTITY);
     public static final TextAttributesKey MACRO_PARAM_VALUE = createTextAttributesKey("SIMPLE_NO1", DefaultLanguageHighlighterColors.MARKUP_ENTITY);
@@ -37,9 +38,10 @@ public class MacroSupportHighlighter extends SyntaxHighlighterBase
 
     private static final TextAttributesKey[] BAD_CHAR_KEYS = new TextAttributesKey[]{BAD_CHARACTER};
     private static final TextAttributesKey[] KEY_KEYS = new TextAttributesKey[]{KEY};
+    private static final TextAttributesKey[] BLOCK_KEYS = new TextAttributesKey[]{BLOCK};
     private static final TextAttributesKey[] VALUE_KEYS = new TextAttributesKey[]{VALUE};
     private static final TextAttributesKey[] MACRO_NAME_KEYS = new TextAttributesKey[]{MACRO_NAME};
-    private static final TextAttributesKey[] MACRO_NAME_PREFIX_KEYS = new TextAttributesKey[]{MACRO_NAME_PREFIX};
+    private static final TextAttributesKey[] MACRO_XML_NAMESPACE_KEYS = new TextAttributesKey[]{MACRO_XML_NAMESPACE};
     private static final TextAttributesKey[] XML_ELEMENT_KEYS = new TextAttributesKey[]{MACRO_TAG_BOUNDARY};
     private static final TextAttributesKey[] MACRO_PARAM_NAME_KEYS = new TextAttributesKey[]{MACRO_PARAM_NAME};
     private static final TextAttributesKey[] MACRO_PARAM_VALUE_KEYS = new TextAttributesKey[]{MACRO_PARAM_VALUE};
@@ -62,8 +64,9 @@ public class MacroSupportHighlighter extends SyntaxHighlighterBase
         else if (tokenType.equals(MacroSupportTypes.DIRECTIVE))
             return KEY_KEYS;
 
-        else if (tokenType.equals(TokenType.BAD_CHARACTER))
-            return BAD_CHAR_KEYS;
+        else if (tokenType.equals(MacroSupportTypes.OPEN_BLOCK_MARKER) || tokenType.equals(MacroSupportTypes.OPEN_BLOCK_MARKER_PRINT)
+                || tokenType.equals(MacroSupportTypes.OPEN_BLOCK_MARKER_DIRECTIVE) || tokenType.equals(MacroSupportTypes.CLOSE_BLOCK_MARKER))
+            return BLOCK_KEYS;
 
         else if (tokenType.equals(MacroSupportTypes.XML_TAG_END) || tokenType.equals(MacroSupportTypes.XML_TAG_START) ||
                 tokenType.equals(MacroSupportTypes.XML_CLOSE_TAG_START) || tokenType.equals(MacroSupportTypes.XML_UNPAIRED_TAG_END))
@@ -72,8 +75,8 @@ public class MacroSupportHighlighter extends SyntaxHighlighterBase
         else if(tokenType.equals(MacroSupportTypes.MACRO_NAME))
             return MACRO_NAME_KEYS;
 
-        else if(tokenType.equals(MacroSupportTypes.MACRO_XML_PREFIX))
-            return MACRO_NAME_PREFIX_KEYS;
+        else if(tokenType.equals(MacroSupportTypes.MACRO_XML_NAMESPACE))
+            return MACRO_XML_NAMESPACE_KEYS;
 
         else if(tokenType.equals(MacroSupportTypes.MACRO_PARAM_NAME))
             return MACRO_PARAM_NAME_KEYS;
@@ -83,6 +86,9 @@ public class MacroSupportHighlighter extends SyntaxHighlighterBase
 
         else if(tokenType.equals(MacroSupportTypes.MACRO_PARAM_EXPRESSION_STATEMENT))
             return MACRO_PARAM_EXPRESSION_STATEMENT_KEYS;
+
+        else if (tokenType.equals(TokenType.BAD_CHARACTER))
+            return BAD_CHAR_KEYS;
 
         return EMPTY_KEYS;
     }

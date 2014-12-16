@@ -1,16 +1,18 @@
 {
-  parserClass="ool.idea.macro.parser.MacroSupportParser"
+//    generatePsi=false
+    parserClass="ool.idea.macro.parser.MacroSupportParser"
 
-  extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
+    extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
+    implements="ool.idea.macro.psi.MacroSupportPsiElement"
 
-  psiClassPrefix="MacroSupport"
-  psiImplClassSuffix="Impl"
-  psiPackage="ool.idea.macro.psi"
-  psiImplPackage="ool.idea.macro.psi.impl"
+    psiClassPrefix="MacroSupport"
+    psiImplClassSuffix="Impl"
+    psiPackage="ool.idea.macro.psi"
+    psiImplPackage="ool.idea.macro.psi.impl"
 
-  elementTypeHolderClass="ool.idea.macro.psi.MacroSupportTypes"
-  elementTypeClass="ool.idea.macro.psi.MacroSupportElementType"
-  tokenTypeClass="ool.idea.macro.psi.MacroSupportTokenType"
+    elementTypeHolderClass="ool.idea.macro.psi.MacroSupportTypes"
+    elementTypeClass="ool.idea.macro.psi.MacroSupportElementType"
+    tokenTypeClass="ool.idea.macro.psi.MacroSupportTokenType"
 //  psiImplUtilClass="ool.idea.macro.psi.impl.MacroSupportPsiImplUtil"
 }
 
@@ -23,13 +25,13 @@ private item_ ::= (COMMENTS|
     directive_statement|
     directive_open_statement|
     directive_param_wrapper|
-    macro_tag|macro_unpaired_tag|macro_attribute|macro_parameter|macro_expression_parameter|
+    macro_tag|macro_unpaired_tag|macro_attribute|macro_parameter|macro_expression_parameter|macro_xml_prefix|
     TEMPLATE_HTML_CODE|TEMPLATE_JAVASCRIPT_CODE|
     INNER_TEMPLATE_ELEMENT|OUTER_TEMPLATE_ELEMENT|
     OPEN_BLOCK_MARKER|OPEN_BLOCK_MARKER_PRINT|OPEN_BLOCK_MARKER_DIRECTIVE|CLOSE_BLOCK_MARKER|
     DIRECTIVE|DIRECTIVE_PARAM|DIRECTIVE_PARAM_BOUNDARY|
-    XML_TAG_START|XML_CLOSE_TAG_START|XML_TAG_END|XML_UNPAIRED_TAG_END|
-    MACRO_XML_PREFIX|MACRO_NAME|MACRO_PARAM_NAME|MACRO_PARAM_ASSIGNMENT|MACRO_PARAM_BOUNDARY|MACRO_PARAM|MACRO_PARAM_EXPRESSION_STATEMENT|MACRO_PARAM_EXPRESSION)
+    XML_TAG_START|XML_CLOSE_TAG_START|XML_TAG_END|XML_UNPAIRED_TAG_END|XML_NAMESPACE_DELIMITER|
+    MACRO_XML_NAMESPACE|MACRO_NAME|MACRO_PARAM_NAME|MACRO_PARAM_ASSIGNMENT|MACRO_PARAM_BOUNDARY|MACRO_PARAM|MACRO_PARAM_EXPRESSION_STATEMENT)
 
 block_open_statement ::= OPEN_BLOCK_MARKER | OPEN_BLOCK_MARKER_PRINT
 block_close_statement ::= CLOSE_BLOCK_MARKER
@@ -40,8 +42,9 @@ directive_open_statement ::= OPEN_BLOCK_MARKER_DIRECTIVE
 directive_statement ::= (directive_open_statement DIRECTIVE directive_param_wrapper* block_close_statement)
 
 macro_parameter ::= MACRO_PARAM
-macro_expression_parameter ::= MACRO_PARAM_EXPRESSION_STATEMENT MACRO_PARAM_EXPRESSION//{pin=1}
+macro_xml_prefix ::= MACRO_XML_NAMESPACE XML_NAMESPACE_DELIMITER
+macro_expression_parameter ::= MACRO_PARAM_EXPRESSION_STATEMENT TEMPLATE_JAVASCRIPT_CODE//{pin=1}
 macro_attribute ::= MACRO_PARAM_NAME MACRO_PARAM_ASSIGNMENT MACRO_PARAM_BOUNDARY (macro_parameter | macro_expression_parameter) MACRO_PARAM_BOUNDARY
-macro_unpaired_tag ::= XML_TAG_START MACRO_XML_PREFIX MACRO_NAME macro_attribute* XML_UNPAIRED_TAG_END
-macro_tag ::= XML_TAG_START MACRO_XML_PREFIX MACRO_NAME macro_attribute* XML_TAG_END
-    (macro_tag | macro_unpaired_tag | block_statement | TEMPLATE_HTML_CODE)* XML_CLOSE_TAG_START MACRO_XML_PREFIX MACRO_NAME XML_TAG_END
+macro_unpaired_tag ::= XML_TAG_START macro_xml_prefix MACRO_NAME macro_attribute* XML_UNPAIRED_TAG_END
+macro_tag ::= XML_TAG_START macro_xml_prefix MACRO_NAME macro_attribute* XML_TAG_END
+    (macro_tag | macro_unpaired_tag | block_statement | TEMPLATE_HTML_CODE)* XML_CLOSE_TAG_START macro_xml_prefix MACRO_NAME XML_TAG_END

@@ -70,8 +70,10 @@ CLOSE_BLOCK_MARKER = %>
 OPEN_BLOCK_MARKER_DIRECTIVE = <%@
 
 MACRO_NAME = [A-Za-z][A-Za-z0-9_]+(\.[A-Za-z][A-Za-z0-9_]+)*\.{0,1}
-MACRO_XML_PREFIX = m:
+MACRO_XML_NAMESPACE = m
+MACRO_XML_PREFIX = {MACRO_XML_NAMESPACE}{XML_NAMESPACE_DELIMITER}
 MACRO_PARAM_EXPRESSION_STATEMENT_START = expr:
+XML_NAMESPACE_DELIMITER = :
 XML_TAG_START = <
 XML_CLOSE_TAG_START = <\/
 XML_TAG_END = >
@@ -215,10 +217,14 @@ NON_SPECIAL_CHARS = !([^]*({SPECIAL_CHARS}|{WHITE_SPACE})[^]*)
     {
         return XML_TAG_START;
     }
-    {MACRO_XML_PREFIX}
+    {MACRO_XML_NAMESPACE}
+    {
+        return MACRO_XML_NAMESPACE;
+    }
+    {XML_NAMESPACE_DELIMITER}
     {
         yypushstate(S_MACRO_NAME);
-        return MACRO_XML_PREFIX;
+        return XML_NAMESPACE_DELIMITER;
     }
     {NON_SPECIAL_CHARS}+
     {
@@ -302,7 +308,7 @@ NON_SPECIAL_CHARS = !([^]*({SPECIAL_CHARS}|{WHITE_SPACE})[^]*)
 {
     !([^]*(\")[^]*)
     {
-        return MACRO_PARAM_EXPRESSION;
+        return TEMPLATE_JAVASCRIPT_CODE;
     }
     \"
     {
@@ -317,10 +323,14 @@ NON_SPECIAL_CHARS = !([^]*({SPECIAL_CHARS}|{WHITE_SPACE})[^]*)
     {
         return XML_CLOSE_TAG_START;
     }
-    {MACRO_XML_PREFIX}
+    {MACRO_XML_NAMESPACE}
+    {
+        return MACRO_XML_NAMESPACE;
+    }
+    {XML_NAMESPACE_DELIMITER}
     {
         yypushstate(S_MACRO_NAME);
-        return MACRO_XML_PREFIX;
+        return XML_NAMESPACE_DELIMITER;
     }
     {XML_TAG_END}
     {

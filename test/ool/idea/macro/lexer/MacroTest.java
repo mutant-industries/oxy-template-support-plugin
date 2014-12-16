@@ -28,7 +28,8 @@ public class MacroTest
         lexer.reset(input, 0, input.length(), 0);
 
         assertEquals(MacroSupportTypes.XML_CLOSE_TAG_START, lexer.advance());
-        assertEquals(MacroSupportTypes.MACRO_XML_PREFIX, lexer.advance());
+        assertEquals(MacroSupportTypes.MACRO_XML_NAMESPACE, lexer.advance());
+        assertEquals(MacroSupportTypes.XML_NAMESPACE_DELIMITER, lexer.advance());
         assertEquals(MacroSupportTypes.MACRO_NAME, lexer.advance());
         assertEquals(MacroSupportTypes.XML_TAG_END, lexer.advance());
 
@@ -42,7 +43,8 @@ public class MacroTest
         lexer.reset(input, 0, input.length(), 0);
 
         assertEquals(MacroSupportTypes.XML_TAG_START, lexer.advance());
-        assertEquals(MacroSupportTypes.MACRO_XML_PREFIX, lexer.advance());
+        assertEquals(MacroSupportTypes.MACRO_XML_NAMESPACE, lexer.advance());
+        assertEquals(MacroSupportTypes.XML_NAMESPACE_DELIMITER, lexer.advance());
         assertEquals(MacroSupportTypes.MACRO_NAME, lexer.advance());
         assertEquals(WHITE_SPACE, lexer.advance());
         assertEquals(MacroSupportTypes.MACRO_PARAM_NAME, lexer.advance());
@@ -62,7 +64,8 @@ public class MacroTest
         lexer.reset(input, 0, input.length(), 0);
 
         assertEquals(MacroSupportTypes.XML_TAG_START, lexer.advance());
-        assertEquals(MacroSupportTypes.MACRO_XML_PREFIX, lexer.advance());
+        assertEquals(MacroSupportTypes.MACRO_XML_NAMESPACE, lexer.advance());
+        assertEquals(MacroSupportTypes.XML_NAMESPACE_DELIMITER, lexer.advance());
         assertEquals(MacroSupportTypes.MACRO_NAME, lexer.advance());
         assertEquals(WHITE_SPACE, lexer.advance());
         assertEquals(MacroSupportTypes.MACRO_PARAM_NAME, lexer.advance());
@@ -84,7 +87,8 @@ public class MacroTest
         lexer.reset(input, 0, input.length(), 0);
 
         assertEquals(MacroSupportTypes.XML_TAG_START, lexer.advance());
-        assertEquals(MacroSupportTypes.MACRO_XML_PREFIX, lexer.advance());
+        assertEquals(MacroSupportTypes.MACRO_XML_NAMESPACE, lexer.advance());
+        assertEquals(MacroSupportTypes.XML_NAMESPACE_DELIMITER, lexer.advance());
         assertEquals(MacroSupportTypes.MACRO_NAME, lexer.advance());
         assertEquals(WHITE_SPACE, lexer.advance());
         assertEquals(MacroSupportTypes.MACRO_PARAM_NAME, lexer.advance());
@@ -92,7 +96,7 @@ public class MacroTest
         assertEquals(MacroSupportTypes.MACRO_PARAM_BOUNDARY, lexer.advance());
 
         assertEquals(MacroSupportTypes.MACRO_PARAM_EXPRESSION_STATEMENT, lexer.advance());
-        assertEquals(MacroSupportTypes.MACRO_PARAM_EXPRESSION, lexer.advance());
+        assertEquals(MacroSupportTypes.TEMPLATE_JAVASCRIPT_CODE, lexer.advance());
 
         assertEquals(MacroSupportTypes.MACRO_PARAM_BOUNDARY, lexer.advance());
         assertEquals(WHITE_SPACE, lexer.advance());
@@ -117,14 +121,16 @@ public class MacroTest
 
         assertEquals(MacroSupportTypes.TEMPLATE_HTML_CODE, lexer.advance());
         assertEquals(MacroSupportTypes.XML_TAG_START, lexer.advance());
-        assertEquals(MacroSupportTypes.MACRO_XML_PREFIX, lexer.advance());
+        assertEquals(MacroSupportTypes.MACRO_XML_NAMESPACE, lexer.advance());
+        assertEquals(MacroSupportTypes.XML_NAMESPACE_DELIMITER, lexer.advance());
         assertEquals(MacroSupportTypes.MACRO_NAME, lexer.advance());
         assertEquals(MacroSupportTypes.XML_TAG_END, lexer.advance());
 
         assertEquals(MacroSupportTypes.TEMPLATE_HTML_CODE, lexer.advance());
 
         assertEquals(MacroSupportTypes.XML_TAG_START, lexer.advance());
-        assertEquals(MacroSupportTypes.MACRO_XML_PREFIX, lexer.advance());
+        assertEquals(MacroSupportTypes.MACRO_XML_NAMESPACE, lexer.advance());
+        assertEquals(MacroSupportTypes.XML_NAMESPACE_DELIMITER, lexer.advance());
         assertEquals(MacroSupportTypes.MACRO_NAME, lexer.advance());
         assertEquals(WHITE_SPACE, lexer.advance());
         assertEquals(MacroSupportTypes.XML_UNPAIRED_TAG_END, lexer.advance());
@@ -132,7 +138,8 @@ public class MacroTest
         assertEquals(MacroSupportTypes.TEMPLATE_HTML_CODE, lexer.advance());
 
         assertEquals(MacroSupportTypes.XML_CLOSE_TAG_START, lexer.advance());
-        assertEquals(MacroSupportTypes.MACRO_XML_PREFIX, lexer.advance());
+        assertEquals(MacroSupportTypes.MACRO_XML_NAMESPACE, lexer.advance());
+        assertEquals(MacroSupportTypes.XML_NAMESPACE_DELIMITER, lexer.advance());
         assertEquals(MacroSupportTypes.MACRO_NAME, lexer.advance());
         assertEquals(MacroSupportTypes.XML_TAG_END, lexer.advance());
 

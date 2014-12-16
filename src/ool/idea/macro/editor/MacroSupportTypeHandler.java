@@ -10,11 +10,9 @@ import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.tree.TokenSet;
 import ool.idea.macro.MacroSupport;
 import ool.idea.macro.file.MacroSupportFileViewProvider;
-import ool.idea.macro.psi.MacroSupportBlockStatement;
-import ool.idea.macro.psi.MacroSupportPsiElement;
 import ool.idea.macro.psi.MacroSupportTypes;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,6 +24,7 @@ public class MacroSupportTypeHandler extends XmlGtTypedHandler
     @Override
     public TypedHandlerDelegate.Result charTyped(char c, Project project, @NotNull Editor editor, @NotNull PsiFile file)
     {
+        PsiElement elementAt;
         FileViewProvider provider = file.getViewProvider();
 
         if (!(provider instanceof MacroSupportFileViewProvider))
@@ -49,44 +48,15 @@ public class MacroSupportTypeHandler extends XmlGtTypedHandler
         }
 
         String previousChars = editor.getDocument().getText(new TextRange(offset - openBraceLength, offset));
-        PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
 
-        if (((delimiters.first).equals(previousChars))/* &&
-                ! hasClosingBrace(project, editor, provider, offset - openBraceLength / 2)*/)
+        if (((delimiters.first).equals(previousChars)) && ((elementAt = provider.findElementAt(offset, MacroSupport.INSTANCE)) == null
+                || ! TokenSet.create(MacroSupportTypes.TEMPLATE_JAVASCRIPT_CODE).contains(elementAt.getNode().getElementType())))
         {
+            PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
             editor.getDocument().insertString(offset, (CharSequence) delimiters.second);
         }
 
         return TypedHandlerDelegate.Result.CONTINUE;
     }
-
-//    private boolean hasClosingBrace(Project project, Editor editor, FileViewProvider provider, int offset)
-//    {
-//        PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
-//        MacroSupportPsiElement elementAt = PsiTreeUtil.getParentOfType(
-//                provider.findElementAt(offset, MacroSupport.INSTANCE), MacroSupportPsiElement.class);
-//
-//        PsiElement parent = elementAt != null ? elementAt.getParent() : null;
-//
-//        return ((parent instanceof MacroSupportBlockStatement))
-//                && (((MacroSupportBlockStatement) parent).getBlockOpenStatement() == elementAt)
-//                && (!containsUnbalancedOpenBrace((MacroSupportBlockStatement) parent));
-//    }
-//
-//    private boolean containsUnbalancedOpenBrace(MacroSupportBlockStatement braces)
-//    {
-//        PsiElement currentChild = braces.getBlockOpenStatement();
-//        if (currentChild == null) return false;
-//        while ((currentChild = currentChild.getNextSibling()) != null)
-//        {
-//            if (((currentChild instanceof MacroSupportPsiElement))
-//                    && (MacroSupportTypes.BLOCK_OPEN_STATEMENT == ((MacroSupportPsiElement) currentChild)))
-//            {
-//                return true;
-//            }
-//        }
-//
-//        return false;
-//    }
 
 }

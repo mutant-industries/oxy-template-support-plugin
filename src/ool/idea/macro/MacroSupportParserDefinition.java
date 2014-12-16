@@ -25,6 +25,16 @@ public class MacroSupportParserDefinition implements ParserDefinition
     public static final TokenSet WHITE_SPACES = TokenSet.create(TokenType.WHITE_SPACE);
     public static final TokenSet HTML = TokenSet.create(MacroSupportTypes.TEMPLATE_HTML_CODE);
     public static final TokenSet COMMENTS = TokenSet.create(MacroSupportTypes.COMMENTS);
+//    public static final TokenSet OPEN_BLOCK_MARKERS = TokenSet.create(
+//            MacroSupportTypes.BLOCK_OPEN_STATEMENT,
+//            MacroSupportTypes.DIRECTIVE_OPEN_STATEMENT,
+//            MacroSupportTypes.OPEN_BLOCK_MARKER,
+//            MacroSupportTypes.OPEN_BLOCK_MARKER_DIRECTIVE,
+//            MacroSupportTypes.OPEN_BLOCK_MARKER_PRINT);
+//    public static final TokenSet CLOSE_BLOCK_MARKERS = TokenSet.create(
+//            MacroSupportTypes.BLOCK_CLOSE_STATEMENT,
+//            MacroSupportTypes.CLOSE_BLOCK_MARKER);
+
     public static final IFileElementType FILE = new IFileElementType(Language.<MacroSupport>findInstance(MacroSupport.class));
 
     @NotNull

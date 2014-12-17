@@ -14,6 +14,7 @@ import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
 import ool.idea.macro.file.MacroSupportFile;
 import ool.idea.macro.parser.MacroSupportParser;
+import ool.idea.macro.psi.MacroSupportPsiElementFactory;
 import ool.idea.macro.psi.MacroSupportTypes;
 import org.jetbrains.annotations.NotNull;
 
@@ -92,6 +93,6 @@ public class MacroSupportParserDefinition implements ParserDefinition
     @NotNull
     public PsiElement createElement(ASTNode node)
     {
-        return MacroSupportTypes.Factory.createElement(node);
+        return MacroSupportPsiElementFactory.createElement(node);
     }
 }

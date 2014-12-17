@@ -14,7 +14,7 @@ public class DirectiveTest extends AbstractLexerTest
     @Test
     public void directiveBlockTest() throws IOException
     {
-        String input = "<%@ layout \"_layout.jsm\" %>";
+        String input = "<%@ include_once \"_layout.jsm\" %>";
         lexer.start(input);
 
         assertEquals(OPEN_BLOCK_MARKER_DIRECTIVE, nextToken());
@@ -32,7 +32,7 @@ public class DirectiveTest extends AbstractLexerTest
     @Test
     public void directiveBlockUnclosedParameterTest() throws IOException
     {
-        String input = "<%@ layout \"_layout.jsm %>";
+        String input = "<%@ unknown \"_layout.jsm %>";
         lexer.start(input);
 
         assertEquals(OPEN_BLOCK_MARKER_DIRECTIVE, nextToken());
@@ -47,7 +47,7 @@ public class DirectiveTest extends AbstractLexerTest
     @Test
     public void directiveBlockUnclosedBlockTest() throws IOException
     {
-        String input = "<%@ layout \"_layout.jsm\" %";
+        String input = "<%@ include \"_layout.jsm\" %";
         lexer.start(input);
 
         assertEquals(OPEN_BLOCK_MARKER_DIRECTIVE, nextToken());

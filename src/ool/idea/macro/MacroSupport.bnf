@@ -1,5 +1,5 @@
 {
-//    generatePsi=false
+    generatePsi=false
     parserClass="ool.idea.macro.parser.MacroSupportParser"
 
     extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
@@ -22,9 +22,8 @@ private item_ ::= (COMMENTS|
     block_statement|
     block_open_statement|
     block_close_statement|
-    directive_statement|
+    directive_statement|directive_param_wrapper|directive_param_file_reference|
     directive_open_statement|
-    directive_param_wrapper|
     macro_tag|macro_unpaired_tag|macro_attribute|macro_parameter|macro_expression_parameter|macro_xml_prefix|
     TEMPLATE_HTML_CODE|TEMPLATE_JAVASCRIPT_CODE|
     INNER_TEMPLATE_ELEMENT|OUTER_TEMPLATE_ELEMENT|
@@ -37,7 +36,8 @@ block_open_statement ::= OPEN_BLOCK_MARKER | OPEN_BLOCK_MARKER_PRINT
 block_close_statement ::= CLOSE_BLOCK_MARKER
 block_statement ::= (block_open_statement TEMPLATE_JAVASCRIPT_CODE block_close_statement)
 
-directive_param_wrapper ::= (DIRECTIVE_PARAM_BOUNDARY DIRECTIVE_PARAM DIRECTIVE_PARAM_BOUNDARY)
+directive_param_file_reference ::= DIRECTIVE_PARAM  // all directives reference a file
+directive_param_wrapper ::= (DIRECTIVE_PARAM_BOUNDARY directive_param_file_reference DIRECTIVE_PARAM_BOUNDARY)
 directive_open_statement ::= OPEN_BLOCK_MARKER_DIRECTIVE
 directive_statement ::= (directive_open_statement DIRECTIVE directive_param_wrapper* block_close_statement)
 

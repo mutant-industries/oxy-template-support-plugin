@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>ool.idea.macro</id>
     <name>Oxy template support</name>
-    <version>0.2.1</version>
+    <version>0.3</version>
     <vendor email="p.mayr@oxyonline.cz" url="http://www.oxyonline.cz">OxyOnline</vendor>
 
     <depends>com.intellij.modules.ultimate</depends>
@@ -52,7 +52,16 @@
         <b>0.2.1</b>
         <ul>
             <li>
-                Commenter - možnost zakonentování vyznačeného bloku
+                commenter - možnost zakonentování vyznačeného bloku
+            </li>
+        </ul>
+        <b>0.3</b>
+        <ul>
+            <li>
+                napovídání souboru v parametru direktivy, automatická úprava referencí při přesunu souboru, vyznačování neplatných referencí
+            </li>
+            <li>
+                commenter - multilang support
             </li>
         </ul>
     ]]>
@@ -81,6 +90,12 @@
         <typedHandler implementation="ool.idea.macro.editor.MacroSupportParamQuoteTypeHandler"/>
         <lang.commenter language="MacroSupport"
                         implementationClass="ool.idea.macro.editor.MacroSupportCommenter"/>
+        <multiLangCommenter implementation="ool.idea.macro.editor.MacroSupportCommentProvider"/>
+        <lang.elementManipulator forClass="ool.idea.macro.psi.MacroSupportDirectiveParamFileReference"
+                                 implementationClass="ool.idea.macro.editor.MacroSupportFileReferenceManipulator"/>
+
+        <localInspection language="MacroSupport" shortName="MacroSupportUnresolvedInclude" groupName="MacroSupport" enabledByDefault="true" level="WARNING"
+                         implementationClass="ool.idea.macro.editor.MacroSupportUnresolvedDirectiveInspection" />
     </extensions>
 
     <application-components>

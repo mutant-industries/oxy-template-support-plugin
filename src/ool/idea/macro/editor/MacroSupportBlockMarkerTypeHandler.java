@@ -52,6 +52,11 @@ public class MacroSupportBlockMarkerTypeHandler extends XmlGtTypedHandler
         if (((delimiters.first).equals(previousChars)) && ((elementAt = provider.findElementAt(offset, MacroSupport.INSTANCE)) == null
                 || ! TokenSet.create(MacroSupportTypes.TEMPLATE_JAVASCRIPT_CODE).contains(elementAt.getNode().getElementType())))
         {
+            if(elementAt != null && elementAt.getText().contains("%>"))
+            {
+                return TypedHandlerDelegate.Result.CONTINUE;
+            }
+
             PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
             editor.getDocument().insertString(offset, (CharSequence) delimiters.second);
         }

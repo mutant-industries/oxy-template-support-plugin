@@ -49,6 +49,12 @@
                 našeptávání 'expr: ' v parametru makra
             </li>
         </ul>
+        <b>0.2.1</b>
+        <ul>
+            <li>
+                Commenter - možnost zakonentování vyznačeného bloku
+            </li>
+        </ul>
     ]]>
     </change-notes>
 
@@ -73,6 +79,8 @@
         <typedHandler implementation="ool.idea.macro.editor.MacroSupportBlockMarkerTypeHandler"/>
         <typedHandler implementation="ool.idea.macro.editor.MacroSupportTagCloseTypeHandler"/>
         <typedHandler implementation="ool.idea.macro.editor.MacroSupportParamQuoteTypeHandler"/>
+        <lang.commenter language="MacroSupport"
+                        implementationClass="ool.idea.macro.editor.MacroSupportCommenter"/>
     </extensions>
 
     <application-components>

@@ -1,8 +1,10 @@
 <idea-plugin version="2">
-    <id>ool.idea.macro</id>
+    <id>ool.idea.plugin</id>
     <name>Oxy template support</name>
-    <version>0.3</version>
-    <vendor email="p.mayr@oxyonline.cz" url="http://www.oxyonline.cz">OxyOnline</vendor>
+    <version>0.3.1</version>
+    <vendor email="p.mayr@oxyonline.cz" url="http://stash.oxyonline.local/projects/CZC/repos/macro-support-plugin">
+        oXy Online s.r.o.
+    </vendor>
 
     <depends>com.intellij.modules.ultimate</depends>
     <depends>com.intellij.modules.lang</depends>
@@ -64,11 +66,19 @@
                 commenter - multilang support
             </li>
         </ul>
-    ]]>
+        <b>0.3.1</b>
+        <ul>
+            <li>
+                vyznačování odpovídajících tagů a uvozovek
+            </li>
+            <li>
+                bugfixy v doplňování tagů a uvozovek
+            </li>
+        </ul>]]>
     </change-notes>
 
     <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Build+Number+Ranges for description -->
-    <idea-version since-build="131"/>
+    <idea-version since-build="131" />
 
     <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
          on how to target different products -->
@@ -77,25 +87,27 @@
     -->
 
     <extensions defaultExtensionNs="com.intellij">
-        <fileTypeFactory implementation="ool.idea.macro.file.MacroSupportFileTypeFactory"/>
-        <lang.parserDefinition language="MacroSupport"
-                               implementationClass="ool.idea.macro.MacroSupportParserDefinition"/>
-        <lang.fileViewProviderFactory language="MacroSupport"
-                                      implementationClass="ool.idea.macro.file.MacroSupportFileViewProviderFactory"/>
-        <lang.braceMatcher language="MacroSupport" implementationClass="ool.idea.macro.highlighter.MacroSupportBlockMarkerMatcher"/>
-        <colorSettingsPage implementation="ool.idea.macro.highlighter.MacroSupportColorSettingsPage"/>
-        <completion.contributor language="MacroSupport" implementationClass="ool.idea.macro.editor.MacroSupportCompletionContributor"/>
-        <typedHandler implementation="ool.idea.macro.editor.MacroSupportBlockMarkerTypeHandler"/>
-        <typedHandler implementation="ool.idea.macro.editor.MacroSupportTagCloseTypeHandler"/>
-        <typedHandler implementation="ool.idea.macro.editor.MacroSupportParamQuoteTypeHandler"/>
-        <lang.commenter language="MacroSupport"
-                        implementationClass="ool.idea.macro.editor.MacroSupportCommenter"/>
-        <multiLangCommenter implementation="ool.idea.macro.editor.MacroSupportCommentProvider"/>
-        <lang.elementManipulator forClass="ool.idea.macro.psi.MacroSupportDirectiveParamFileReference"
-                                 implementationClass="ool.idea.macro.editor.MacroSupportFileReferenceManipulator"/>
+        <fileTypeFactory implementation="ool.idea.plugin.file.OxyTemplateFileTypeFactory"/>
+        <lang.parserDefinition language="OxyTemplate"
+                               implementationClass="ool.idea.plugin.file.OxyTemplateParserDefinition"/>
+        <lang.fileViewProviderFactory language="OxyTemplate"
+                                      implementationClass="ool.idea.plugin.file.OxyTemplateFileViewProviderFactory"/>
+        <braceMatcher filetype="Oxy template" implementationClass="ool.idea.plugin.highlighter.MatchingElementHighlighter" />
+        <colorSettingsPage implementation="ool.idea.plugin.highlighter.OxyTemplateColorSettingsPage"/>
+        <completion.contributor language="OxyTemplate" implementationClass="ool.idea.plugin.editor.completion.ExpressionStatement"/>
+        <completion.contributor language="OxyTemplate" implementationClass="ool.idea.plugin.editor.completion.Directive"/>
+        <completion.contributor language="HTML" implementationClass="ool.idea.plugin.editor.completion.UnclosedTag"/>
+        <typedHandler implementation="ool.idea.plugin.editor.type.BlockMarkerHandler"/>
+        <typedHandler implementation="ool.idea.plugin.editor.type.ParamQuoteHandler"/>
+        <typedHandler implementation="ool.idea.plugin.editor.type.TagCloseHandler"/>
+        <lang.commenter language="OxyTemplate"
+                        implementationClass="ool.idea.plugin.editor.comment.OxyTemplateCommenter"/>
+        <multiLangCommenter implementation="ool.idea.plugin.editor.comment.CommentProvider"/>
+        <lang.elementManipulator forClass="ool.idea.plugin.psi.DirectiveParamFileReference"
+                                 implementationClass="ool.idea.plugin.editor.FileReferenceManipulator"/>
 
-        <localInspection language="MacroSupport" shortName="MacroSupportUnresolvedInclude" groupName="MacroSupport" enabledByDefault="true" level="WARNING"
-                         implementationClass="ool.idea.macro.editor.MacroSupportUnresolvedDirectiveInspection" />
+        <localInspection language="OxyTemplate" shortName="UnresolvedInclude" groupName="OxyTemplate" enabledByDefault="true" level="WARNING"
+                         implementationClass="ool.idea.plugin.editor.inspection.UnresolvedDirectiveIncludeInspection" />
     </extensions>
 
     <application-components>
@@ -109,5 +121,4 @@
     <actions>
         <!-- Add your actions here -->
     </actions>
-
 </idea-plugin>

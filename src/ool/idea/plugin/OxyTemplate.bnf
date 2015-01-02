@@ -1,0 +1,47 @@
+{
+    generatePsi=false
+    parserClass="ool.idea.plugin.parser.OxyTemplateParser"
+
+    extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
+    implements="ool.idea.plugin.psi.OxyTemplatePsiElement"
+
+    psiImplClassSuffix="Impl"
+    psiPackage="ool.idea.plugin.psi"
+    psiImplPackage="ool.idea.plugin.psi.impl"
+
+    elementTypeHolderClass="ool.idea.plugin.psi.OxyTemplateTypes"
+    elementTypeClass="ool.idea.plugin.psi.OxyTemplateElementType"
+    tokenTypeClass="ool.idea.plugin.psi.OxyTemplateTokenType"
+//  psiImplUtilClass="ool.idea.pluginn.psi.impl.OxyTemplatePsiImplUtil"
+}
+
+macroFile ::= item_*
+
+private item_ ::= (COMMENTS|
+    block_statement|block_open_statement|block_close_statement|
+    directive_statement|directive_param_wrapper|directive_param_file_reference|directive_open_statement|
+    macro_tag|macro_unpaired_tag|macro_attribute|macro_param|macro_param_name|macro_expression_param|macro_xml_prefix|
+    T_TEMPLATE_HTML_CODE|T_TEMPLATE_JAVASCRIPT_CODE|T_INNER_TEMPLATE_ELEMENT|T_OUTER_TEMPLATE_ELEMENT|
+    T_OPEN_BLOCK_MARKER|T_OPEN_BLOCK_MARKER_PRINT|T_OPEN_BLOCK_MARKER_DIRECTIVE|T_CLOSE_BLOCK_MARKER|
+    T_DIRECTIVE|T_DIRECTIVE_PARAM|T_DIRECTIVE_PARAM_BOUNDARY|
+    T_XML_TAG_START|T_XML_OPEN_TAG_END|T_XML_CLOSE_TAG_START|T_XML_CLOSE_TAG_END|T_XML_UNPAIRED_TAG_END|T_XML_NAMESPACE_DELIMITER|
+    T_MACRO_XML_NAMESPACE|T_MACRO_NAME|T_MACRO_PARAM_NAME|T_MACRO_PARAM_ASSIGNMENT|T_MACRO_PARAM_BOUNDARY|T_MACRO_PARAM|T_MACRO_PARAM_EXPRESSION_STATEMENT)
+
+block_open_statement ::= T_OPEN_BLOCK_MARKER | T_OPEN_BLOCK_MARKER_PRINT
+block_close_statement ::= T_CLOSE_BLOCK_MARKER
+block_statement ::= block_open_statement T_TEMPLATE_JAVASCRIPT_CODE* block_close_statement{pin=2}
+
+directive_param_file_reference ::= T_DIRECTIVE_PARAM  // all directives reference a file
+directive_param_wrapper ::= T_DIRECTIVE_PARAM_BOUNDARY directive_param_file_reference T_DIRECTIVE_PARAM_BOUNDARY{pin=1}
+directive_open_statement ::= T_OPEN_BLOCK_MARKER_DIRECTIVE
+directive_statement ::= directive_open_statement T_DIRECTIVE directive_param_wrapper+ block_close_statement{pin=2}
+
+macro_param ::= T_MACRO_PARAM
+macro_name ::= T_MACRO_NAME
+macro_param_name ::= T_MACRO_PARAM_NAME
+macro_xml_prefix ::= T_MACRO_XML_NAMESPACE T_XML_NAMESPACE_DELIMITER
+macro_expression_param ::= T_MACRO_PARAM_EXPRESSION_STATEMENT T_TEMPLATE_JAVASCRIPT_CODE{pin=1}
+macro_attribute ::= macro_param_name T_MACRO_PARAM_ASSIGNMENT T_MACRO_PARAM_BOUNDARY (macro_param | macro_expression_param) T_MACRO_PARAM_BOUNDARY{pin=1}
+macro_unpaired_tag ::= T_XML_TAG_START macro_xml_prefix macro_name macro_attribute* T_XML_UNPAIRED_TAG_END{pin=2}
+macro_tag ::= T_XML_TAG_START macro_xml_prefix macro_name macro_attribute* T_XML_OPEN_TAG_END
+    (macro_tag | macro_unpaired_tag | block_statement | T_TEMPLATE_HTML_CODE)* T_XML_CLOSE_TAG_START macro_xml_prefix macro_name T_XML_CLOSE_TAG_END{pin=5}

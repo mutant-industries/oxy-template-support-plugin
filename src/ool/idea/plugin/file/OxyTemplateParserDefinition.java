@@ -46,6 +46,11 @@ public class OxyTemplateParserDefinition implements ParserDefinition
     public static final TokenSet CLOSE_BLOCK_MARKERS = TokenSet.create(
             OxyTemplateTypes.BLOCK_CLOSE_STATEMENT,
             OxyTemplateTypes.T_CLOSE_BLOCK_MARKER);
+    public static final TokenSet PARAMETER_QUOTES = TokenSet.create(
+            OxyTemplateTypes.T_DIRECTIVE_PARAM_BOUNDARY,
+            OxyTemplateTypes.T_MACRO_PARAM_BOUNDARY,
+            XmlTokenType.XML_ATTRIBUTE_VALUE_START_DELIMITER,
+            XmlTokenType.XML_ATTRIBUTE_VALUE_END_DELIMITER);
 
     public static final IFileElementType FILE = new IFileElementType(Language.<OxyTemplate>findInstance(OxyTemplate.class));
 

@@ -24,31 +24,12 @@ import org.jetbrains.annotations.Nullable;
  */
 public class UnresolvedDirectiveIncludeInspection extends LocalInspectionTool
 {
-    @NotNull
-    @Override
-    public String getGroupDisplayName()
-    {
-        return "Oxy template";
-    }
-
     @Nls
     @NotNull
     @Override
     public String getDisplayName()
     {
         return "Unresolved include";
-    }
-
-    public boolean isEnabledByDefault()
-    {
-        return true;
-    }
-
-    @NotNull
-    @Override
-    public String getShortName()
-    {
-        return "UnresolvedInclude";
     }
 
     @Nullable

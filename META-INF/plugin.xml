@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>ool.idea.plugin</id>
     <name>Oxy template support</name>
-    <version>0.3.1</version>
+    <version>0.4</version>
     <vendor email="p.mayr@oxyonline.cz" url="http://stash.oxyonline.local/projects/CZC/repos/macro-support-plugin">
         oXy Online s.r.o.
     </vendor>
@@ -74,6 +74,21 @@
             <li>
                 bugfixy v doplňování tagů a uvozovek
             </li>
+        </ul>
+        <b>0.4</b>
+        <ul>
+            <li>
+                formátovač
+            </li>
+            <li>
+                možnost sbalení obsahu makra / js bloku
+            </li>
+            <li>
+                kontrola, zda sedí jméno otvíracího a koncového tagu
+            </li>
+            <li>
+                fix našeptávání koncového tagu
+            </li>
         </ul>]]>
     </change-notes>
 
@@ -96,18 +111,25 @@
         <colorSettingsPage implementation="ool.idea.plugin.highlighter.OxyTemplateColorSettingsPage"/>
         <completion.contributor language="OxyTemplate" implementationClass="ool.idea.plugin.editor.completion.ExpressionStatement"/>
         <completion.contributor language="OxyTemplate" implementationClass="ool.idea.plugin.editor.completion.Directive"/>
+        <completion.contributor language="OxyTemplate" implementationClass="ool.idea.plugin.editor.completion.UnclosedMacroTag"/>
         <completion.contributor language="HTML" implementationClass="ool.idea.plugin.editor.completion.UnclosedTag"/>
         <typedHandler implementation="ool.idea.plugin.editor.type.BlockMarkerHandler"/>
         <typedHandler implementation="ool.idea.plugin.editor.type.ParamQuoteHandler"/>
         <typedHandler implementation="ool.idea.plugin.editor.type.TagCloseHandler"/>
+        <backspaceHandlerDelegate implementation="ool.idea.plugin.editor.type.BackspaceHandler"/>
+        <enterHandlerDelegate implementation="ool.idea.plugin.editor.type.EnterHandler"/>
         <lang.commenter language="OxyTemplate"
                         implementationClass="ool.idea.plugin.editor.comment.OxyTemplateCommenter"/>
         <multiLangCommenter implementation="ool.idea.plugin.editor.comment.CommentProvider"/>
+        <lang.formatter language="OxyTemplate" implementationClass="ool.idea.plugin.editor.format.OxyTemplateFormatter"/>
+        <lang.foldingBuilder language="OxyTemplate" implementationClass="ool.idea.plugin.editor.folding.MatchingTagsAndJsBlock"/>
         <lang.elementManipulator forClass="ool.idea.plugin.psi.DirectiveParamFileReference"
                                  implementationClass="ool.idea.plugin.editor.FileReferenceManipulator"/>
 
-        <localInspection language="OxyTemplate" shortName="UnresolvedInclude" groupName="OxyTemplate" enabledByDefault="true" level="WARNING"
+        <localInspection language="OxyTemplate" shortName="UnresolvedInclude" groupName="Oxy template" enabledByDefault="true" level="WARNING"
                          implementationClass="ool.idea.plugin.editor.inspection.UnresolvedDirectiveIncludeInspection" />
+        <localInspection language="OxyTemplate" shortName="NotMatchingTag" groupName="Oxy template" enabledByDefault="true" level="WARNING"
+                         implementationClass="ool.idea.plugin.editor.inspection.NotMatchingTagsInspection" />
     </extensions>
 
     <application-components>

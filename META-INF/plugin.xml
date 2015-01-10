@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>ool.idea.plugin</id>
     <name>Oxy template support</name>
-    <version>0.4</version>
+    <version>0.4.1</version>
     <vendor email="p.mayr@oxyonline.cz" url="http://stash.oxyonline.local/projects/CZC/repos/macro-support-plugin">
         oXy Online s.r.o.
     </vendor>
@@ -89,6 +89,12 @@
             <li>
                 fix našeptávání koncového tagu
             </li>
+        </ul>
+        <b>0.4.1</b>
+        <ul>
+            <li>
+                fix řádkového komentáře v js
+            </li>
         </ul>]]>
     </change-notes>
 
@@ -105,9 +111,11 @@
         <fileTypeFactory implementation="ool.idea.plugin.file.OxyTemplateFileTypeFactory"/>
         <lang.parserDefinition language="OxyTemplate"
                                implementationClass="ool.idea.plugin.file.OxyTemplateParserDefinition"/>
+        <editorHighlighterProvider filetype="OxyTemplate"
+                                   implementationClass="ool.idea.plugin.highlighter.OxyTemplateHighlighterProvider"/>
         <lang.fileViewProviderFactory language="OxyTemplate"
                                       implementationClass="ool.idea.plugin.file.OxyTemplateFileViewProviderFactory"/>
-        <braceMatcher filetype="Oxy template" implementationClass="ool.idea.plugin.highlighter.MatchingElementHighlighter" />
+        <braceMatcher filetype="OxyTemplate" implementationClass="ool.idea.plugin.highlighter.MatchingElementHighlighter" />
         <colorSettingsPage implementation="ool.idea.plugin.highlighter.OxyTemplateColorSettingsPage"/>
         <completion.contributor language="OxyTemplate" implementationClass="ool.idea.plugin.editor.completion.ExpressionStatement"/>
         <completion.contributor language="OxyTemplate" implementationClass="ool.idea.plugin.editor.completion.Directive"/>
@@ -125,7 +133,6 @@
         <lang.foldingBuilder language="OxyTemplate" implementationClass="ool.idea.plugin.editor.folding.MatchingTagsAndJsBlock"/>
         <lang.elementManipulator forClass="ool.idea.plugin.psi.DirectiveParamFileReference"
                                  implementationClass="ool.idea.plugin.editor.FileReferenceManipulator"/>
-
         <localInspection language="OxyTemplate" shortName="UnresolvedInclude" groupName="Oxy template" enabledByDefault="true" level="WARNING"
                          implementationClass="ool.idea.plugin.editor.inspection.UnresolvedDirectiveIncludeInspection" />
         <localInspection language="OxyTemplate" shortName="NotMatchingTag" groupName="Oxy template" enabledByDefault="true" level="WARNING"

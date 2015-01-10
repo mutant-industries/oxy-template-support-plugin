@@ -21,7 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 import ool.idea.plugin.file.OxyTemplateParserDefinition;
 import ool.idea.plugin.file.OxyTemplateFileType;
-import ool.idea.plugin.highlighter.OxyTemplateHighlighter;
+import ool.idea.plugin.highlighter.OxyTemplateSyntaxHighlighter;
 import ool.idea.plugin.psi.OxyTemplateTypes;
 import org.jetbrains.annotations.NotNull;
 
@@ -44,7 +44,7 @@ public class MatchingTagsAndJsBlock extends CustomFoldingBuilder
             return;
         }
 
-        buildBraceMatcherBasedFolding(descriptors, root, document, new OxyTemplateHighlighter());
+        buildBraceMatcherBasedFolding(descriptors, root, document, new OxyTemplateSyntaxHighlighter());
     }
 
     private static void buildBraceMatcherBasedFolding(@NotNull List<FoldingDescriptor> descriptors, @NotNull PsiElement root,

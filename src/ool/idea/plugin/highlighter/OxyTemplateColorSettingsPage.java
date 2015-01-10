@@ -19,15 +19,15 @@ import org.jetbrains.annotations.Nullable;
 public class OxyTemplateColorSettingsPage implements ColorSettingsPage
 {
     private static final AttributesDescriptor[] DESCRIPTORS = new AttributesDescriptor[] {
-            new AttributesDescriptor("Inner block boundary marker", OxyTemplateHighlighter.BLOCK),
-            new AttributesDescriptor("Directive", OxyTemplateHighlighter.KEY),
-            new AttributesDescriptor("Directive param", OxyTemplateHighlighter.VALUE),
-            new AttributesDescriptor("Macro tag boundary", OxyTemplateHighlighter.MACRO_TAG_BOUNDARY),
-            new AttributesDescriptor("Macro name xml namespace", OxyTemplateHighlighter.MACRO_XML_NAMESPACE),
-            new AttributesDescriptor("Macro name", OxyTemplateHighlighter.MACRO_NAME),
-            new AttributesDescriptor("Macro parameter name", OxyTemplateHighlighter.MACRO_PARAM_NAME),
-            new AttributesDescriptor("Macro parameter value", OxyTemplateHighlighter.MACRO_PARAM_VALUE),
-            new AttributesDescriptor("Macro parameter expression statement", OxyTemplateHighlighter.MACRO_PARAM_EXPRESSION_STATEMENT),
+            new AttributesDescriptor("Inner block boundary marker", OxyTemplateSyntaxHighlighter.BLOCK),
+            new AttributesDescriptor("Directive", OxyTemplateSyntaxHighlighter.KEY),
+            new AttributesDescriptor("Directive param", OxyTemplateSyntaxHighlighter.VALUE),
+            new AttributesDescriptor("Macro tag boundary", OxyTemplateSyntaxHighlighter.MACRO_TAG_BOUNDARY),
+            new AttributesDescriptor("Macro name xml namespace", OxyTemplateSyntaxHighlighter.MACRO_XML_NAMESPACE),
+            new AttributesDescriptor("Macro name", OxyTemplateSyntaxHighlighter.MACRO_NAME),
+            new AttributesDescriptor("Macro parameter name", OxyTemplateSyntaxHighlighter.MACRO_PARAM_NAME),
+            new AttributesDescriptor("Macro parameter value", OxyTemplateSyntaxHighlighter.MACRO_PARAM_VALUE),
+            new AttributesDescriptor("Macro parameter expression statement", OxyTemplateSyntaxHighlighter.MACRO_PARAM_EXPRESSION_STATEMENT),
     };
 
     @Nullable
@@ -41,7 +41,7 @@ public class OxyTemplateColorSettingsPage implements ColorSettingsPage
     @Override
     public SyntaxHighlighter getHighlighter()
     {
-        return new OxyTemplateHighlighter();
+        return new OxyTemplateSyntaxHighlighter();
     }
 
     @NotNull

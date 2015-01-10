@@ -1,7 +1,6 @@
 package ool.idea.plugin.file;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.lang.Language;
 import com.intellij.lang.ParserDefinition;
 import com.intellij.lang.PsiParser;
 import com.intellij.lexer.Lexer;
@@ -28,7 +27,6 @@ import org.jetbrains.annotations.NotNull;
 public class OxyTemplateParserDefinition implements ParserDefinition
 {
     public static final TokenSet WHITE_SPACES = TokenSet.create(TokenType.WHITE_SPACE);
-    public static final TokenSet COMMENTS = TokenSet.create(OxyTemplateTypes.COMMENTS);
     public static final TokenSet HTML = TokenSet.create(
             OxyTemplateTypes.T_TEMPLATE_HTML_CODE,
             OxyTemplateTypes.T_OUTER_TEMPLATE_ELEMENT
@@ -52,7 +50,7 @@ public class OxyTemplateParserDefinition implements ParserDefinition
             XmlTokenType.XML_ATTRIBUTE_VALUE_START_DELIMITER,
             XmlTokenType.XML_ATTRIBUTE_VALUE_END_DELIMITER);
 
-    public static final IFileElementType FILE = new IFileElementType(Language.<OxyTemplate>findInstance(OxyTemplate.class));
+    public static final IFileElementType FILE = new IFileElementType(OxyTemplate.INSTANCE);
 
     @NotNull
     @Override
@@ -67,24 +65,28 @@ public class OxyTemplateParserDefinition implements ParserDefinition
     }
 
     @NotNull
+    @Override
     public TokenSet getWhitespaceTokens()
     {
         return WHITE_SPACES;
     }
 
     @NotNull
+    @Override
     public TokenSet getCommentTokens()
     {
-        return COMMENTS;
+        return TokenSet.EMPTY;
     }
 
     @NotNull
+    @Override
     public TokenSet getStringLiteralElements()
     {
         return TokenSet.EMPTY;
     }
 
     @NotNull
+    @Override
     public PsiParser createParser(final Project project)
     {
         return new OxyTemplateParser();
@@ -96,17 +98,20 @@ public class OxyTemplateParserDefinition implements ParserDefinition
         return FILE;
     }
 
+    @Override
     public PsiFile createFile(FileViewProvider viewProvider)
     {
         return new OxyTemplateFile(viewProvider);
     }
 
+    @Override
     public SpaceRequirements spaceExistanceTypeBetweenTokens(ASTNode left, ASTNode right)
     {
         return SpaceRequirements.MAY;
     }
 
     @NotNull
+    @Override
     public PsiElement createElement(ASTNode node)
     {
         return OxyTemplatePsiElementFactory.createElement(node);

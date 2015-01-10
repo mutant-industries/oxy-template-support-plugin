@@ -65,9 +65,8 @@ import com.intellij.util.containers.Stack;
 %state S_DIRECTIVE_BLOCK
 %state S_JAVASCRIPT_BLOCK
 %state S_DIRECTIVE_PARAM
-%state S_MACRO_OPEN_OR_UNPAIRED_TAG_START
+%state S_MACRO_TAG_START
 %state S_MACRO_OPEN_OR_UNPAIRED_TAG
-%state S_MACRO_CLOSE_TAG_START
 %state S_MACRO_CLOSE_TAG
 %state S_MACRO_PARAM_ASIGNMENT
 %state S_MACRO_NAME
@@ -118,7 +117,7 @@ NON_SPECIAL_CHARS = !([^]*({SPECIAL_CHARS}|{WHITE_SPACE})[^]*)
         IElementType el;
 
         yypushback(3);
-        yypushstate(S_MACRO_OPEN_OR_UNPAIRED_TAG_START);
+        yypushstate(S_MACRO_TAG_START);
 
         if((el = trimElement(T_TEMPLATE_HTML_CODE)) != null) return el;
     }
@@ -128,7 +127,7 @@ NON_SPECIAL_CHARS = !([^]*({SPECIAL_CHARS}|{WHITE_SPACE})[^]*)
         IElementType el;
 
         yypushback(4);
-        yypushstate(S_MACRO_CLOSE_TAG_START);
+        yypushstate(S_MACRO_TAG_START);
 
         if((el = trimElement(T_TEMPLATE_HTML_CODE)) != null) return el;
     }
@@ -178,7 +177,7 @@ NON_SPECIAL_CHARS = !([^]*({SPECIAL_CHARS}|{WHITE_SPACE})[^]*)
         return trimElement(T_TEMPLATE_JAVASCRIPT_CODE);
     }
 }
-// <%@ directive "paramX" "paramY" %>
+// directive "paramX" "paramY"
 <S_DIRECTIVE_BLOCK>
 {
     !([^]*({WHITE_SPACE}|{SPECIAL_CHARS})[^]*)
@@ -219,13 +218,18 @@ NON_SPECIAL_CHARS = !([^]*({SPECIAL_CHARS}|{WHITE_SPACE})[^]*)
         yyresetstate();
     }
 }
-// <
-<S_MACRO_OPEN_OR_UNPAIRED_TAG_START>
+// <, </
+<S_MACRO_TAG_START>
 {
     {XML_TAG_START}
     {
         yypushstate(S_MACRO_OPEN_OR_UNPAIRED_TAG);
         return T_XML_TAG_START;
+    }
+    {XML_CLOSE_TAG_START}
+    {
+        yypushstate(S_MACRO_CLOSE_TAG);
+        return T_XML_CLOSE_TAG_START;
     }
 }
 // m:foo.bar param_name="[expr:]param" [/]>
@@ -330,15 +334,6 @@ NON_SPECIAL_CHARS = !([^]*({SPECIAL_CHARS}|{WHITE_SPACE})[^]*)
     {
         yypopstate(3);
         return T_MACRO_PARAM_BOUNDARY;
-    }
-}
-// </
-<S_MACRO_CLOSE_TAG_START>
-{
-    {XML_CLOSE_TAG_START}
-    {
-        yypushstate(S_MACRO_CLOSE_TAG);
-        return T_XML_CLOSE_TAG_START;
     }
 }
 // m:foo.bar>

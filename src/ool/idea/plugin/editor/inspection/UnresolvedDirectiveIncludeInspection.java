@@ -46,7 +46,7 @@ public class UnresolvedDirectiveIncludeInspection extends LocalInspectionTool
                 {
                     for (PsiReference reference : element.getReferences())
                     {
-                        if (((reference instanceof FileReference)) && (reference.resolve() == null))
+                        if (reference instanceof FileReference && reference.resolve() == null)
                         {
                             result.add(manager.createProblemDescriptor(reference.getElement(), reference.getRangeInElement(),
                                     UnresolvedDirectiveIncludeInspection.this.getDisplayName(),

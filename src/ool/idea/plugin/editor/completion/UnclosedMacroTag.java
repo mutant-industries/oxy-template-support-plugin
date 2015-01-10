@@ -35,13 +35,6 @@ public class UnclosedMacroTag extends CompletionContributor
                                                ProcessingContext context,
                                                @NotNull CompletionResultSet resultSet)
                     {
-                        FileViewProvider provider = parameters.getOriginalFile().getViewProvider();
-
-                        if (!(provider instanceof OxyTemplateFileViewProvider))
-                        {
-                            return;
-                        }
-
                         MacroName elementAt = (MacroName)parameters.getPosition().getParent();
 
                         if(elementAt.getPrevSibling().getPrevSibling().getNode().getElementType() == OxyTemplateTypes.T_XML_CLOSE_TAG_START)

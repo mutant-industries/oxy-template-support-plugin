@@ -3,7 +3,7 @@ package ool.idea.plugin.file;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.util.IconLoader;
 import javax.swing.Icon;
-import ool.idea.plugin.OxyTemplate;
+import ool.idea.plugin.lang.OxyTemplate;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -16,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 public class OxyTemplateFileType extends LanguageFileType
 {
     @NonNls
-    private static final Icon DEFAULT_ICON = IconLoader.getIcon("/ool/idea/plugin/icons/default.png");
+    private static final Icon DEFAULT_ICON = IconLoader.getIcon("/icons/default.png");
 
     @NonNls
     public static final String DEFAULT_EXTENSION = "jsm;jst";

@@ -1,7 +1,7 @@
 package ool.idea.plugin.psi;
 
 import com.intellij.psi.tree.IElementType;
-import ool.idea.plugin.OxyTemplate;
+import ool.idea.plugin.lang.OxyTemplate;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 

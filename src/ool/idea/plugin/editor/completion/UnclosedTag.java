@@ -13,10 +13,9 @@ import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.XmlTokenType;
 import com.intellij.util.ProcessingContext;
-import ool.idea.plugin.OxyTemplate;
-import ool.idea.plugin.editor.completion.insert.LineFormattingInsertHandler;
 import ool.idea.plugin.editor.type.TagCloseHandler;
 import ool.idea.plugin.file.OxyTemplateFileViewProvider;
+import ool.idea.plugin.lang.OxyTemplate;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -56,7 +55,7 @@ public class UnclosedTag extends CompletionContributor
                         {
                             resultSet.addElement(LookupElementBuilder.create("m:" + macroTagToBeClosedName + ">")
                                     .withPresentableText("m:" + macroTagToBeClosedName)
-                                    .withInsertHandler(new LineFormattingInsertHandler())
+//                                    .withInsertHandler(new LineFormattingInsertHandler())
                                     .withAutoCompletionPolicy(AutoCompletionPolicy.GIVE_CHANCE_TO_OVERWRITE));
                         }
                     }

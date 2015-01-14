@@ -1,4 +1,4 @@
-package ool.idea.plugin;
+package ool.idea.plugin.lang;
 
 import com.intellij.lang.Language;
 import com.intellij.openapi.fileTypes.LanguageFileType;

@@ -8,12 +8,9 @@ import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.lookup.AutoCompletionPolicy;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.patterns.PlatformPatterns;
-import com.intellij.psi.FileViewProvider;
 import com.intellij.util.ProcessingContext;
-import ool.idea.plugin.OxyTemplate;
-import ool.idea.plugin.editor.completion.insert.LineFormattingInsertHandler;
 import ool.idea.plugin.editor.type.TagCloseHandler;
-import ool.idea.plugin.file.OxyTemplateFileViewProvider;
+import ool.idea.plugin.lang.OxyTemplate;
 import ool.idea.plugin.psi.MacroName;
 import ool.idea.plugin.psi.OxyTemplateTypes;
 import org.jetbrains.annotations.NotNull;
@@ -45,7 +42,7 @@ public class UnclosedMacroTag extends CompletionContributor
                             {
                                 resultSet.addElement(LookupElementBuilder.create(macroTagToBeClosedName + ">")
                                         .withPresentableText("m:" + macroTagToBeClosedName)
-                                        .withInsertHandler(new LineFormattingInsertHandler())
+//                                        .withInsertHandler(new LineFormattingInsertHandler())
                                         .withAutoCompletionPolicy(AutoCompletionPolicy.GIVE_CHANCE_TO_OVERWRITE));
                             }
                         }

@@ -4,7 +4,6 @@ import com.intellij.lang.Language;
 import com.intellij.lang.LanguageParserDefinitions;
 import com.intellij.lang.ParserDefinition;
 import com.intellij.lang.StdLanguages;
-import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -28,7 +27,8 @@ import gnu.trove.THashSet;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Set;
-import ool.idea.plugin.OxyTemplate;
+import ool.idea.plugin.lang.OxyTemplate;
+import ool.idea.plugin.lang.OxyTemplateInnerJs;
 import ool.idea.plugin.psi.OxyTemplateTypes;
 import org.jetbrains.annotations.NotNull;
 
@@ -99,7 +99,7 @@ public class OxyTemplateFileViewProvider extends MultiplePsiFilesPerDocumentFile
     {
         return new THashSet<Language>(Arrays.asList(new Language[]{
                         OxyTemplate.INSTANCE,
-                        JavascriptLanguage.INSTANCE,
+                        OxyTemplateInnerJs.INSTANCE,
                         StdLanguages.HTML}
         ));
     }
@@ -124,10 +124,10 @@ public class OxyTemplateFileViewProvider extends MultiplePsiFilesPerDocumentFile
         {
             return parserDefinition.createFile(this);
         }
-        else if (lang == JavascriptLanguage.INSTANCE)
+        else if (lang == OxyTemplateInnerJs.INSTANCE)
         {
             PsiFileImpl file = (PsiFileImpl) parserDefinition.createFile(this);
-            file.setContentElementType(new TemplateDataElementType("TEMPLATE_JS", JavascriptLanguage.INSTANCE, OxyTemplateTypes.T_TEMPLATE_JAVASCRIPT_CODE, OxyTemplateTypes.T_INNER_TEMPLATE_ELEMENT)
+            file.setContentElementType(new TemplateDataElementType("TEMPLATE_JS", OxyTemplateInnerJs.INSTANCE, OxyTemplateTypes.T_TEMPLATE_JAVASCRIPT_CODE, OxyTemplateTypes.T_INNER_TEMPLATE_ELEMENT)
             {
                 private final Logger LOG = Logger.getInstance(getClass());
 

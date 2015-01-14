@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>ool.idea.plugin</id>
     <name>Oxy template support</name>
-    <version>0.4.1</version>
+    <version>0.4.2</version>
     <vendor email="p.mayr@oxyonline.cz" url="http://stash.oxyonline.local/projects/CZC/repos/macro-support-plugin">
         oXy Online s.r.o.
     </vendor>
@@ -95,11 +95,20 @@
             <li>
                 fix řádkového komentáře v js
             </li>
+        </ul>
+        <b>0.4.2</b>
+        <ul>
+            <li>
+                našeptávání předdefinovaných objektů a funkcí šablonovacího systému (oxy, out...)
+            </li>
+            <li>
+                vypnutí kontroly 'Expression statement which is not assignment or call' v js
+            </li>
         </ul>]]>
     </change-notes>
 
     <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Build+Number+Ranges for description -->
-    <idea-version since-build="131" />
+    <idea-version since-build="133" />
 
     <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
          on how to target different products -->
@@ -111,6 +120,8 @@
         <fileTypeFactory implementation="ool.idea.plugin.file.OxyTemplateFileTypeFactory"/>
         <lang.parserDefinition language="OxyTemplate"
                                implementationClass="ool.idea.plugin.file.OxyTemplateParserDefinition"/>
+        <lang.parserDefinition language="OxyTemplateInnerJs"
+                               implementationClass="ool.idea.plugin.file.OxyTemplateInnerJsParserDefinition"/>
         <editorHighlighterProvider filetype="OxyTemplate"
                                    implementationClass="ool.idea.plugin.highlighter.OxyTemplateHighlighterProvider"/>
         <lang.fileViewProviderFactory language="OxyTemplate"
@@ -137,6 +148,10 @@
                          implementationClass="ool.idea.plugin.editor.inspection.UnresolvedDirectiveIncludeInspection" />
         <localInspection language="OxyTemplate" shortName="NotMatchingTag" groupName="Oxy template" enabledByDefault="true" level="WARNING"
                          implementationClass="ool.idea.plugin.editor.inspection.NotMatchingTagsInspection" />
+    </extensions>
+    <extensions defaultExtensionNs="JavaScript">
+        <predefinedLibraryProvider implementation="ool.idea.plugin.editor.InnerJsPredefinedLibrary"/>
+        <intentionAndInspectionFilter language="OxyTemplate" implementationClass="ool.idea.plugin.editor.inspection.JsIntentionAndInspectionFilter"/>
     </extensions>
 
     <application-components>

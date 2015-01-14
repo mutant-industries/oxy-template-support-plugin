@@ -3,13 +3,13 @@ package ool.idea.plugin.editor.comment;
 import com.intellij.lang.Commenter;
 import com.intellij.lang.Language;
 import com.intellij.lang.LanguageCommenters;
-import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.templateLanguages.MultipleLangCommentProvider;
-import ool.idea.plugin.OxyTemplate;
 import ool.idea.plugin.file.OxyTemplateFileViewProvider;
+import ool.idea.plugin.lang.OxyTemplate;
+import ool.idea.plugin.lang.OxyTemplateInnerJs;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -26,7 +26,7 @@ public class CommentProvider implements MultipleLangCommentProvider
         // TODO temp code
         if (lineStartLanguage == lineEndLanguage)
         {
-            return LanguageCommenters.INSTANCE.forLanguage(lineStartLanguage == JavascriptLanguage.INSTANCE ? JavascriptLanguage.INSTANCE : OxyTemplate.INSTANCE);
+            return LanguageCommenters.INSTANCE.forLanguage(lineStartLanguage == OxyTemplateInnerJs.INSTANCE ? OxyTemplateInnerJs.INSTANCE : OxyTemplate.INSTANCE);
         }
 
         return null;

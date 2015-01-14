@@ -7,9 +7,9 @@ import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiFile;
-import ool.idea.plugin.OxyTemplate;
-import static ool.idea.plugin.file.OxyTemplateParserDefinition.PARAMETER_QUOTES;
 import ool.idea.plugin.file.OxyTemplateFileViewProvider;
+import static ool.idea.plugin.file.OxyTemplateParserDefinition.PARAMETER_QUOTES;
+import ool.idea.plugin.lang.OxyTemplate;
 import org.jetbrains.annotations.Nullable;
 
 /**

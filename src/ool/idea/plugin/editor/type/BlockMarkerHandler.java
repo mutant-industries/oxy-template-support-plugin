@@ -9,9 +9,9 @@ import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import ool.idea.plugin.OxyTemplate;
 import ool.idea.plugin.file.OxyTemplateFileViewProvider;
 import ool.idea.plugin.file.OxyTemplateParserDefinition;
+import ool.idea.plugin.lang.OxyTemplate;
 import org.jetbrains.annotations.NotNull;
 
 /**

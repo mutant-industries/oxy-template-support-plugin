@@ -8,7 +8,7 @@ import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.util.ProcessingContext;
-import ool.idea.plugin.OxyTemplate;
+import ool.idea.plugin.lang.OxyTemplate;
 import ool.idea.plugin.psi.OxyTemplateTypes;
 import org.jetbrains.annotations.NotNull;
 

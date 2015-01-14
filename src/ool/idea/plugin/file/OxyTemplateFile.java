@@ -5,7 +5,7 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.impl.PsiFileEx;
 import javax.swing.Icon;
-import ool.idea.plugin.OxyTemplate;
+import ool.idea.plugin.lang.OxyTemplate;
 import org.jetbrains.annotations.NotNull;
 
 /**

@@ -9,7 +9,6 @@ import com.intellij.formatting.Spacing;
 import com.intellij.formatting.Wrap;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.LanguageFormatting;
-import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
@@ -19,6 +18,7 @@ import com.intellij.psi.html.HtmlTag;
 import com.intellij.webcore.template.formatter.TemplateLanguageBlock;
 import java.util.List;
 import ool.idea.plugin.file.OxyTemplateParserDefinition;
+import ool.idea.plugin.lang.OxyTemplateInnerJs;
 import ool.idea.plugin.psi.BlockStatement;
 import ool.idea.plugin.psi.MacroAttribute;
 import ool.idea.plugin.psi.MacroTag;
@@ -139,8 +139,8 @@ class OxyTemplateLanguageBlock extends TemplateLanguageBlock
         if (child.getElementType() == OxyTemplateTypes.T_TEMPLATE_JAVASCRIPT_CODE)
         {
             PsiElement childPsi = child.getPsi();
-            FormattingModelBuilder modelBuilder = LanguageFormatting.INSTANCE.forContext(JavascriptLanguage.INSTANCE, childPsi);
-            PsiFile jsPsiFile = childPsi.getContainingFile().getViewProvider().getPsi(JavascriptLanguage.INSTANCE);
+            FormattingModelBuilder modelBuilder = LanguageFormatting.INSTANCE.forContext(OxyTemplateInnerJs.INSTANCE, childPsi);
+            PsiFile jsPsiFile = childPsi.getContainingFile().getViewProvider().getPsi(OxyTemplateInnerJs.INSTANCE);
 
             if ((modelBuilder != null) && (jsPsiFile != null))
             {

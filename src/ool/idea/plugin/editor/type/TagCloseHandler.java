@@ -104,7 +104,7 @@ public class TagCloseHandler extends TypedHandlerDelegate
         {
             psiElement = elementAt.getPrevSibling();
 
-            if(psiElement instanceof MacroUnpairedTag
+            if(psiElement instanceof PsiErrorElement && (psiElement = psiElement.getPrevSibling()) instanceof MacroUnpairedTag
                     && psiElement.getLastChild().getNode().getElementType() != OxyTemplateTypes.T_XML_UNPAIRED_TAG_END)
             {
                 return true;

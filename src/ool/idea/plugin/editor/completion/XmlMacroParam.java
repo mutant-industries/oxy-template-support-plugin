@@ -107,6 +107,13 @@ public class XmlMacroParam extends CompletionContributor
         );
     }
 
+
+    @Override
+    public boolean invokeAutoPopup(@NotNull PsiElement position, char typeChar)
+    {
+        return typeChar == ' ' && position.getNode().getElementType() == OxyTemplateTypes.T_MACRO_NAME_IDENTIFIER;
+    }
+
     @NotNull
     private static List<String> getMacroParamNameSuggestions(@NotNull PsiClass psiClass)
     {

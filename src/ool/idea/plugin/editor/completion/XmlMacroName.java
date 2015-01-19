@@ -8,6 +8,7 @@ import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
+import ool.idea.plugin.editor.completion.lookupElement.XmlMacroNameLookupElementProvider;
 import ool.idea.plugin.file.index.OxyTemplateIndexUtil;
 import ool.idea.plugin.lang.OxyTemplate;
 import ool.idea.plugin.psi.MacroName;
@@ -35,9 +36,10 @@ public class XmlMacroName extends CompletionContributor
 
                     String partialText = elementAt.getText().substring(0, parameters.getPosition().getParent().getStartOffsetInParent());
 
+
                     if(elementAt.getPrevSibling().getPrevSibling().getNode().getElementType() == OxyTemplateTypes.T_XML_TAG_START)
                     {
-                        OxyTemplateIndexUtil.addMacroNameCompletions(partialText, elementAt.getProject(), resultSet);
+                        OxyTemplateIndexUtil.addMacroNameCompletions(partialText, elementAt.getProject(), resultSet, XmlMacroNameLookupElementProvider.INSTANCE);
                     }
                 }
             }

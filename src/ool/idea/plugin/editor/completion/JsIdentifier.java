@@ -13,6 +13,8 @@ import static com.intellij.patterns.PlatformPatterns.psiElement;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
+import ool.idea.plugin.editor.completion.lookupElement.JsGlobalVariableLookupElementProvider;
+import ool.idea.plugin.editor.completion.lookupElement.JsMacroNameLookupElementProvider;
 import ool.idea.plugin.file.index.OxyTemplateIndexUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,12 +44,12 @@ public class JsIdentifier extends CompletionContributor
                         String partialText = topReference.getText()
                                 .substring(0, parameters.getPosition().getStartOffsetInParent());
 
-                        OxyTemplateIndexUtil.addMacroNameCompletions(partialText, psiElement.getProject(), resultSet);
+                        OxyTemplateIndexUtil.addMacroNameCompletions(partialText, psiElement.getProject(), resultSet, JsMacroNameLookupElementProvider.INSTANCE);
                     }
                     else
                     {
                         //  global vars
-                        OxyTemplateIndexUtil.addGlobalVariableCompletions(psiElement.getProject(), resultSet);
+                        OxyTemplateIndexUtil.addGlobalVariableCompletions(psiElement.getProject(), resultSet, JsGlobalVariableLookupElementProvider.INSTANCE);
                     }
                 }
             }

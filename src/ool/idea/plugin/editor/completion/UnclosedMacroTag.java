@@ -26,29 +26,29 @@ public class UnclosedMacroTag extends CompletionContributor
     public UnclosedMacroTag()
     {
         extend(CompletionType.BASIC, PlatformPatterns.psiElement(OxyTemplateTypes.T_MACRO_NAME_IDENTIFIER).withLanguage(OxyTemplate.INSTANCE),
-                new CompletionProvider<CompletionParameters>()
+            new CompletionProvider<CompletionParameters>()
+            {
+                @Override
+                public void addCompletions(@NotNull CompletionParameters parameters,
+                                           ProcessingContext context,
+                                           @NotNull CompletionResultSet resultSet)
                 {
-                    @Override
-                    public void addCompletions(@NotNull CompletionParameters parameters,
-                                               ProcessingContext context,
-                                               @NotNull CompletionResultSet resultSet)
+                    MacroName elementAt = PsiTreeUtil.getParentOfType(parameters.getPosition(), MacroName.class);
+
+                    if(elementAt.getPrevSibling().getPrevSibling().getNode().getElementType() == OxyTemplateTypes.T_XML_CLOSE_TAG_START)
                     {
-                        MacroName elementAt = PsiTreeUtil.getParentOfType(parameters.getPosition(), MacroName.class);
+                        String macroTagToBeClosedName = TagCloseHandler.getPreviousUnclosedMacroTagName(elementAt.getPrevSibling());
 
-                        if(elementAt.getPrevSibling().getPrevSibling().getNode().getElementType() == OxyTemplateTypes.T_XML_CLOSE_TAG_START)
+                        if (macroTagToBeClosedName != null)
                         {
-                            String macroTagToBeClosedName = TagCloseHandler.getPreviousUnclosedMacroTagName(elementAt.getPrevSibling());
-
-                            if (macroTagToBeClosedName != null)
-                            {
-                                resultSet.addElement(LookupElementBuilder.create(macroTagToBeClosedName + ">")
-                                        .withPresentableText("m:" + macroTagToBeClosedName)
-//                                        .withInsertHandler(new LineFormattingInsertHandler())
-                                        .withAutoCompletionPolicy(AutoCompletionPolicy.GIVE_CHANCE_TO_OVERWRITE));
-                            }
+                            resultSet.addElement(LookupElementBuilder.create(macroTagToBeClosedName + ">")
+                                    .withPresentableText("m:" + macroTagToBeClosedName)
+//                                    .withInsertHandler(new LineFormattingInsertHandler())
+                                    .withAutoCompletionPolicy(AutoCompletionPolicy.GIVE_CHANCE_TO_OVERWRITE));
                         }
                     }
                 }
+            }
         );
     }
 

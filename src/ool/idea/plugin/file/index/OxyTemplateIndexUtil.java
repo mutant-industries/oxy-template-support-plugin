@@ -17,6 +17,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.indexing.FileBasedIndex;
 import java.util.Collection;
 import java.util.List;
+import ool.idea.plugin.editor.completion.lookupElement.BaseLookupElementProvider;
 import ool.idea.plugin.file.index.globals.JsGlobalsIndex;
 import ool.idea.plugin.file.index.nacros.java.JavaMacroNameIndex;
 import ool.idea.plugin.file.index.nacros.js.JsMacroNameIndex;
@@ -84,7 +85,8 @@ public class OxyTemplateIndexUtil
         return null;
     }
 
-    public static void addMacroNameCompletions(String partialText, @NotNull Project project, @NotNull CompletionResultSet resultSet)
+    public static void addMacroNameCompletions(String partialText, @NotNull Project project, @NotNull CompletionResultSet resultSet,
+                                               @NotNull BaseLookupElementProvider lookupElementProvider)
     {
         final GlobalSearchScope allScope = ProjectScope.getProjectScope(project);
 
@@ -92,8 +94,7 @@ public class OxyTemplateIndexUtil
         {
             if (key.startsWith(partialText))
             {
-                resultSet.addElement(LookupElementBuilder.create(key.replace(partialText, ""))
-                        .withAutoCompletionPolicy(AutoCompletionPolicy.GIVE_CHANCE_TO_OVERWRITE));
+                resultSet.addElement(lookupElementProvider.create(key.replace(partialText, "")));
             }
         }
 
@@ -108,8 +109,7 @@ public class OxyTemplateIndexUtil
 
                 if (key.startsWith(partialText))
                 {
-                    resultSet.addElement(LookupElementBuilder.create(key.replace(partialText, ""))
-                            .withAutoCompletionPolicy(AutoCompletionPolicy.GIVE_CHANCE_TO_OVERWRITE));
+                    resultSet.addElement(lookupElementProvider.create(key.replace(partialText, "")));
                 }
             }
         }
@@ -148,12 +148,12 @@ public class OxyTemplateIndexUtil
         return null;
     }
 
-    public static void addGlobalVariableCompletions(@NotNull Project project, @NotNull CompletionResultSet resultSet)
+    public static void addGlobalVariableCompletions(@NotNull Project project, @NotNull CompletionResultSet resultSet,
+                                                    @NotNull BaseLookupElementProvider lookupElementProvider)
     {
         for (String key : FileBasedIndex.getInstance().getAllKeys(JsGlobalsIndex.INDEX_ID, project))
         {
-            resultSet.addElement(LookupElementBuilder.create(key)
-                    .withAutoCompletionPolicy(AutoCompletionPolicy.GIVE_CHANCE_TO_OVERWRITE));
+            resultSet.addElement(lookupElementProvider.create(key));
         }
     }
 

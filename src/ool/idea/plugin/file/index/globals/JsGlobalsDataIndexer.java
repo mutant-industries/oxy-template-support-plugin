@@ -1,4 +1,4 @@
-package ool.idea.plugin.file.index;
+package ool.idea.plugin.file.index.globals;
 
 import com.intellij.util.indexing.DataIndexer;
 import com.intellij.util.indexing.FileContent;

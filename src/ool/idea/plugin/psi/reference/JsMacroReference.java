@@ -1,7 +1,7 @@
 package ool.idea.plugin.psi.reference;
 
+import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiIdentifier;
 import com.intellij.util.IncorrectOperationException;
 import ool.idea.plugin.psi.MacroNameIdentifier;
 import org.jetbrains.annotations.NotNull;
@@ -12,9 +12,9 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author Petr Mayr <p.mayr@oxyonline.cz>
  */
-public class JavaMacroReference extends MacroReference<PsiIdentifier>
+public class JsMacroReference extends MacroReference<JSElement>
 {
-    public JavaMacroReference(@NotNull MacroNameIdentifier macroNameIdentifier, @NotNull PsiIdentifier referencedElement)
+    public JsMacroReference(@NotNull MacroNameIdentifier macroNameIdentifier, @NotNull JSElement referencedElement)
     {
         super(macroNameIdentifier, referencedElement);
     }
@@ -33,7 +33,7 @@ public class JavaMacroReference extends MacroReference<PsiIdentifier>
     }
 
     @Override
-    public PsiElement bindToElement(@NotNull PsiElement element) throws IncorrectOperationException
+    public PsiElement bindToElement(PsiElement element) throws IncorrectOperationException
     {
         throw new IncorrectOperationException("bindToElement not implemented yet");
     }
@@ -41,7 +41,7 @@ public class JavaMacroReference extends MacroReference<PsiIdentifier>
     @Override
     public boolean isReferenceTo(PsiElement element)
     {
-        return element instanceof PsiIdentifier && referencedElement.isEquivalentTo(element);
+        return referencedElement.isEquivalentTo(element);
     }
 
     @NotNull

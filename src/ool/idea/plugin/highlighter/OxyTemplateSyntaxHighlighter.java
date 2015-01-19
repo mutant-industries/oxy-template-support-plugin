@@ -76,7 +76,8 @@ public class OxyTemplateSyntaxHighlighter extends SyntaxHighlighterBase
         {
             return XML_ELEMENT_KEYS;
         }
-        else if(tokenType.equals(OxyTemplateTypes.T_MACRO_NAME))
+        else if(tokenType.equals(OxyTemplateTypes.T_MACRO_NAME_IDENTIFIER)
+                || tokenType.equals(OxyTemplateTypes.T_MACRO_NAME_DOT))
         {
             return MACRO_NAME_KEYS;
         }

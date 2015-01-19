@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>ool.idea.plugin</id>
     <name>Oxy template support</name>
-    <version>0.4.3</version>
+    <version>0.5</version>
     <vendor email="p.mayr@oxyonline.cz" url="http://stash.oxyonline.local/projects/CZC/repos/macro-support-plugin">
         oXy Online s.r.o.
     </vendor>
@@ -104,13 +104,20 @@
             <li>
                 vypnutí kontroly 'Expression statement which is not assignment or call' v js
             </li>
-        </ul><b>0.4.3</b>
+        </ul>
+        <b>0.4.3</b>
         <ul>
             <li>
-                mašeptávání a prokliky java maker, mašeptávání parametrů maker v xml
+                mašeptávání a prokliky java maker, mašeptávání parametrů java maker v xml
             </li>
             <li>
                 našeptávání a prokliky globálních proměnných js
+            </li>
+        </ul>
+        <b>0.5</b>
+        <ul>
+            <li>
+                mašeptávání a prokliky js maker, mašeptávání parametrů js maker v xml
             </li>
         </ul>]]>
     </change-notes>
@@ -159,8 +166,9 @@
                          implementationClass="ool.idea.plugin.editor.inspection.UnresolvedDirectiveIncludeInspection" />
         <localInspection language="OxyTemplate" shortName="NotMatchingTag" groupName="Oxy template" enabledByDefault="true" level="WARNING"
                          implementationClass="ool.idea.plugin.editor.inspection.NotMatchingTagsInspection" />
-        <fileBasedIndex implementation="ool.idea.plugin.file.index.JsGlobalsIndex"/>
-        <fileBasedIndex implementation="ool.idea.plugin.file.index.JavaMacroNameIndex"/>
+        <fileBasedIndex implementation="ool.idea.plugin.file.index.globals.JsGlobalsIndex"/>
+        <fileBasedIndex implementation="ool.idea.plugin.file.index.nacros.java.JavaMacroNameIndex"/>
+        <fileBasedIndex implementation="ool.idea.plugin.file.index.nacros.js.JsMacroNameIndex"/>
     </extensions>
     <extensions defaultExtensionNs="JavaScript">
         <predefinedLibraryProvider implementation="ool.idea.plugin.editor.InnerJsPredefinedLibrary"/>

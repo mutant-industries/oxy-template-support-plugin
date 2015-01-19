@@ -110,7 +110,7 @@ public class TagCloseHandler extends TypedHandlerDelegate
                 return true;
             }
         }
-        else if(elementAt.getNode().getElementType() == OxyTemplateTypes.T_MACRO_NAME)
+        else if(PsiTreeUtil.getParentOfType(elementAt, MacroName.class) != null)
         {
             if((psiElement = PsiTreeUtil.getParentOfType(elementAt, MacroUnpairedTag.class)) != null
                     && psiElement.getLastChild() instanceof PsiErrorElement

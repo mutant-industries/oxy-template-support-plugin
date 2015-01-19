@@ -58,7 +58,7 @@ public class BlockMarkerHandler extends TypedHandlerDelegate
             }
 
             PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
-            editor.getDocument().insertString(offset, (CharSequence) delimiters.second);
+            editor.getDocument().insertString(offset, " " + delimiters.second);
         }
 
         return TypedHandlerDelegate.Result.CONTINUE;

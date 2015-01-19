@@ -5,16 +5,15 @@ import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionProvider;
 import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.codeInsight.completion.CompletionType;
-import com.intellij.codeInsight.lookup.AutoCompletionPolicy;
-import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.lang.javascript.JSElementTypes;
 import com.intellij.lang.javascript.JSTokenTypes;
-import com.intellij.patterns.PlatformPatterns;
+import com.intellij.lang.javascript.psi.JSProperty;
+import com.intellij.lang.javascript.psi.JSReferenceExpression;
+import static com.intellij.patterns.PlatformPatterns.not;
+import static com.intellij.patterns.PlatformPatterns.psiElement;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
-import com.intellij.util.indexing.FileBasedIndex;
-import ool.idea.plugin.file.index.JavaMacroNameIndex;
-import ool.idea.plugin.file.index.JsGlobalsIndex;
+import ool.idea.plugin.file.index.OxyTemplateIndexUtil;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -26,36 +25,29 @@ public class JsIdentifier extends CompletionContributor
 {
     public JsIdentifier()
     {
-        extend(CompletionType.BASIC, PlatformPatterns.psiElement(JSTokenTypes.IDENTIFIER),
+        extend(CompletionType.BASIC, psiElement(JSTokenTypes.IDENTIFIER).withParent(not(psiElement(JSProperty.class))),
             new CompletionProvider<CompletionParameters>()
             {
-
                 @Override
                 public void addCompletions(@NotNull CompletionParameters parameters,
                                            ProcessingContext context,
                                            @NotNull CompletionResultSet resultSet)
                 {
-                    PsiElement psiElement = parameters.getPosition().getPrevSibling();
+                    PsiElement psiElement = parameters.getPosition();
+                    JSReferenceExpression topReference = PsiTreeUtil.getTopmostParentOfType(psiElement, JSReferenceExpression.class);
 
-                    if(psiElement != null && psiElement.getNode().getElementType() == JSTokenTypes.DOT)
+                    if(topReference != null && psiElement.getPrevSibling() != null && psiElement.getPrevSibling()
+                            .getNode().getElementType() == JSTokenTypes.DOT)
                     {
-                        if((psiElement = psiElement.getPrevSibling()) != null && psiElement.getNode().getElementType() == JSElementTypes.REFERENCE_EXPRESSION
-                                && "oxy".equals(psiElement.getText()) && psiElement.getPrevSibling() == null)
-                        {
-                            // oxy namespace
-                            for(String key : FileBasedIndex.getInstance().getAllKeys(JavaMacroNameIndex.INDEX_ID, parameters.getPosition().getProject()))
-                            {
-                                resultSet.addElement(LookupElementBuilder.create(key).withAutoCompletionPolicy(AutoCompletionPolicy.GIVE_CHANCE_TO_OVERWRITE));
-                            }
-                        }
+                        String partialText = topReference.getText()
+                                .substring(0, parameters.getPosition().getStartOffsetInParent());
+
+                        OxyTemplateIndexUtil.addMacroNameCompletions(partialText, psiElement.getProject(), resultSet);
                     }
                     else
                     {
                         //  global vars
-                        for(String key : FileBasedIndex.getInstance().getAllKeys(JsGlobalsIndex.INDEX_ID, parameters.getPosition().getProject()))
-                        {
-                            resultSet.addElement(LookupElementBuilder.create(key).withAutoCompletionPolicy(AutoCompletionPolicy.GIVE_CHANCE_TO_OVERWRITE));
-                        }
+                        OxyTemplateIndexUtil.addGlobalVariableCompletions(psiElement.getProject(), resultSet);
                     }
                 }
             }

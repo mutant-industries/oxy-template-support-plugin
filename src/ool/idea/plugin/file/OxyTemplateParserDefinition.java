@@ -15,7 +15,6 @@ import com.intellij.psi.xml.XmlTokenType;
 import ool.idea.plugin.lang.OxyTemplate;
 import ool.idea.plugin.lang.OxyTemplateLexerAdapter;
 import ool.idea.plugin.parser.OxyTemplateParser;
-import ool.idea.plugin.psi.OxyTemplatePsiElementFactory;
 import ool.idea.plugin.psi.OxyTemplateTypes;
 import org.jetbrains.annotations.NotNull;
 
@@ -114,7 +113,7 @@ public class OxyTemplateParserDefinition implements ParserDefinition
     @Override
     public PsiElement createElement(ASTNode node)
     {
-        return OxyTemplatePsiElementFactory.createElement(node);
+        return OxyTemplateTypes.Factory.createElement(node);
     }
 
 }

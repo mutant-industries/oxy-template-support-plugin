@@ -4,6 +4,11 @@
 var oxy = {};
 
 /**
+ * Debug namespace
+ */
+var debug = {};
+
+/**
  * Název registru maker, do kterého může skript přidávat makra.
  */
 var macros = {

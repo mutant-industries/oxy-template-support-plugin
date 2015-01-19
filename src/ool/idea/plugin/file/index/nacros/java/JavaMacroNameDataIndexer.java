@@ -1,4 +1,4 @@
-package ool.idea.plugin.file.index;
+package ool.idea.plugin.file.index.nacros.java;
 
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.indexing.DataIndexer;
@@ -29,7 +29,10 @@ public class JavaMacroNameDataIndexer implements DataIndexer<String, Void, FileC
 
         if(matcher.find())
         {
-            return Collections.singletonMap(StringUtil.decapitalize(matcher.group(1)), null);
+            String macroName = matcher.group(1);
+
+            return Collections.singletonMap((macroName.equals("generatedCode") ?
+                "debug." : "oxy.") + StringUtil.decapitalize(macroName), null);
         }
 
         return Collections.emptyMap();

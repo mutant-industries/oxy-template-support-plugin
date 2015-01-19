@@ -22,7 +22,9 @@ public class MacroTest extends AbstractLexerTest
         assertEquals(OxyTemplateTypes.T_XML_CLOSE_TAG_START, nextToken());
         assertEquals(OxyTemplateTypes.T_MACRO_XML_NAMESPACE, nextToken());
         assertEquals(OxyTemplateTypes.T_XML_NAMESPACE_DELIMITER, nextToken());
-        assertEquals(OxyTemplateTypes.T_MACRO_NAME, nextToken());
+        assertEquals(OxyTemplateTypes.T_MACRO_NAME_IDENTIFIER, nextToken());
+        assertEquals(OxyTemplateTypes.T_MACRO_NAME_DOT, nextToken());
+        assertEquals(OxyTemplateTypes.T_MACRO_NAME_IDENTIFIER, nextToken());
         assertEquals(OxyTemplateTypes.T_XML_CLOSE_TAG_END, nextToken());
 
         assertEquals(null, nextToken());
@@ -37,7 +39,9 @@ public class MacroTest extends AbstractLexerTest
         assertEquals(OxyTemplateTypes.T_XML_TAG_START, nextToken());
         assertEquals(OxyTemplateTypes.T_MACRO_XML_NAMESPACE, nextToken());
         assertEquals(OxyTemplateTypes.T_XML_NAMESPACE_DELIMITER, nextToken());
-        assertEquals(OxyTemplateTypes.T_MACRO_NAME, nextToken());
+        assertEquals(OxyTemplateTypes.T_MACRO_NAME_IDENTIFIER, nextToken());
+        assertEquals(OxyTemplateTypes.T_MACRO_NAME_DOT, nextToken());
+        assertEquals(OxyTemplateTypes.T_MACRO_NAME_IDENTIFIER, nextToken());
         assertEquals(WHITE_SPACE, nextToken());
         assertEquals(OxyTemplateTypes.T_MACRO_PARAM_NAME, nextToken());
         assertEquals(OxyTemplateTypes.T_MACRO_PARAM_ASSIGNMENT, nextToken());
@@ -58,7 +62,9 @@ public class MacroTest extends AbstractLexerTest
         assertEquals(OxyTemplateTypes.T_XML_TAG_START, nextToken());
         assertEquals(OxyTemplateTypes.T_MACRO_XML_NAMESPACE, nextToken());
         assertEquals(OxyTemplateTypes.T_XML_NAMESPACE_DELIMITER, nextToken());
-        assertEquals(OxyTemplateTypes.T_MACRO_NAME, nextToken());
+        assertEquals(OxyTemplateTypes.T_MACRO_NAME_IDENTIFIER, nextToken());
+        assertEquals(OxyTemplateTypes.T_MACRO_NAME_DOT, nextToken());
+        assertEquals(OxyTemplateTypes.T_MACRO_NAME_IDENTIFIER, nextToken());
         assertEquals(WHITE_SPACE, nextToken());
         assertEquals(OxyTemplateTypes.T_MACRO_PARAM_NAME, nextToken());
         assertEquals(OxyTemplateTypes.T_MACRO_PARAM_ASSIGNMENT, nextToken());
@@ -81,7 +87,9 @@ public class MacroTest extends AbstractLexerTest
         assertEquals(OxyTemplateTypes.T_XML_TAG_START, nextToken());
         assertEquals(OxyTemplateTypes.T_MACRO_XML_NAMESPACE, nextToken());
         assertEquals(OxyTemplateTypes.T_XML_NAMESPACE_DELIMITER, nextToken());
-        assertEquals(OxyTemplateTypes.T_MACRO_NAME, nextToken());
+        assertEquals(OxyTemplateTypes.T_MACRO_NAME_IDENTIFIER, nextToken());
+        assertEquals(OxyTemplateTypes.T_MACRO_NAME_DOT, nextToken());
+        assertEquals(OxyTemplateTypes.T_MACRO_NAME_IDENTIFIER, nextToken());
         assertEquals(WHITE_SPACE, nextToken());
         assertEquals(OxyTemplateTypes.T_MACRO_PARAM_NAME, nextToken());
         assertEquals(OxyTemplateTypes.T_MACRO_PARAM_ASSIGNMENT, nextToken());
@@ -115,7 +123,9 @@ public class MacroTest extends AbstractLexerTest
         assertEquals(OxyTemplateTypes.T_XML_TAG_START, nextToken());
         assertEquals(OxyTemplateTypes.T_MACRO_XML_NAMESPACE, nextToken());
         assertEquals(OxyTemplateTypes.T_XML_NAMESPACE_DELIMITER, nextToken());
-        assertEquals(OxyTemplateTypes.T_MACRO_NAME, nextToken());
+        assertEquals(OxyTemplateTypes.T_MACRO_NAME_IDENTIFIER, nextToken());
+        assertEquals(OxyTemplateTypes.T_MACRO_NAME_DOT, nextToken());
+        assertEquals(OxyTemplateTypes.T_MACRO_NAME_IDENTIFIER, nextToken());
         assertEquals(OxyTemplateTypes.T_XML_OPEN_TAG_END, nextToken());
 
         assertEquals(OxyTemplateTypes.T_TEMPLATE_HTML_CODE, nextToken());
@@ -123,7 +133,9 @@ public class MacroTest extends AbstractLexerTest
         assertEquals(OxyTemplateTypes.T_XML_TAG_START, nextToken());
         assertEquals(OxyTemplateTypes.T_MACRO_XML_NAMESPACE, nextToken());
         assertEquals(OxyTemplateTypes.T_XML_NAMESPACE_DELIMITER, nextToken());
-        assertEquals(OxyTemplateTypes.T_MACRO_NAME, nextToken());
+        assertEquals(OxyTemplateTypes.T_MACRO_NAME_IDENTIFIER, nextToken());
+        assertEquals(OxyTemplateTypes.T_MACRO_NAME_DOT, nextToken());
+        assertEquals(OxyTemplateTypes.T_MACRO_NAME_IDENTIFIER, nextToken());
         assertEquals(WHITE_SPACE, nextToken());
         assertEquals(OxyTemplateTypes.T_XML_UNPAIRED_TAG_END, nextToken());
 
@@ -132,7 +144,9 @@ public class MacroTest extends AbstractLexerTest
         assertEquals(OxyTemplateTypes.T_XML_CLOSE_TAG_START, nextToken());
         assertEquals(OxyTemplateTypes.T_MACRO_XML_NAMESPACE, nextToken());
         assertEquals(OxyTemplateTypes.T_XML_NAMESPACE_DELIMITER, nextToken());
-        assertEquals(OxyTemplateTypes.T_MACRO_NAME, nextToken());
+        assertEquals(OxyTemplateTypes.T_MACRO_NAME_IDENTIFIER, nextToken());
+        assertEquals(OxyTemplateTypes.T_MACRO_NAME_DOT, nextToken());
+        assertEquals(OxyTemplateTypes.T_MACRO_NAME_IDENTIFIER, nextToken());
         assertEquals(OxyTemplateTypes.T_XML_CLOSE_TAG_END, nextToken());
 
         assertEquals(OxyTemplateTypes.T_TEMPLATE_HTML_CODE, nextToken());

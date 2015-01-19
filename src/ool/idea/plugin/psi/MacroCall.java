@@ -4,15 +4,17 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public interface MacroUnpairedTag extends OxyTemplatePsiElement
+/**
+ * 1/16/15
+ *
+ * @author Petr Mayr <p.mayr@oxyonline.cz>
+ */
+public interface MacroCall extends OxyTemplatePsiElement
 {
-    @NotNull
-    List<MacroAttribute> getMacroAttributeList();
-
     @Nullable
     MacroName getMacroName();
 
     @NotNull
-    MacroXmlPrefix getMacroXmlPrefix();
+    List<MacroAttribute> getMacroAttributeList();
 
 }

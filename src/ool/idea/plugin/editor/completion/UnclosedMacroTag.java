@@ -8,6 +8,7 @@ import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.lookup.AutoCompletionPolicy;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.patterns.PlatformPatterns;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
 import ool.idea.plugin.editor.type.TagCloseHandler;
 import ool.idea.plugin.lang.OxyTemplate;
@@ -24,7 +25,7 @@ public class UnclosedMacroTag extends CompletionContributor
 {
     public UnclosedMacroTag()
     {
-        extend(CompletionType.BASIC, PlatformPatterns.psiElement(OxyTemplateTypes.T_MACRO_NAME).withLanguage(OxyTemplate.INSTANCE),
+        extend(CompletionType.BASIC, PlatformPatterns.psiElement(OxyTemplateTypes.T_MACRO_NAME_IDENTIFIER).withLanguage(OxyTemplate.INSTANCE),
                 new CompletionProvider<CompletionParameters>()
                 {
                     @Override
@@ -32,7 +33,7 @@ public class UnclosedMacroTag extends CompletionContributor
                                                ProcessingContext context,
                                                @NotNull CompletionResultSet resultSet)
                     {
-                        MacroName elementAt = (MacroName)parameters.getPosition().getParent();
+                        MacroName elementAt = PsiTreeUtil.getParentOfType(parameters.getPosition(), MacroName.class);
 
                         if(elementAt.getPrevSibling().getPrevSibling().getNode().getElementType() == OxyTemplateTypes.T_XML_CLOSE_TAG_START)
                         {

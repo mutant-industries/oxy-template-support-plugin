@@ -79,7 +79,7 @@ CLOSE_BLOCK_MARKER = %>
 
 OPEN_BLOCK_MARKER_DIRECTIVE = <%@
 
-MACRO_NAME = [A-Za-z][A-Za-z0-9_]*(\.[A-Za-z][A-Za-z0-9_]*)*\.{0,1}
+MACRO_NAME_IDENTIFIER = [A-Za-z][A-Za-z0-9_]*
 MACRO_XML_NAMESPACE = m
 MACRO_XML_PREFIX = {MACRO_XML_NAMESPACE}{XML_NAMESPACE_DELIMITER}
 MACRO_PARAM_EXPRESSION_STATEMENT_START = expr:
@@ -272,10 +272,18 @@ NON_SPECIAL_CHARS = !([^]*({SPECIAL_CHARS}|{WHITE_SPACE})[^]*)
 
 <S_MACRO_NAME>
 {
-    {MACRO_NAME}
+    {MACRO_NAME_IDENTIFIER}
+    {
+        return T_MACRO_NAME_IDENTIFIER;
+    }
+    \.
+    {
+        return T_MACRO_NAME_DOT;
+    }
+    {WHITE_SPACE}+
     {
         yypopstate();
-        return T_MACRO_NAME;
+        return TokenType.WHITE_SPACE;
     }
     .
     {

@@ -12,43 +12,33 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author Petr Mayr <p.mayr@oxyonline.cz>
  */
-public class JavaMacroReference extends MacroReference<PsiIdentifier>
+public class JavaMacroReference extends MacroReference<MacroNameIdentifier>
 {
-    public JavaMacroReference(@NotNull MacroNameIdentifier macroNameIdentifier, @NotNull PsiIdentifier referencedElement)
+    protected final PsiIdentifier reference;
+
+    public JavaMacroReference(@NotNull MacroNameIdentifier macroNameIdentifier, @NotNull PsiIdentifier reference)
     {
-        super(macroNameIdentifier, referencedElement);
+        super(macroNameIdentifier);
+        this.reference = reference;
     }
 
     @Nullable
     @Override
     public PsiElement resolve()
     {
-        return referencedElement;
+        return reference;
+    }
+
+    @Override
+    public boolean isReferenceTo(PsiElement element)
+    {
+        return reference.isEquivalentTo(element);
     }
 
     @Override
     public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException
     {
         throw new IncorrectOperationException("handleElementRename not implemented yet");
-    }
-
-    @Override
-    public PsiElement bindToElement(@NotNull PsiElement element) throws IncorrectOperationException
-    {
-        throw new IncorrectOperationException("bindToElement not implemented yet");
-    }
-
-    @Override
-    public boolean isReferenceTo(PsiElement element)
-    {
-        return element instanceof PsiIdentifier && referencedElement.isEquivalentTo(element);
-    }
-
-    @NotNull
-    @Override
-    public Object[] getVariants()
-    {
-        return new Object[0];
     }
 
 }

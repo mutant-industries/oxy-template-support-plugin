@@ -8,8 +8,8 @@ import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferen
 import java.util.List;
 import ool.idea.plugin.file.index.OxyTemplateIndexUtil;
 import ool.idea.plugin.psi.DirectiveParamFileReference;
-import ool.idea.plugin.psi.MacroName;
 import ool.idea.plugin.psi.MacroNameIdentifier;
+import ool.idea.plugin.psi.OxyTemplateElementFactory;
 import ool.idea.plugin.psi.reference.JavaMacroReference;
 import ool.idea.plugin.psi.reference.JsMacroReference;
 import org.jetbrains.annotations.NotNull;
@@ -22,28 +22,6 @@ import org.jetbrains.annotations.Nullable;
  */
 public class OxyTemplatePsiUtil
 {
-    public static String getMacroNamespace(@NotNull MacroName macroName)
-    {
-        List<MacroNameIdentifier> macroNameIdentifierList = macroName.getMacroNameIdentifierList();
-
-        if(macroNameIdentifierList.size() == 1)
-        {
-            return macroNameIdentifierList.get(0).getText();
-        }
-
-        StringBuilder macroNamespace = new StringBuilder(macroNameIdentifierList.get(0).getText());
-
-        macroNameIdentifierList.remove(0);
-        macroNameIdentifierList.remove(macroNameIdentifierList.size() - 1);
-
-        for(MacroNameIdentifier macroNameIdentifier : macroNameIdentifierList)
-        {
-            macroNamespace.append("." + macroNameIdentifier.getText());
-        }
-
-        return macroNamespace.toString();
-    }
-
     @NotNull
     public static PsiReference[] getReferences(@NotNull DirectiveParamFileReference directiveParamFileReference)
     {
@@ -56,21 +34,33 @@ public class OxyTemplatePsiUtil
         String partialText = macroNameIdentifier.getParent().getText().substring(0,
                 macroNameIdentifier.getStartOffsetInParent() + macroNameIdentifier.getTextLength());
 
-        PsiElement reference = OxyTemplateIndexUtil.getMacroNameReference(partialText, macroNameIdentifier.getProject());
+        List<JSElement> jsMacroReferences;
+        PsiIdentifier javaMacroReference;
 
-        if(reference != null)
+        if((javaMacroReference = OxyTemplateIndexUtil.getJavaMacroNameReference(partialText,
+                macroNameIdentifier.getProject())) != null)
         {
-            if(reference instanceof JSElement)
-            {
-                return new JsMacroReference(macroNameIdentifier, (JSElement)reference);
-            }
-            else if(reference instanceof PsiIdentifier)
-            {
-                return new JavaMacroReference(macroNameIdentifier, (PsiIdentifier)reference);
-            }
+            return new JavaMacroReference(macroNameIdentifier, javaMacroReference);
+        }
+        else if((jsMacroReferences = OxyTemplateIndexUtil.getJsMacroNameReferences(partialText,
+                macroNameIdentifier.getProject())).size() > 0)
+        {
+            return new JsMacroReference(macroNameIdentifier, jsMacroReferences
+                    .toArray(new JSElement[jsMacroReferences.size()]));
         }
 
         return null;
+    }
+
+    public static PsiElement setName(MacroNameIdentifier macroNameIdentifier, String newName)
+    {
+        return macroNameIdentifier.replace(OxyTemplateElementFactory
+                .createMacroNameIdentifier(macroNameIdentifier.getProject(), newName));
+    }
+
+    public static String getName(MacroNameIdentifier macroNameIdentifier)
+    {
+        return macroNameIdentifier.getText();
     }
 
 }

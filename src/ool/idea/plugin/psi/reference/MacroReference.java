@@ -3,7 +3,7 @@ package ool.idea.plugin.psi.reference;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
-import ool.idea.plugin.psi.MacroNameIdentifier;
+import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -13,39 +13,49 @@ import org.jetbrains.annotations.NotNull;
  */
 abstract public class MacroReference<T extends PsiElement> implements PsiReference
 {
-    protected final T referencedElement;
+    protected final T referencedIdentifier;
 
-    protected final MacroNameIdentifier macroNameIdentifier;
-
-    public MacroReference(@NotNull MacroNameIdentifier macroNameIdentifier, @NotNull T referencedElement)
+    public MacroReference(@NotNull T referencedIdentifier)
     {
-        this.referencedElement = referencedElement;
-        this.macroNameIdentifier = macroNameIdentifier;
+        this.referencedIdentifier = referencedIdentifier;
     }
 
     @Override
     public PsiElement getElement()
     {
-        return macroNameIdentifier;
+        return referencedIdentifier;
     }
 
     @Override
     public TextRange getRangeInElement()
     {
-        return TextRange.create(0, macroNameIdentifier.getText().length());
+        return TextRange.create(0, referencedIdentifier.getText().length());
     }
 
     @NotNull
     @Override
     public String getCanonicalText()
     {
-        return macroNameIdentifier.getText();
+        return referencedIdentifier.getText();
     }
 
     @Override
     public boolean isSoft()
     {
         return true;
+    }
+
+    @NotNull
+    @Override
+    public Object[] getVariants()
+    {
+        return EMPTY_ARRAY;
+    }
+
+    @Override
+    public PsiElement bindToElement(@NotNull PsiElement element) throws IncorrectOperationException
+    {
+        throw new IncorrectOperationException("bindToElement not implemented yet");
     }
 
 }

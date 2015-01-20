@@ -1,7 +1,10 @@
 package ool.idea.plugin.psi.reference;
 
 import com.intellij.lang.javascript.psi.JSElement;
+import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiPolyVariantReference;
+import com.intellij.psi.ResolveResult;
 import com.intellij.util.IncorrectOperationException;
 import ool.idea.plugin.psi.MacroNameIdentifier;
 import org.jetbrains.annotations.NotNull;
@@ -12,43 +15,47 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author Petr Mayr <p.mayr@oxyonline.cz>
  */
-public class JsMacroReference extends MacroReference<JSElement>
+public class JsMacroReference extends MacroReference<MacroNameIdentifier> implements PsiPolyVariantReference
 {
-    public JsMacroReference(@NotNull MacroNameIdentifier macroNameIdentifier, @NotNull JSElement referencedElement)
+    private final JSElement[] references;
+
+    public JsMacroReference(@NotNull MacroNameIdentifier macroNameIdentifier, @NotNull JSElement[] references)
     {
-        super(macroNameIdentifier, referencedElement);
+        super(macroNameIdentifier);
+        this.references = references;
     }
 
     @Nullable
     @Override
     public PsiElement resolve()
     {
-        return referencedElement;
-    }
-
-    @Override
-    public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException
-    {
-        throw new IncorrectOperationException("handleElementRename not implemented yet");
-    }
-
-    @Override
-    public PsiElement bindToElement(PsiElement element) throws IncorrectOperationException
-    {
-        throw new IncorrectOperationException("bindToElement not implemented yet");
+        return references.length == 1 ? references[0] : null;
     }
 
     @Override
     public boolean isReferenceTo(PsiElement element)
     {
-        return referencedElement.isEquivalentTo(element);
+        return element.isEquivalentTo(resolve());
     }
 
     @NotNull
     @Override
-    public Object[] getVariants()
+    public ResolveResult[] multiResolve(boolean incompleteCode)
     {
-        return new Object[0];
+        ResolveResult[] resolveResults = new ResolveResult[references.length];
+
+        for(int i = 0; i < references.length; i++)
+        {
+            resolveResults[i] = new JSResolveResult(references[i]);
+        }
+
+        return resolveResults;
+    }
+
+    @Override
+    public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException
+    {
+        return referencedIdentifier.setName(newElementName);
     }
 
 }

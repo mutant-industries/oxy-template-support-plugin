@@ -8,6 +8,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.ResolveResult;
 import com.intellij.psi.util.PsiTreeUtil;
+import java.util.List;
 import ool.idea.plugin.file.index.OxyTemplateIndexUtil;
 
 /**
@@ -30,15 +31,23 @@ public class OxyTemplateReferenceExpressionResolver extends JSReferenceExpressio
             return ResolveResult.EMPTY_ARRAY;
         }
 
-        PsiElement reference;
-
         String text = myRef.getElement().getText();
 
         if(PsiTreeUtil.getParentOfType(myRef, JSCallExpression.class) != null)
         {
-            if((reference = OxyTemplateIndexUtil.getMacroNameReference(myRef.getText(), myContainingFile.getProject())) != null)
+            List<PsiElement> references = OxyTemplateIndexUtil.getMacroNameReferences(myRef.getText(),
+                    myContainingFile.getProject());
+
+            if(references.size() > 0)
             {
-                return new JSResolveResult[]{new JSResolveResult(reference)};
+                JSResolveResult[] result = new JSResolveResult[references.size()];
+
+                for(int i = 0; i < references.size(); i++)
+                {
+                    result[i] = new JSResolveResult(references.get(i));
+                }
+
+                return result;
             }
         }
 
@@ -46,6 +55,7 @@ public class OxyTemplateReferenceExpressionResolver extends JSReferenceExpressio
 
         if((parentResult == null || parentResult.length == 0) && text.equals(myReferencedName))
         {
+            PsiElement reference;
             // global
             if((reference = OxyTemplateIndexUtil.getGlobalVariableRefrence(myReferencedName, myContainingFile.getProject())) != null)
             {

@@ -2,7 +2,7 @@
     parserClass="ool.idea.plugin.parser.OxyTemplateParser"
 
     extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
-    implements="ool.idea.plugin.psi.OxyTemplatePsiElement"
+    implements="ool.idea.plugin.psi.OxyTemplateElement"
 
     psiImplClassSuffix="Impl"
     psiPackage="ool.idea.plugin.psi"
@@ -36,8 +36,8 @@ directive_param_wrapper ::= T_DIRECTIVE_PARAM_BOUNDARY directive_param_file_refe
 directive_open_statement ::= T_OPEN_BLOCK_MARKER_DIRECTIVE
 directive_statement ::= directive_open_statement T_DIRECTIVE directive_param_wrapper+ block_close_statement{pin=2}
 
-macro_name ::= macro_name_identifier (T_MACRO_NAME_DOT macro_name_identifier)* {methods=[macroFunction="/macro_name_identifier[last]" getMacroNamespace]}
-macro_name_identifier ::= T_MACRO_NAME_IDENTIFIER {methods=[getReference]}
+macro_name ::= macro_name_identifier (T_MACRO_NAME_DOT macro_name_identifier)* {methods=[macroFunction="/macro_name_identifier[last]"]}
+macro_name_identifier ::= T_MACRO_NAME_IDENTIFIER {methods=[getReference setName getName] implements="ool.idea.plugin.psi.OxyTemplateNamedElement"}
 macro_param_name ::= T_MACRO_PARAM_NAME
 macro_xml_prefix ::= T_MACRO_XML_NAMESPACE T_XML_NAMESPACE_DELIMITER
 macro_param ::= T_MACRO_PARAM

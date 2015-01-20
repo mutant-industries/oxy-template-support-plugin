@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>ool.idea.plugin</id>
     <name>Oxy template support</name>
-    <version>0.5.1</version>
+    <version>0.6</version>
     <vendor email="p.mayr@oxyonline.cz" url="http://stash.oxyonline.local/projects/CZC/repos/macro-support-plugin">
         oXy Online s.r.o.
     </vendor>
@@ -119,6 +119,15 @@
             <li>
                 mašeptávání, prokliky a find usages js maker, mašeptávání parametrů js maker v xml
             </li>
+        </ul>
+        <b>0.6</b>
+        <ul>
+            <li>
+                find usages / refactoring js maker, proklikávatelný namespace
+            </li>
+            <li>
+                reference na js makra ve volání přes partialPageUpdater
+            </li>
         </ul>]]>
     </change-notes>
 
@@ -169,6 +178,8 @@
         <fileBasedIndex implementation="ool.idea.plugin.file.index.globals.JsGlobalsIndex"/>
         <fileBasedIndex implementation="ool.idea.plugin.file.index.nacros.java.JavaMacroNameIndex"/>
         <fileBasedIndex implementation="ool.idea.plugin.file.index.nacros.js.JsMacroNameIndex"/>
+        <lang.findUsagesProvider language="OxyTemplateInnerJs" implementationClass="ool.idea.plugin.psi.reference.search.InnerJsFindUsagesProvider"/>
+        <psi.referenceContributor implementation="ool.idea.plugin.psi.reference.java.LiteralJsMacroReferenceContributor" order="first"/>
     </extensions>
     <extensions defaultExtensionNs="JavaScript">
         <predefinedLibraryProvider implementation="ool.idea.plugin.editor.InnerJsPredefinedLibrary"/>

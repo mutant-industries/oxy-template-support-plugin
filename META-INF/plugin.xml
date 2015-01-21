@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>ool.idea.plugin</id>
     <name>Oxy template support</name>
-    <version>0.6.1</version>
+    <version>0.6.2</version>
     <vendor email="p.mayr@oxyonline.cz" url="http://stash.oxyonline.local/projects/CZC/repos/macro-support-plugin">
         oXy Online s.r.o.
     </vendor>
@@ -15,64 +15,55 @@
     ]]></description>
 
     <change-notes><![CDATA[
-        <b>0.1</b> - první stabilní verze
+        <b>0.6.2</b>
         <ul>
             <li>
-                rozlišení js / html bloku, direktiv a maker
-            </li>
-            <li>
-                stránka s nastavením barev
-            </li>
-            <li>
-                samostatné syntaktické stromy pro jednotlivé jazyky, zvyrazňovač syntaxe
+                dokumentace v našeptávači maker a parametrů
             </li>
         </ul>
-        <b>0.1.1</b>
+        <b>0.6.1</b>
         <ul>
             <li>
-                dploňování a zvýrazňování odpovídající značky hranice bloku
-            </li>
-            <li>
-                našeptávání direktiv
-            </li>
-            <li>
-                'expr:' parametr se zahrnuje do javascriptového bloku
+                java makra - find usages
             </li>
         </ul>
-        <b>0.2</b>
+        <b>0.6</b>
         <ul>
             <li>
-                tagy maker - doplňování konců nepárových a koncových tagů párových
+                find usages / refactoring js maker, proklikávatelný namespace
             </li>
             <li>
-                doplňování uvozovek u parametru maker a direktiv
-            </li>
-            <li>
-                našeptávání 'expr: ' v parametru makra
+                reference na js makra ve volání přes partialPageUpdater
             </li>
         </ul>
-        <b>0.2.1</b>
+        <b>0.5</b>
         <ul>
             <li>
-                commenter - možnost zakonentování vyznačeného bloku
+                mašeptávání, prokliky a find usages js maker, mašeptávání parametrů js maker v xml
             </li>
         </ul>
-        <b>0.3</b>
+        <b>0.4.3</b>
         <ul>
             <li>
-                napovídání souboru v parametru direktivy, automatická úprava referencí při přesunu souboru, vyznačování neplatných referencí
+                mašeptávání a prokliky java maker, mašeptávání parametrů java maker v xml
             </li>
             <li>
-                commenter - multilang support
+                našeptávání a prokliky globálních proměnných js
             </li>
         </ul>
-        <b>0.3.1</b>
+        <b>0.4.2</b>
         <ul>
             <li>
-                vyznačování odpovídajících tagů a uvozovek
+                našeptávání předdefinovaných objektů a funkcí šablonovacího systému (oxy, out...)
             </li>
             <li>
-                bugfixy v doplňování tagů a uvozovek
+                vypnutí kontroly 'Expression statement which is not assignment or call' v js
+            </li>
+        </ul>
+        <b>0.4.1</b>
+        <ul>
+            <li>
+                fix řádkového komentáře v js
             </li>
         </ul>
         <b>0.4</b>
@@ -90,49 +81,64 @@
                 fix našeptávání koncového tagu
             </li>
         </ul>
-        <b>0.4.1</b>
+        <b>0.3.1</b>
         <ul>
             <li>
-                fix řádkového komentáře v js
+                vyznačování odpovídajících tagů a uvozovek
+            </li>
+            <li>
+                bugfixy v doplňování tagů a uvozovek
             </li>
         </ul>
-        <b>0.4.2</b>
+        <b>0.3</b>
         <ul>
             <li>
-                našeptávání předdefinovaných objektů a funkcí šablonovacího systému (oxy, out...)
+                napovídání souboru v parametru direktivy, automatická úprava referencí při přesunu souboru, vyznačování neplatných referencí
             </li>
             <li>
-                vypnutí kontroly 'Expression statement which is not assignment or call' v js
+                commenter - multilang support
             </li>
         </ul>
-        <b>0.4.3</b>
+        <b>0.2.1</b>
         <ul>
             <li>
-                mašeptávání a prokliky java maker, mašeptávání parametrů java maker v xml
-            </li>
-            <li>
-                našeptávání a prokliky globálních proměnných js
+                commenter - možnost zakonentování vyznačeného bloku
             </li>
         </ul>
-        <b>0.5</b>
+        <b>0.2</b>
         <ul>
             <li>
-                mašeptávání, prokliky a find usages js maker, mašeptávání parametrů js maker v xml
+                tagy maker - doplňování konců nepárových a koncových tagů párových
+            </li>
+            <li>
+                doplňování uvozovek u parametru maker a direktiv
+            </li>
+            <li>
+                našeptávání 'expr: ' v parametru makra
             </li>
         </ul>
-        <b>0.6</b>
+        <b>0.1.1</b>
         <ul>
             <li>
-                find usages / refactoring js maker, proklikávatelný namespace
+                dploňování a zvýrazňování odpovídající značky hranice bloku
             </li>
             <li>
-                reference na js makra ve volání přes partialPageUpdater
+                našeptávání direktiv
+            </li>
+            <li>
+                'expr:' parametr se zahrnuje do javascriptového bloku
             </li>
         </ul>
-        <b>0.6.1</b>
+        <b>0.1</b> - první stabilní verze
         <ul>
             <li>
-                java makra - find usages
+                rozlišení js / html bloku, direktiv a maker
+            </li>
+            <li>
+                stránka s nastavením barev
+            </li>
+            <li>
+                samostatné syntaktické stromy pro jednotlivé jazyky, zvyrazňovač syntaxe
             </li>
         </ul>]]>
     </change-notes>
@@ -187,6 +193,7 @@
         <lang.findUsagesProvider language="OxyTemplate" implementationClass="ool.idea.plugin.psi.reference.usages.OxyTemplateFindUsagesProvider"/>
         <psi.referenceContributor implementation="ool.idea.plugin.psi.reference.java.LiteralJsMacroReferenceContributor" order="first"/>
         <referencesSearch implementation="ool.idea.plugin.psi.reference.usages.OxyTemplateReferenceSearch"/>
+        <documentationProvider implementation="ool.idea.plugin.editor.documentation.MacroNameDocumentationProvider"/>
     </extensions>
     <extensions defaultExtensionNs="JavaScript">
         <predefinedLibraryProvider implementation="ool.idea.plugin.editor.InnerJsPredefinedLibrary"/>

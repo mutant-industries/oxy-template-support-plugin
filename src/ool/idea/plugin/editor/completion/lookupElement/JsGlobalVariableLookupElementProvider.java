@@ -4,6 +4,7 @@ import com.intellij.codeInsight.lookup.AutoCompletionPolicy;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * 1/19/15
@@ -16,7 +17,7 @@ public class JsGlobalVariableLookupElementProvider implements BaseLookupElementP
 
     @NotNull
     @Override
-    public LookupElement create(String lookupText)
+    public LookupElement create(String lookupText, @Nullable Object lookupObject)
     {
         return LookupElementBuilder.create(lookupText).withAutoCompletionPolicy(AutoCompletionPolicy.GIVE_CHANCE_TO_OVERWRITE);
     }

@@ -3,6 +3,7 @@ package ool.idea.plugin.editor.completion.lookupElement;
 import com.intellij.codeInsight.lookup.AutoCompletionPolicy;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import ool.idea.plugin.file.OxyTemplateFileType;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -16,9 +17,10 @@ public class XmlMacroNameLookupElementProvider implements BaseLookupElementProvi
 
     @NotNull
     @Override
-    public LookupElement create(String lookupText)
+    public LookupElement create(String lookupText, @NotNull Object lookupObject)
     {
-        return LookupElementBuilder.create(lookupText).withAutoCompletionPolicy(AutoCompletionPolicy.GIVE_CHANCE_TO_OVERWRITE);
+        return LookupElementBuilder.create(lookupObject, lookupText).withIcon(OxyTemplateFileType.INSTANCE.getIcon())
+                .withAutoCompletionPolicy(AutoCompletionPolicy.GIVE_CHANCE_TO_OVERWRITE);
     }
 
 }

@@ -7,6 +7,7 @@ import com.intellij.codeInsight.lookup.AutoCompletionPolicy;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.editor.CaretModel;
+import ool.idea.plugin.file.OxyTemplateFileType;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -20,19 +21,21 @@ public class JsMacroNameLookupElementProvider implements BaseLookupElementProvid
 
     @NotNull
     @Override
-    public LookupElement create(String lookupText)
+    public LookupElement create(String lookupText, @NotNull Object lookupObject)
     {
-        return PrioritizedLookupElement.withPriority(LookupElementBuilder.create(lookupText + "()").withInsertHandler(
-            new InsertHandler<LookupElement>()
-            {
-                @Override
-                public void handleInsert(InsertionContext context, LookupElement item)
+        return PrioritizedLookupElement.withPriority(LookupElementBuilder.create(lookupObject, lookupText + "()")
+            .withIcon(OxyTemplateFileType.INSTANCE.getIcon())
+            .withPresentableText(lookupText)
+            .withInsertHandler(new InsertHandler<LookupElement>()
                 {
-                    CaretModel caretModel = context.getEditor().getCaretModel();
-                    caretModel.moveToOffset(caretModel.getOffset() - 1);
+                    @Override
+                    public void handleInsert(InsertionContext context, LookupElement item)
+                    {
+                        CaretModel caretModel = context.getEditor().getCaretModel();
+                        caretModel.moveToOffset(caretModel.getOffset() - 1);
+                    }
                 }
-            }
-        ).withPresentableText(lookupText).withAutoCompletionPolicy(AutoCompletionPolicy.GIVE_CHANCE_TO_OVERWRITE), Integer.MAX_VALUE);
+            ).withAutoCompletionPolicy(AutoCompletionPolicy.GIVE_CHANCE_TO_OVERWRITE), Integer.MAX_VALUE);
     }
 
 }

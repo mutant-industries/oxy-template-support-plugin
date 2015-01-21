@@ -11,6 +11,6 @@ import org.jetbrains.annotations.NotNull;
 public interface BaseLookupElementProvider
 {
     @NotNull
-    public LookupElement create(String lookupText);
+    public LookupElement create(String lookupText, Object lookupObject);
 
 }

@@ -16,9 +16,9 @@ import ool.idea.plugin.file.index.OxyTemplateIndexUtil;
  *
  * @author Petr Mayr <p.mayr@oxyonline.cz>
  */
-public class OxyTemplateReferenceExpressionResolver extends JSReferenceExpressionResolver
+public class InnerJsReferenceExpressionResolver extends JSReferenceExpressionResolver
 {
-    public OxyTemplateReferenceExpressionResolver(JSReferenceExpressionImpl expression, PsiFile file)
+    public InnerJsReferenceExpressionResolver(JSReferenceExpressionImpl expression, PsiFile file)
     {
         super(expression, file);
     }

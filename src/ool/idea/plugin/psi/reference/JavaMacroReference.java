@@ -1,7 +1,7 @@
 package ool.idea.plugin.psi.reference;
 
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiIdentifier;
 import com.intellij.util.IncorrectOperationException;
 import ool.idea.plugin.psi.MacroNameIdentifier;
 import org.jetbrains.annotations.NotNull;
@@ -14,9 +14,9 @@ import org.jetbrains.annotations.Nullable;
  */
 public class JavaMacroReference extends MacroReference<MacroNameIdentifier>
 {
-    protected final PsiIdentifier reference;
+    protected final PsiClass reference;
 
-    public JavaMacroReference(@NotNull MacroNameIdentifier macroNameIdentifier, @NotNull PsiIdentifier reference)
+    public JavaMacroReference(@NotNull MacroNameIdentifier macroNameIdentifier, @NotNull PsiClass reference)
     {
         super(macroNameIdentifier);
         this.reference = reference;

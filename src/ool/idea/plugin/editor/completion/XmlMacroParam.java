@@ -68,13 +68,13 @@ public class XmlMacroParam extends CompletionContributor
                     PsiElement reference = macroFunction.getReference().resolve();
 
                     if(reference == null || ( ! (reference.getLastChild() instanceof JSFunctionExpression) &&
-                        ! (reference.getParent() instanceof PsiClass)))
+                        ! (reference instanceof PsiClass)))
                     {
                         return;
                     }
 
                     List<String> suggestions = reference.getLastChild() instanceof JSFunctionExpression ?
-                            getMacroParamNameSuggestions((JSFunctionExpression) reference.getLastChild()) : getMacroParamNameSuggestions((PsiClass) reference.getParent());
+                            getMacroParamNameSuggestions((JSFunctionExpression) reference.getLastChild()) : getMacroParamNameSuggestions((PsiClass)reference);
 
                     List<MacroAttribute> attributes = macroCall.getMacroAttributeList();
 

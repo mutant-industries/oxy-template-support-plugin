@@ -1,8 +1,8 @@
 package ool.idea.plugin.psi.impl;
 
 import com.intellij.lang.javascript.psi.JSElement;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiIdentifier;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceSet;
 import java.util.List;
@@ -35,7 +35,7 @@ public class OxyTemplatePsiUtil
                 macroNameIdentifier.getStartOffsetInParent() + macroNameIdentifier.getTextLength());
 
         List<JSElement> jsMacroReferences;
-        PsiIdentifier javaMacroReference;
+        PsiClass javaMacroReference;
 
         if((javaMacroReference = OxyTemplateIndexUtil.getJavaMacroNameReference(partialText,
                 macroNameIdentifier.getProject())) != null)

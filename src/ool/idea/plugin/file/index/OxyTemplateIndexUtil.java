@@ -7,7 +7,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiIdentifier;
 import com.intellij.psi.PsiLiteralExpression;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -36,7 +35,7 @@ public class OxyTemplateIndexUtil
     public static List<PsiElement> getMacroNameReferences(String macroName, @NotNull Project project)
     {
         List<PsiElement> references = new ArrayList<PsiElement>();
-        PsiIdentifier identifier;
+        PsiClass identifier;
 
         references.addAll(getJsMacroNameReferences(macroName, project));
 
@@ -49,7 +48,7 @@ public class OxyTemplateIndexUtil
     }
 
     @Nullable
-    public static PsiIdentifier getJavaMacroNameReference(String macroName, @NotNull Project project)
+    public static PsiClass getJavaMacroNameReference(String macroName, @NotNull Project project)
     {
         final GlobalSearchScope allScope = ProjectScope.getProjectScope(project);
 
@@ -65,9 +64,9 @@ public class OxyTemplateIndexUtil
             {
                 PsiClass psiClass = PsiTreeUtil.findChildOfType(psiFile, PsiClass.class);
 
-                if(psiClass != null && psiClass.getNameIdentifier() != null)
+                if(psiClass != null)
                 {
-                    return psiClass.getNameIdentifier();
+                    return psiClass;
                 }
             }
         }

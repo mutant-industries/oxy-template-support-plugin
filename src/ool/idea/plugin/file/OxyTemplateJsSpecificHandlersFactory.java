@@ -4,7 +4,7 @@ import com.intellij.lang.javascript.JavaScriptSpecificHandlersFactory;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.psi.PsiFile;
-import ool.idea.plugin.psi.reference.OxyTemplateReferenceExpressionResolver;
+import ool.idea.plugin.psi.reference.InnerJsReferenceExpressionResolver;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -19,7 +19,7 @@ public class OxyTemplateJsSpecificHandlersFactory extends JavaScriptSpecificHand
     public JSResolveUtil.Resolver<JSReferenceExpressionImpl> createReferenceExpressionResolver(JSReferenceExpressionImpl referenceExpression,
                                                                                                PsiFile containingFile)
     {
-        return new OxyTemplateReferenceExpressionResolver(referenceExpression, containingFile);
+        return new InnerJsReferenceExpressionResolver(referenceExpression, containingFile);
     }
 
 }

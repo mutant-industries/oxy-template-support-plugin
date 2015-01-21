@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>ool.idea.plugin</id>
     <name>Oxy template support</name>
-    <version>0.6</version>
+    <version>0.6.1</version>
     <vendor email="p.mayr@oxyonline.cz" url="http://stash.oxyonline.local/projects/CZC/repos/macro-support-plugin">
         oXy Online s.r.o.
     </vendor>
@@ -128,6 +128,12 @@
             <li>
                 reference na js makra ve volání přes partialPageUpdater
             </li>
+        </ul>
+        <b>0.6.1</b>
+        <ul>
+            <li>
+                java makra - find usages
+            </li>
         </ul>]]>
     </change-notes>
 
@@ -178,8 +184,9 @@
         <fileBasedIndex implementation="ool.idea.plugin.file.index.globals.JsGlobalsIndex"/>
         <fileBasedIndex implementation="ool.idea.plugin.file.index.nacros.java.JavaMacroNameIndex"/>
         <fileBasedIndex implementation="ool.idea.plugin.file.index.nacros.js.JsMacroNameIndex"/>
-        <lang.findUsagesProvider language="OxyTemplateInnerJs" implementationClass="ool.idea.plugin.psi.reference.search.InnerJsFindUsagesProvider"/>
+        <lang.findUsagesProvider language="OxyTemplate" implementationClass="ool.idea.plugin.psi.reference.usages.OxyTemplateFindUsagesProvider"/>
         <psi.referenceContributor implementation="ool.idea.plugin.psi.reference.java.LiteralJsMacroReferenceContributor" order="first"/>
+        <referencesSearch implementation="ool.idea.plugin.psi.reference.usages.OxyTemplateReferenceSearch"/>
     </extensions>
     <extensions defaultExtensionNs="JavaScript">
         <predefinedLibraryProvider implementation="ool.idea.plugin.editor.InnerJsPredefinedLibrary"/>

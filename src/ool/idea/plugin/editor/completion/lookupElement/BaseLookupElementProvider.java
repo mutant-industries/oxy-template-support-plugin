@@ -1,6 +1,7 @@
 package ool.idea.plugin.editor.completion.lookupElement;
 
 import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -11,6 +12,6 @@ import org.jetbrains.annotations.NotNull;
 public interface BaseLookupElementProvider
 {
     @NotNull
-    public LookupElement create(String lookupText, Object lookupObject);
+    public LookupElement create(String lookupText, PsiElement lookupObject);
 
 }

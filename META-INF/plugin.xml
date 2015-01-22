@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>ool.idea.plugin</id>
     <name>Oxy template support</name>
-    <version>0.6.2</version>
+    <version>0.7</version>
     <vendor email="p.mayr@oxyonline.cz" url="http://stash.oxyonline.local/projects/CZC/repos/macro-support-plugin">
         oXy Online s.r.o.
     </vendor>
@@ -15,6 +15,15 @@
     ]]></description>
 
     <change-notes><![CDATA[
+        <b>0.7</b>
+        <ul>
+            <li>
+                automatické doplňování include direktiv
+            </li>
+            <li>
+                kontrola chybějících include direktiv
+            </li>
+        </ul>
         <b>0.6.2</b>
         <ul>
             <li>
@@ -187,13 +196,15 @@
                          implementationClass="ool.idea.plugin.editor.inspection.UnresolvedDirectiveIncludeInspection" />
         <localInspection language="OxyTemplate" shortName="NotMatchingTag" groupName="Oxy template" enabledByDefault="true" level="WARNING"
                          implementationClass="ool.idea.plugin.editor.inspection.NotMatchingTagsInspection" />
+        <localInspection language="OxyTemplate" shortName="MissingIncludeDirective" groupName="Oxy template" enabledByDefault="true" level="WARNING"
+                         implementationClass="ool.idea.plugin.editor.inspection.MissingIncludeDirectiveInspection" />
         <fileBasedIndex implementation="ool.idea.plugin.file.index.globals.JsGlobalsIndex"/>
         <fileBasedIndex implementation="ool.idea.plugin.file.index.nacros.java.JavaMacroNameIndex"/>
         <fileBasedIndex implementation="ool.idea.plugin.file.index.nacros.js.JsMacroNameIndex"/>
         <lang.findUsagesProvider language="OxyTemplate" implementationClass="ool.idea.plugin.psi.reference.usages.OxyTemplateFindUsagesProvider"/>
         <psi.referenceContributor implementation="ool.idea.plugin.psi.reference.java.LiteralJsMacroReferenceContributor" order="first"/>
         <referencesSearch implementation="ool.idea.plugin.psi.reference.usages.OxyTemplateReferenceSearch"/>
-        <documentationProvider implementation="ool.idea.plugin.editor.documentation.MacroNameDocumentationProvider"/>
+        <!--<documentationProvider implementation="ool.idea.plugin.editor.documentation.MacroNameDocumentationProvider"/>-->
     </extensions>
     <extensions defaultExtensionNs="JavaScript">
         <predefinedLibraryProvider implementation="ool.idea.plugin.editor.InnerJsPredefinedLibrary"/>

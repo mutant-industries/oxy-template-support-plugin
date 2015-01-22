@@ -26,7 +26,7 @@ import org.jetbrains.annotations.Nullable;
 
 /**
 * 1/9/15
- * TODO isMacroParamNamePosition, jsComment retrieval
+ * TODO cely spatne
 *
 * @author Petr Mayr <p.mayr@oxyonline.cz>
 */

@@ -3,6 +3,7 @@ package ool.idea.plugin.editor.completion.lookupElement;
 import com.intellij.codeInsight.lookup.AutoCompletionPolicy;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,7 +18,7 @@ public class JsGlobalVariableLookupElementProvider implements BaseLookupElementP
 
     @NotNull
     @Override
-    public LookupElement create(String lookupText, @Nullable Object lookupObject)
+    public LookupElement create(String lookupText, @Nullable PsiElement lookupObject)
     {
         return LookupElementBuilder.create(lookupText).withAutoCompletionPolicy(AutoCompletionPolicy.GIVE_CHANCE_TO_OVERWRITE);
     }

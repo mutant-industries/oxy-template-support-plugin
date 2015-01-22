@@ -36,7 +36,7 @@ public class JsMacroNameDataIndexer implements DataIndexer<String, JsMacroNameIn
         for(PsiElement psiElement : jsFile.getChildren())
         {
             if(psiElement instanceof JSExpressionStatement
-                    && (psiElement = psiElement.getFirstChild()) instanceof JSAssignmentExpression
+                    && (psiElement = PsiTreeUtil.getChildOfAnyType(psiElement, JSAssignmentExpression.class)) != null
                     && psiElement.getFirstChild() instanceof JSDefinitionExpression)
             {
                 String namespace = psiElement.getFirstChild().getText().replace(MACRO_REGISTRY_NAMESPACE, "");

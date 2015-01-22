@@ -69,7 +69,7 @@ public class JsMacroNameIndex extends FileBasedIndexExtension<String, JsMacroNam
     @Override
     public int getVersion()
     {
-        return 0;
+        return 1;
     }
 
 }

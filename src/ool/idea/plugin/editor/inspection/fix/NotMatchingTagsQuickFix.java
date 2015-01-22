@@ -1,4 +1,4 @@
-package ool.idea.plugin.editor.inspection;
+package ool.idea.plugin.editor.inspection.fix;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;

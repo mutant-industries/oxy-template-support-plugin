@@ -32,9 +32,26 @@ public class OxyTemplateElementFactory
     }
 
     @NotNull
+    public static DirectiveStatement createDirectiveStatement(@NotNull Project project, String directive, String... params)
+    {
+        StringBuilder builder = new StringBuilder("<%@ " + directive);
+
+        for(String param : params)
+        {
+            builder.append(" \"" + param + "\" ");
+        }
+
+        builder.append("%>");
+
+        return (DirectiveStatement) createFile(project, builder.toString()).getFirstChild();
+    }
+
+    @NotNull
     public static OxyTemplateFile createFile(@NotNull Project project, String text)
     {
         return (OxyTemplateFile) PsiFileFactory.getInstance(project).createFileFromText("dummy.jsm", OxyTemplateFileType.INSTANCE, text);
     }
+
+
 
 }

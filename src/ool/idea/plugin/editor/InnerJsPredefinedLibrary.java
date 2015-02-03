@@ -26,10 +26,10 @@ public class InnerJsPredefinedLibrary extends JSPredefinedLibraryProvider
     {
         Set virtualFiles = getVirtualFiles();
 
-        ScriptingLibraryModel scriptingLibraryModel1 = ScriptingLibraryModel.createPredefinedLibrary(LIBRARY_NAME,
+        ScriptingLibraryModel scriptingLibraryModel = ScriptingLibraryModel.createPredefinedLibrary(LIBRARY_NAME,
                 (VirtualFile[]) virtualFiles.toArray(new VirtualFile[virtualFiles.size()]), true);
 
-        return new ScriptingLibraryModel[]{scriptingLibraryModel1};
+        return new ScriptingLibraryModel[]{scriptingLibraryModel};
     }
 
     @Override
@@ -40,7 +40,7 @@ public class InnerJsPredefinedLibrary extends JSPredefinedLibraryProvider
 
     private Set<VirtualFile> getVirtualFiles()
     {
-        Set<VirtualFile> virtualFiles = new HashSet();
+        Set<VirtualFile> virtualFiles = new HashSet<VirtualFile>();
 
         for (String libFileName : this.jsFiles)
         {

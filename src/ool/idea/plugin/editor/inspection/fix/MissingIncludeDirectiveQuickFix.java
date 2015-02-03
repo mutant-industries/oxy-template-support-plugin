@@ -2,12 +2,13 @@ package ool.idea.plugin.editor.inspection.fix;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.util.PsiTreeUtil;
+import java.util.List;
 import ool.idea.plugin.file.RelativePathCalculator;
+import ool.idea.plugin.lang.OxyTemplate;
 import ool.idea.plugin.psi.DirectiveStatement;
 import ool.idea.plugin.psi.OxyTemplateElementFactory;
 import org.jetbrains.annotations.NotNull;
@@ -54,20 +55,28 @@ public class MissingIncludeDirectiveQuickFix  implements LocalQuickFix
     }
 
     @Override
-    public void applyFix(Project project, ProblemDescriptor descriptor)
+    public void applyFix(@NotNull final Project project, @NotNull ProblemDescriptor descriptor)
     {
-        Editor editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
+        applyFix(project);
+    }
 
-        if(editor == null)
+    public void applyFix(Project project)
+    {
+        final PsiFile file = macroCallMissingInclude.getContainingFile()
+                .getViewProvider().getPsi(OxyTemplate.INSTANCE);
+        final DirectiveStatement includeDirective = OxyTemplateElementFactory.createDirectiveStatement(project,
+                directiveType, includePath);
+
+        List<DirectiveStatement> statements = PsiTreeUtil.getChildrenOfTypeAsList(file, DirectiveStatement.class);
+
+        if (statements.size() > 0)
         {
-            return;
+            file.addAfter(includeDirective, statements.get(statements.size() - 1));
         }
-
-        DirectiveStatement includeDirective = OxyTemplateElementFactory.createDirectiveStatement(macroCallMissingInclude
-                .getProject(), directiveType, includePath);
-
-        Document document = editor.getDocument();
-        document.insertString(0, includeDirective.getText() + "\n");;
+        else
+        {
+            file.addBefore(includeDirective, file.getFirstChild());
+        }
     }
 
 }

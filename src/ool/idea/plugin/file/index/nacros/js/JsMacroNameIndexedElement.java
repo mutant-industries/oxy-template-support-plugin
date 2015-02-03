@@ -1,6 +1,6 @@
 package ool.idea.plugin.file.index.nacros.js;
 
-import com.google.common.base.Objects;
+import java.util.Objects;
 
 /**
  * 1/15/15
@@ -38,7 +38,7 @@ public class JsMacroNameIndexedElement
     @Override
     public int hashCode()
     {
-        return Objects.hashCode(isMacro, offserInFile);
+        return Objects.hash(isMacro, offserInFile);
     }
 
     @Override
@@ -54,8 +54,8 @@ public class JsMacroNameIndexedElement
         }
         final JsMacroNameIndexedElement other = (JsMacroNameIndexedElement) obj;
 
-        return Objects.equal(this.isMacro, other.isMacro)
-                && Objects.equal(this.offserInFile, other.offserInFile);
+        return Objects.equals(this.isMacro, other.isMacro)
+                && Objects.equals(this.offserInFile, other.offserInFile);
     }
 
 }

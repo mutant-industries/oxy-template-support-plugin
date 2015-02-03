@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>ool.idea.plugin</id>
     <name>Oxy template support</name>
-    <version>0.7</version>
+    <version>0.7.1</version>
     <vendor email="p.mayr@oxyonline.cz" url="http://stash.oxyonline.local/projects/CZC/repos/macro-support-plugin">
         oXy Online s.r.o.
     </vendor>
@@ -15,6 +15,18 @@
     ]]></description>
 
     <change-notes><![CDATA[
+        <b>0.7.1</b>
+        <ul>
+            <li>
+                bugfixy našeptávače
+            </li>
+            <li>
+                standartní xml komentáře
+            </li>
+            <li>
+                find usages, refactoring globálních proměnných
+            </li>
+        </ul>
         <b>0.7</b>
         <ul>
             <li>
@@ -48,7 +60,7 @@
         <b>0.5</b>
         <ul>
             <li>
-                mašeptávání, prokliky a find usages js maker, mašeptávání parametrů js maker v xml
+                mašeptávání a prokliky js maker, mašeptávání parametrů js maker v xml
             </li>
         </ul>
         <b>0.4.3</b>
@@ -103,9 +115,6 @@
         <ul>
             <li>
                 napovídání souboru v parametru direktivy, automatická úprava referencí při přesunu souboru, vyznačování neplatných referencí
-            </li>
-            <li>
-                commenter - multilang support
             </li>
         </ul>
         <b>0.2.1</b>
@@ -164,51 +173,55 @@
     <extensions defaultExtensionNs="com.intellij">
         <fileTypeFactory implementation="ool.idea.plugin.file.OxyTemplateFileTypeFactory"/>
         <lang.parserDefinition language="OxyTemplate"
-                               implementationClass="ool.idea.plugin.file.OxyTemplateParserDefinition"/>
+                               implementationClass="ool.idea.plugin.lang.parser.OxyTemplateParserDefinition"/>
         <lang.parserDefinition language="OxyTemplateInnerJs"
-                               implementationClass="ool.idea.plugin.file.OxyTemplateInnerJsParserDefinition"/>
+                               implementationClass="ool.idea.plugin.lang.parser.OxyTemplateInnerJsParserDefinition"/>
         <editorHighlighterProvider filetype="OxyTemplate"
-                                   implementationClass="ool.idea.plugin.highlighter.OxyTemplateHighlighterProvider"/>
+                                   implementationClass="ool.idea.plugin.editor.highlighter.OxyTemplateHighlighterProvider"/>
         <lang.fileViewProviderFactory language="OxyTemplate"
                                       implementationClass="ool.idea.plugin.file.OxyTemplateFileViewProviderFactory"/>
-        <braceMatcher filetype="OxyTemplate" implementationClass="ool.idea.plugin.highlighter.MatchingElementHighlighter" />
-        <colorSettingsPage implementation="ool.idea.plugin.highlighter.OxyTemplateColorSettingsPage"/>
+        <braceMatcher filetype="OxyTemplate" implementationClass="ool.idea.plugin.editor.highlighter.MatchingElementHighlighter" />
+        <colorSettingsPage implementation="ool.idea.plugin.editor.highlighter.OxyTemplateColorSettingsPage"/>
         <completion.contributor language="OxyTemplate" implementationClass="ool.idea.plugin.editor.completion.ExpressionStatement"/>
         <completion.contributor language="OxyTemplate" implementationClass="ool.idea.plugin.editor.completion.Directive"/>
         <completion.contributor language="OxyTemplate" implementationClass="ool.idea.plugin.editor.completion.UnclosedMacroTag"/>
         <completion.contributor language="OxyTemplate" implementationClass="ool.idea.plugin.editor.completion.XmlMacroParam"/>
         <completion.contributor language="OxyTemplate" implementationClass="ool.idea.plugin.editor.completion.XmlMacroName"/>
-        <completion.contributor language="HTML" implementationClass="ool.idea.plugin.editor.completion.UnclosedTag"/>
-        <completion.contributor language="OxyTemplateInnerJs" implementationClass="ool.idea.plugin.editor.completion.JsIdentifier"/>
+        <completion.contributor language="HTML" implementationClass="ool.idea.plugin.editor.completion.UnclosedTag" order="first"/>
+        <completion.contributor language="HTML" implementationClass="ool.idea.plugin.editor.completion.XmlMacroNamespace" order="first"/>
+        <completion.contributor language="OxyTemplateInnerJs" implementationClass="ool.idea.plugin.editor.completion.JsMacroName" order="first"/>
+        <completion.contributor language="OxyTemplateInnerJs" implementationClass="ool.idea.plugin.editor.completion.JsGlobalVariable"/>
         <typedHandler implementation="ool.idea.plugin.editor.type.BlockMarkerHandler"/>
         <typedHandler implementation="ool.idea.plugin.editor.type.ParamQuoteHandler"/>
         <typedHandler implementation="ool.idea.plugin.editor.type.TagCloseHandler"/>
         <backspaceHandlerDelegate implementation="ool.idea.plugin.editor.type.BackspaceHandler"/>
         <enterHandlerDelegate implementation="ool.idea.plugin.editor.type.EnterHandler"/>
-        <lang.commenter language="OxyTemplate"
-                        implementationClass="ool.idea.plugin.editor.comment.OxyTemplateCommenter"/>
-        <multiLangCommenter implementation="ool.idea.plugin.editor.comment.CommentProvider"/>
+        <lang.commenter language="OxyTemplate" implementationClass="com.intellij.lang.xml.XmlCommenter"/>
+        <multiLangCommenter implementation="ool.idea.plugin.editor.comment.OxyTemplateCommentProvider"/>
         <lang.formatter language="OxyTemplate" implementationClass="ool.idea.plugin.editor.format.OxyTemplateFormatter"/>
         <lang.foldingBuilder language="OxyTemplate" implementationClass="ool.idea.plugin.editor.folding.MatchingTagsAndJsBlock"/>
         <lang.elementManipulator forClass="ool.idea.plugin.psi.DirectiveParamFileReference"
-                                 implementationClass="ool.idea.plugin.editor.FileReferenceManipulator"/>
+                                 implementationClass="ool.idea.plugin.psi.manipulator.DirectiveParamFileReferenceManipulator"/>
+        <lang.elementManipulator forClass="ool.idea.plugin.psi.MacroName"
+                                 implementationClass="ool.idea.plugin.psi.manipulator.MacroNameManipulator"/>
         <localInspection language="OxyTemplate" shortName="UnresolvedInclude" groupName="Oxy template" enabledByDefault="true" level="WARNING"
-                         implementationClass="ool.idea.plugin.editor.inspection.UnresolvedDirectiveIncludeInspection" />
+                         implementationClass="ool.idea.plugin.editor.inspection.UnresolvedIncludeInspection" />
         <localInspection language="OxyTemplate" shortName="NotMatchingTag" groupName="Oxy template" enabledByDefault="true" level="WARNING"
                          implementationClass="ool.idea.plugin.editor.inspection.NotMatchingTagsInspection" />
         <localInspection language="OxyTemplate" shortName="MissingIncludeDirective" groupName="Oxy template" enabledByDefault="true" level="WARNING"
-                         implementationClass="ool.idea.plugin.editor.inspection.MissingIncludeDirectiveInspection" />
+                         implementationClass="ool.idea.plugin.editor.inspection.MissingIncludeInspection" />
         <fileBasedIndex implementation="ool.idea.plugin.file.index.globals.JsGlobalsIndex"/>
         <fileBasedIndex implementation="ool.idea.plugin.file.index.nacros.java.JavaMacroNameIndex"/>
         <fileBasedIndex implementation="ool.idea.plugin.file.index.nacros.js.JsMacroNameIndex"/>
-        <lang.findUsagesProvider language="OxyTemplate" implementationClass="ool.idea.plugin.psi.reference.usages.OxyTemplateFindUsagesProvider"/>
+        <lang.findUsagesProvider language="OxyTemplate" implementationClass="ool.idea.plugin.editor.usages.OxyTemplateFindUsagesProvider"/>
         <psi.referenceContributor implementation="ool.idea.plugin.psi.reference.java.LiteralJsMacroReferenceContributor" order="first"/>
-        <referencesSearch implementation="ool.idea.plugin.psi.reference.usages.OxyTemplateReferenceSearch"/>
-        <!--<documentationProvider implementation="ool.idea.plugin.editor.documentation.MacroNameDocumentationProvider"/>-->
+        <psi.referenceContributor implementation="ool.idea.plugin.psi.reference.java.GlobalVariableDefinitionReferenceContributor" order="first"/>
+        <referencesSearch implementation="ool.idea.plugin.editor.usages.OxyTemplateReferenceSearch"/>
+        <!--<documentationProvider implementation="ool.idea.plugin.editor.documentation.MacroParamDocumentationProvider"/>-->
     </extensions>
     <extensions defaultExtensionNs="JavaScript">
         <predefinedLibraryProvider implementation="ool.idea.plugin.editor.InnerJsPredefinedLibrary"/>
-        <intentionAndInspectionFilter language="OxyTemplate" implementationClass="ool.idea.plugin.editor.inspection.JsIntentionAndInspectionFilter"/>
+        <intentionAndInspectionFilter language="OxyTemplate" implementationClass="ool.idea.plugin.editor.inspection.filter.JsIntentionAndInspectionFilter"/>
         <dialectSpecificHandlersFactory language="OxyTemplateInnerJs" implementationClass="ool.idea.plugin.file.OxyTemplateJsSpecificHandlersFactory"/>
     </extensions>
 

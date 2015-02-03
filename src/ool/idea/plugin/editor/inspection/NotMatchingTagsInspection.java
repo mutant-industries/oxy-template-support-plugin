@@ -37,14 +37,14 @@ public class NotMatchingTagsInspection extends LocalInspectionTool
     public ProblemDescriptor[] checkFile(@NotNull PsiFile file, @NotNull final InspectionManager manager,
                                          final boolean isOnTheFly)
     {
-        final List result = new ArrayList();
+        final List<ProblemDescriptor> result = new ArrayList<ProblemDescriptor>();
 
         file.acceptChildren(new PsiRecursiveElementVisitor()
         {
             @Override
             public void visitElement(PsiElement element)
             {
-                if ((element instanceof MacroTag))
+                if (element instanceof MacroTag)
                 {
                     MacroTag tag = (MacroTag) element;
                     List<MacroName> list = tag.getMacroNameList();
@@ -55,10 +55,11 @@ public class NotMatchingTagsInspection extends LocalInspectionTool
                             || closingTagName.getNextSibling().getNode().getElementType() != OxyTemplateTypes.T_XML_CLOSE_TAG_END)
                     {
                         super.visitElement(element);
+
                         return;
                     }
 
-                    final MacroName openingTagName = list.get(0);
+                    final MacroName openingTagName = tag.getMacroName();
 
                     if( ! openingTagName.getText().equals(closingTagName.getText()))
                     {

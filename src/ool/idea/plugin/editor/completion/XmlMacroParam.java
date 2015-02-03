@@ -5,7 +5,6 @@ import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionProvider;
 import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.codeInsight.completion.CompletionType;
-import com.intellij.codeInsight.completion.InsertHandler;
 import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
@@ -20,6 +19,7 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiRecursiveElementVisitor;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.containers.OrderedSet;
@@ -27,11 +27,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import ool.idea.plugin.editor.completion.insert.TrailingPatternConsumer;
 import ool.idea.plugin.lang.OxyTemplate;
 import ool.idea.plugin.psi.MacroAttribute;
 import ool.idea.plugin.psi.MacroCall;
 import ool.idea.plugin.psi.MacroName;
-import ool.idea.plugin.psi.MacroNameIdentifier;
 import ool.idea.plugin.psi.OxyTemplateTypes;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,8 +42,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class XmlMacroParam extends CompletionContributor
 {
-    private static final Pattern MACRO_PARAM_NAME_PULL = Pattern.compile(".parameter\\(\\\"([a-zA-Z_1-9]+)\\\"[^;]+pullValue\\s*\\(\\s*\\)\\s*;");
-    private static final Pattern MACRO_PARAM_NAME_PULL_MAP = Pattern.compile("event\\s*.getParams\\s*\\(\\s*\\)\\s*\\.get\\s*\\(\\\"([a-zA-Z_1-9]+)\\\"\\);");
+    private static final Pattern INSERT_CONSUME = Pattern.compile("\"\\w+=\"");
 
     public XmlMacroParam()
     {
@@ -56,16 +55,15 @@ public class XmlMacroParam extends CompletionContributor
                                            @NotNull CompletionResultSet resultSet)
                 {
                     MacroCall macroCall = PsiTreeUtil.getParentOfType(parameters.getPosition(), MacroCall.class);
-                    MacroNameIdentifier macroFunction;
                     MacroName macroName;
 
                     if(macroCall == null || (macroName = macroCall.getMacroName()) == null
-                            || (macroFunction = macroName.getMacroFunction()) == null || macroFunction.getReference() == null)
+                            || macroName.getReference() == null)
                     {
                         return;
                     }
 
-                    PsiElement reference = macroFunction.getReference().resolve();
+                    PsiElement reference = macroName.getReference().resolve();
 
                     if(reference == null || ( ! (reference.getLastChild() instanceof JSFunctionExpression) &&
                         ! (reference instanceof PsiClass)))
@@ -89,30 +87,45 @@ public class XmlMacroParam extends CompletionContributor
                             }
                         }
 
-                        resultSet.addElement(LookupElementBuilder.create(param + "=\"\"").withPresentableText(param)
-                            .withInsertHandler(new InsertHandler<LookupElement>()
+                        resultSet.consume(LookupElementBuilder.create(param + "=\"\"").withPresentableText(param)
+                            .withInsertHandler(new TrailingPatternConsumer(INSERT_CONSUME)
                             {
                                 @Override
                                 public void handleInsert(InsertionContext context, LookupElement item)
                                 {
                                     CaretModel caretModel = context.getEditor().getCaretModel();
                                     caretModel.moveToOffset(caretModel.getOffset() - 1);
+
+                                    super.handleInsert(context, item);
                                 }
                             })
                         );
                     }
-                    // ---------------
                 }
             }
         );
     }
 
-
     @Override
     public boolean invokeAutoPopup(@NotNull PsiElement position, char typeChar)
     {
-        return typeChar == ' ' && position.getNode().getElementType() == OxyTemplateTypes.T_MACRO_NAME_IDENTIFIER;
+        if(typeChar == ' ')
+        {
+            IElementType elementType = position.getNode().getElementType();
+
+            if(elementType == OxyTemplateTypes.T_MACRO_NAME || elementType == OxyTemplateTypes.T_MACRO_PARAM_BOUNDARY
+                    && position.getParent().getLastChild().isEquivalentTo(position))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
+
+    // TODO temp code ---------------------------------------------------------------------------------------------
+    private static final Pattern MACRO_PARAM_NAME_PULL = Pattern.compile(".parameter\\(\\\"([a-zA-Z_1-9]+)\\\"[^;]+pullValue\\s*\\(\\s*\\)\\s*;");
+    private static final Pattern MACRO_PARAM_NAME_PULL_MAP = Pattern.compile("event\\s*.getParams\\s*\\(\\s*\\)\\s*\\.get\\s*\\(\\\"([a-zA-Z_1-9]+)\\\"\\);");
 
     @NotNull
     private static List<String> getMacroParamNameSuggestions(@NotNull PsiClass psiClass)
@@ -192,5 +205,6 @@ public class XmlMacroParam extends CompletionContributor
 
         return params;
     }
+    // ------------------------------------------------------------------------------------------------------------
 
 }

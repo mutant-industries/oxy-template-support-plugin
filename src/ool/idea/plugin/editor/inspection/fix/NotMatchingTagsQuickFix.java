@@ -2,10 +2,9 @@ package ool.idea.plugin.editor.inspection.fix;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.TextRange;
+import com.intellij.psi.impl.source.resolve.reference.impl.CachingReference;
 import ool.idea.plugin.psi.MacroName;
 import org.jetbrains.annotations.NotNull;
 
@@ -43,16 +42,8 @@ public class NotMatchingTagsQuickFix implements LocalQuickFix
     @Override
     public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor)
     {
-        Editor editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
-
-        if(editor == null)
-        {
-            return;
-        }
-
-        Document document = editor.getDocument();
-        document.replaceString(toBeFixed.getNode().getStartOffset(),
-                toBeFixed.getNode().getStartOffset() + toBeFixed.getNode().getTextLength(), replacement.getText());
+        CachingReference.getManipulator(toBeFixed)
+                .handleContentChange(toBeFixed, TextRange.create(0, toBeFixed.getTextLength()), replacement.getText());
     }
 
 }

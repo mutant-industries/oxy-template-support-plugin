@@ -60,7 +60,7 @@ public class JavaMacroNameIndex extends ScalarIndexExtension<String>
     @Override
     public int getVersion()
     {
-        return 1;
+        return 0;
     }
 
 }

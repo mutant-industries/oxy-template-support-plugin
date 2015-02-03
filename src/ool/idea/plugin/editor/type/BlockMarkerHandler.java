@@ -6,11 +6,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.FileViewProvider;
-import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import ool.idea.plugin.file.OxyTemplateFileViewProvider;
-import ool.idea.plugin.file.OxyTemplateParserDefinition;
+import ool.idea.plugin.lang.parser.OxyTemplateParserDefinition;
 import ool.idea.plugin.lang.OxyTemplate;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,29 +21,24 @@ import org.jetbrains.annotations.NotNull;
 public class BlockMarkerHandler extends TypedHandlerDelegate
 {
     @Override
-    public TypedHandlerDelegate.Result charTyped(char c, Project project, @NotNull Editor editor, @NotNull PsiFile file)
+    public Result charTyped(char c, Project project, @NotNull Editor editor, @NotNull PsiFile file)
     {
         PsiElement elementAt;
         FileViewProvider provider = file.getViewProvider();
 
         if (!(provider instanceof OxyTemplateFileViewProvider))
         {
-            return super.charTyped(c, project, editor, file);
+            return Result.CONTINUE;
         }
 
         int offset = editor.getCaretModel().getOffset();
-
-        if (offset > editor.getDocument().getTextLength())
-        {
-            return TypedHandlerDelegate.Result.CONTINUE;
-        }
 
         Pair delimiters = Pair.create("<%", "%>");
         int openBraceLength = ((String) delimiters.first).length();
 
         if (offset < openBraceLength)
         {
-            return TypedHandlerDelegate.Result.CONTINUE;
+            return Result.CONTINUE;
         }
 
         String previousChars = editor.getDocument().getText(new TextRange(offset - openBraceLength, offset));
@@ -54,14 +48,13 @@ public class BlockMarkerHandler extends TypedHandlerDelegate
         {
             if(elementAt != null && elementAt.getText().contains("%>"))
             {
-                return TypedHandlerDelegate.Result.CONTINUE;
+                return Result.CONTINUE;
             }
 
-            PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
-            editor.getDocument().insertString(offset, " " + delimiters.second);
+            editor.getDocument().insertString(offset, delimiters.second.toString());
         }
 
-        return TypedHandlerDelegate.Result.CONTINUE;
+        return Result.CONTINUE;
     }
 
 }

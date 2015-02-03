@@ -1,6 +1,5 @@
 package ool.idea.plugin.psi.reference.java;
 
-import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiExpression;
@@ -13,8 +12,7 @@ import com.intellij.psi.PsiReferenceProvider;
 import com.intellij.psi.PsiReferenceRegistrar;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
-import java.util.List;
-import ool.idea.plugin.file.index.OxyTemplateIndexUtil;
+import ool.idea.plugin.psi.reference.MacroReferenceSet;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -26,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 public class LiteralJsMacroReferenceContributor extends PsiReferenceContributor
 {
     @Override
-    public void registerReferenceProviders(PsiReferenceRegistrar registrar)
+    public void registerReferenceProviders(@NotNull PsiReferenceRegistrar registrar)
     {
         registrar.registerReferenceProvider(PlatformPatterns.psiElement(PsiLiteralExpression.class),
             new PsiReferenceProvider()
@@ -38,17 +36,19 @@ public class LiteralJsMacroReferenceContributor extends PsiReferenceContributor
                     PsiLiteralExpression literalExpression = (PsiLiteralExpression) element;
                     PsiMethodCallExpression callExpression;
 
-                    if( ! (literalExpression.getValue() instanceof String)) return new PsiReference[0];
+                    if( ! (literalExpression.getValue() instanceof String))
+                    {
+                        return PsiReference.EMPTY_ARRAY;
+                    }
 
-                    String text = (String) literalExpression.getValue();
-
-                    if((callExpression = PsiTreeUtil.getParentOfType(literalExpression, PsiMethodCallExpression.class)) != null)
+                    if((callExpression = PsiTreeUtil
+                            .getParentOfType(literalExpression, PsiMethodCallExpression.class)) != null)
                     {
                         PsiExpression[] parameters = callExpression.getArgumentList().getExpressions();
                         PsiReferenceExpression expression = callExpression.getMethodExpression();
                         String callText = expression.getText();
 
-                        if("partialPageUpdater.update".equals(callText))
+                        if(callText.contains("ageUpdater.update"))  // TODO type check
                         {
                             if(parameters.length > 0 && literalExpression.isEquivalentTo(parameters[0]))
                             {
@@ -56,21 +56,12 @@ public class LiteralJsMacroReferenceContributor extends PsiReferenceContributor
                             }
                             else if(parameters.length > 1 && literalExpression.isEquivalentTo(parameters[1]))
                             {
-                                List<JSElement> jsMacroReferences;
-
-                                 if((jsMacroReferences = OxyTemplateIndexUtil.getJsMacroNameReferences(text,
-                                         literalExpression.getProject())).size() == 1)
-                                {
-                                    return new PsiReference[]{new LiteralJsMacroReference(literalExpression,
-                                            jsMacroReferences.get(0))};
-                                }
-
-                                return new PsiReference[]{new LiteralJsMacroReference(literalExpression, null)};
+                                return new MacroReferenceSet(literalExpression).getAllReferences();
                             }
                         }
                     }
 
-                    return new PsiReference[0];
+                    return PsiReference.EMPTY_ARRAY;
                 }
             }
         );

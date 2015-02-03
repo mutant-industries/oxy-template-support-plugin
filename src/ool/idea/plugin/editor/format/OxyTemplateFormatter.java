@@ -29,7 +29,7 @@ public class OxyTemplateFormatter extends AbstractTemplateLanguageFormattingMode
     @Override
     public boolean isOuterLanguageElement(PsiElement psiElement)
     {
-        return  psiElement.getNode().getElementType() == OxyTemplateTypes.T_OUTER_TEMPLATE_ELEMENT;
+        return psiElement.getNode().getElementType() == OxyTemplateTypes.T_OUTER_TEMPLATE_ELEMENT;
     }
 
     @Override

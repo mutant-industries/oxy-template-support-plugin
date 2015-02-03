@@ -10,7 +10,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiFile;
 import ool.idea.plugin.file.OxyTemplateFileViewProvider;
-import ool.idea.plugin.file.OxyTemplateParserDefinition;
+import ool.idea.plugin.lang.parser.OxyTemplateParserDefinition;
 import ool.idea.plugin.lang.OxyTemplate;
 import ool.idea.plugin.psi.DirectiveStatement;
 import ool.idea.plugin.psi.MacroAttribute;
@@ -29,16 +29,9 @@ public class ParamQuoteHandler extends TypedHandlerDelegate
     public Result beforeCharTyped(char c, Project project, @NotNull Editor editor, @NotNull PsiFile file, FileType fileType)
     {
         FileViewProvider provider = file.getViewProvider();
+        int offset;
 
-        if (!(provider instanceof OxyTemplateFileViewProvider))
-        {
-            return super.beforeCharTyped(c, project, editor, file, fileType);
-        }
-
-        int offset = editor.getCaretModel().getOffset();
-
-        if (offset > editor.getDocument().getTextLength()
-                || offset < 1)
+        if (!(provider instanceof OxyTemplateFileViewProvider) || (offset = editor.getCaretModel().getOffset()) < 1)
         {
             return Result.CONTINUE;
         }

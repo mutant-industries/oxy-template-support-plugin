@@ -2,16 +2,15 @@ package ool.idea.plugin.editor.completion;
 
 import com.intellij.codeInsight.completion.CompletionContributor;
 import com.intellij.codeInsight.completion.CompletionParameters;
-import com.intellij.codeInsight.completion.CompletionProvider;
 import com.intellij.codeInsight.completion.CompletionResultSet;
-import com.intellij.codeInsight.completion.CompletionType;
+import com.intellij.codeInsight.completion.CompletionUtilCore;
+import com.intellij.codeInsight.completion.impl.CamelHumpMatcher;
 import com.intellij.codeInsight.lookup.AutoCompletionPolicy;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.ProcessingContext;
+import java.util.regex.Pattern;
+import ool.idea.plugin.editor.completion.insert.TrailingPatternConsumer;
 import ool.idea.plugin.editor.type.TagCloseHandler;
-import ool.idea.plugin.lang.OxyTemplate;
 import ool.idea.plugin.psi.MacroName;
 import ool.idea.plugin.psi.OxyTemplateTypes;
 import org.jetbrains.annotations.NotNull;
@@ -23,33 +22,30 @@ import org.jetbrains.annotations.NotNull;
  */
 public class UnclosedMacroTag extends CompletionContributor
 {
-    public UnclosedMacroTag()
+    private static final Pattern INSERT_CONSUME = Pattern.compile("[A-Za-z0-9_]*(\\.[A-Za-z][A-Za-z0-9_]*)*>");
+
+    @Override
+    public void fillCompletionVariants(@NotNull CompletionParameters parameters, @NotNull CompletionResultSet result)
     {
-        extend(CompletionType.BASIC, PlatformPatterns.psiElement(OxyTemplateTypes.T_MACRO_NAME_IDENTIFIER).withLanguage(OxyTemplate.INSTANCE),
-            new CompletionProvider<CompletionParameters>()
-            {
-                @Override
-                public void addCompletions(@NotNull CompletionParameters parameters,
-                                           ProcessingContext context,
-                                           @NotNull CompletionResultSet resultSet)
-                {
-                    MacroName elementAt = PsiTreeUtil.getParentOfType(parameters.getPosition(), MacroName.class);
+        MacroName elementAt;
 
-                    if(elementAt.getPrevSibling().getPrevSibling().getNode().getElementType() == OxyTemplateTypes.T_XML_CLOSE_TAG_START)
-                    {
-                        String macroTagToBeClosedName = TagCloseHandler.getPreviousUnclosedMacroTagName(elementAt.getPrevSibling());
+        if(parameters.getPosition().getNode().getElementType() != OxyTemplateTypes.T_MACRO_NAME
+                || (elementAt = PsiTreeUtil.getParentOfType(parameters.getPosition(), MacroName.class)) == null
+                || elementAt.getPrevSibling().getPrevSibling().getNode().getElementType() != OxyTemplateTypes.T_XML_CLOSE_TAG_START)
+        {
+            return;
+        }
 
-                        if (macroTagToBeClosedName != null)
-                        {
-                            resultSet.addElement(LookupElementBuilder.create(macroTagToBeClosedName + ">")
-                                    .withPresentableText("m:" + macroTagToBeClosedName)
-//                                    .withInsertHandler(new LineFormattingInsertHandler())
-                                    .withAutoCompletionPolicy(AutoCompletionPolicy.GIVE_CHANCE_TO_OVERWRITE));
-                        }
-                    }
-                }
-            }
-        );
+        String macroTagToBeClosedName = TagCloseHandler.getPreviousUnclosedMacroTagName(elementAt.getPrevSibling());
+
+        if (macroTagToBeClosedName != null)
+        {
+            result.withPrefixMatcher(new CamelHumpMatcher(elementAt.getText().replace(CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED, "")))
+                .consume(LookupElementBuilder.create(macroTagToBeClosedName + ">")
+                .withPresentableText("m:" + macroTagToBeClosedName)
+                .withInsertHandler(new TrailingPatternConsumer(INSERT_CONSUME))
+                .withAutoCompletionPolicy(AutoCompletionPolicy.GIVE_CHANCE_TO_OVERWRITE));
+        }
     }
 
 }

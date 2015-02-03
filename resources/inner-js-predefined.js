@@ -27,7 +27,6 @@ var out = {
      */
     print: function(content){},
 
-    println: function(){},
     /**
      * @param {String}content
      */

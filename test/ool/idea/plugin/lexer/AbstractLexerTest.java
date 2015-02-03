@@ -2,7 +2,7 @@ package ool.idea.plugin.lexer;
 
 import com.intellij.psi.tree.IElementType;
 import java.io.IOException;
-import ool.idea.plugin.lang.OxyTemplateLexerAdapter;
+import ool.idea.plugin.lang.lexer.OxyTemplateLexerAdapter;
 import org.junit.Before;
 
 /**

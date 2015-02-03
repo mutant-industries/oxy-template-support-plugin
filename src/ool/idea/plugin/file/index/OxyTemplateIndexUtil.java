@@ -1,6 +1,5 @@
 package ool.idea.plugin.file.index;
 
-import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -14,10 +13,12 @@ import com.intellij.psi.search.ProjectScope;
 import com.intellij.util.indexing.FileBasedIndex;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
-import ool.idea.plugin.editor.completion.lookupElement.BaseLookupElementProvider;
+import java.util.Map;
 import ool.idea.plugin.file.index.collector.JavaMacroCollector;
 import ool.idea.plugin.file.index.collector.JsMacroCollector;
+import ool.idea.plugin.file.index.collector.MacroCollector;
 import ool.idea.plugin.file.index.globals.JsGlobalsIndex;
 import ool.idea.plugin.file.index.nacros.java.JavaMacroNameIndex;
 import ool.idea.plugin.file.index.nacros.js.JsMacroNameIndex;
@@ -36,13 +37,13 @@ public class OxyTemplateIndexUtil
     public static List<PsiElement> getMacroNameReferences(String macroName, @NotNull Project project)
     {
         List<PsiElement> references = new ArrayList<PsiElement>();
-        PsiClass identifier;
+        PsiClass psiClass;
 
         references.addAll(getJsMacroNameReferences(macroName, project));
 
-        if((identifier = getJavaMacroNameReference(macroName, project)) != null)
+        if((psiClass = getJavaMacroNameReference(macroName, project)) != null)
         {
-            references.add(identifier);
+            references.add(psiClass);
         }
 
         return references;
@@ -56,7 +57,7 @@ public class OxyTemplateIndexUtil
         JavaMacroCollector processor = new JavaMacroCollector(project);
 
         for(VirtualFile file : index.getContainingFiles(JavaMacroNameIndex.INDEX_ID,
-                macroName, allScope))
+                macroName, allScope))   // single iteration
         {
             index.processValues(JavaMacroNameIndex.INDEX_ID, macroName, file, processor, allScope);
 
@@ -90,26 +91,45 @@ public class OxyTemplateIndexUtil
     {
         final GlobalSearchScope allScope = ProjectScope.getProjectScope(project);
         FileBasedIndex index = FileBasedIndex.getInstance();
-        JsMacroCollector processor = new JsMacroCollector(project);
+        MacroCollector<JSElement, JsMacroNameIndexedElement> processor = new JsMacroCollector(project);
 
         index.processValues(JsMacroNameIndex.INDEX_ID, macroName, file, processor, allScope);
 
-        return processor.getResult();
+        return processor.getResult();   // size <= 1
     }
 
-    public static void addMacroNameCompletions(String namespace, @NotNull Project project, @NotNull CompletionResultSet resultSet,
-                                               @NotNull BaseLookupElementProvider lookupElementProvider)
+//    @NotNull
+//    public static Map<String, PsiElement> getMacros(@NotNull Project project)
+//    {
+//        return getMacros(project, null);
+//    }
+
+//    @NotNull
+//    public static Map<String, JSElement> getJsMacros(@NotNull Project project)
+//    {
+//        return getJsMacros(project, null);
+//    }
+
+    @NotNull
+    public static Map<String, PsiElement> getMacros(@NotNull Project project, @Nullable Collection<VirtualFile> restrictFiles)
+    {
+        Map<String, PsiElement> result = new HashMap<String, PsiElement>();
+        result.putAll(getJavaMacros(project));
+        result.putAll(getJsMacros(project, restrictFiles));
+
+        return result;
+    }
+
+    @NotNull
+    public static Map<String, PsiClass> getJavaMacros(@NotNull Project project)
     {
         final GlobalSearchScope allScope = ProjectScope.getProjectScope(project);
         FileBasedIndex index = FileBasedIndex.getInstance();
 
+        Map<String, PsiClass> result = new HashMap<String, PsiClass>();
+
         for (String key : index.getAllKeys(JavaMacroNameIndex.INDEX_ID, project))
         {
-            if ( ! key.startsWith(namespace))
-            {
-                continue;
-            }
-
             JavaMacroCollector processor = new JavaMacroCollector(project);
 
             for(VirtualFile file : index.getContainingFiles(JavaMacroNameIndex.INDEX_ID, key, allScope))    // single iter
@@ -119,33 +139,52 @@ public class OxyTemplateIndexUtil
 
             if(processor.getResult().size() == 1) // always true
             {
-                resultSet.addElement(lookupElementProvider.create(key.replace(namespace, ""), processor.getResult().get(0)));
+                result.put(key, processor.getResult().get(0));
             }
         }
+
+        return result;
+    }
+
+    @NotNull
+    public static Map<String, JSElement> getJsMacros(@NotNull Project project,
+                                                     @Nullable Collection<VirtualFile> restrictFiles)
+    {
+        return getJsSymbols(project, true, false, restrictFiles);
+    }
+
+    @NotNull
+    public static Map<String, JSElement> getJsSymbols(@NotNull Project project, boolean macros, boolean namespaces,
+                                                     @Nullable Collection<VirtualFile> restrictFiles)
+    {
+        final GlobalSearchScope allScope = ProjectScope.getProjectScope(project);
+        FileBasedIndex index = FileBasedIndex.getInstance();
+
+        Map<String, JSElement> result = new HashMap<String, JSElement>();
 
         for (String key : index.getAllKeys(JsMacroNameIndex.INDEX_ID, project))
         {
-            String lookup = key.replace(namespace, "");
-            JsMacroCollector processor = new JsMacroCollector(project);
+            MacroCollector<JSElement, JsMacroNameIndexedElement> collector = new JsMacroCollector(project);
 
             for (JsMacroNameIndexedElement macroName : index.getValues(JsMacroNameIndex.INDEX_ID, key, allScope))
             {
-                if ( ! macroName.isMacro() || ! key.startsWith(namespace))
+                if(macroName.isMacro() && macros || ! macroName.isMacro() && namespaces)
                 {
-                    continue;
-                }
-
-                for(VirtualFile file : index.getContainingFiles(JsMacroNameIndex.INDEX_ID, key, allScope))
-                {
-                    index.processValues(JsMacroNameIndex.INDEX_ID, key, file, processor, allScope);
+                    for(VirtualFile file : restrictFiles != null ? restrictFiles :
+                            index.getContainingFiles(JsMacroNameIndex.INDEX_ID, key, allScope))
+                    {
+                        index.processValues(JsMacroNameIndex.INDEX_ID, key, file, collector, allScope);
+                    }
                 }
             }
 
-            for(JSElement element : processor.getResult())
+            for(JSElement element : collector.getResult())
             {
-                resultSet.addElement(lookupElementProvider.create(lookup, element));
+                result.put(key, element);
             }
         }
+
+        return result;
     }
 
     @Nullable
@@ -179,15 +218,6 @@ public class OxyTemplateIndexUtil
         }
 
         return null;
-    }
-
-    public static void addGlobalVariableCompletions(@NotNull Project project, @NotNull CompletionResultSet resultSet,
-                                                    @NotNull BaseLookupElementProvider lookupElementProvider)
-    {
-        for (String key : FileBasedIndex.getInstance().getAllKeys(JsGlobalsIndex.INDEX_ID, project))
-        {
-            resultSet.addElement(lookupElementProvider.create(key, null));
-        }
     }
 
 }

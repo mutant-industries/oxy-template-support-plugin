@@ -17,7 +17,7 @@ import com.intellij.psi.formatter.xml.XmlFormattingPolicy;
 import com.intellij.psi.html.HtmlTag;
 import com.intellij.webcore.template.formatter.TemplateLanguageBlock;
 import java.util.List;
-import ool.idea.plugin.file.OxyTemplateParserDefinition;
+import ool.idea.plugin.lang.parser.OxyTemplateParserDefinition;
 import ool.idea.plugin.lang.OxyTemplateInnerJs;
 import ool.idea.plugin.psi.BlockStatement;
 import ool.idea.plugin.psi.MacroAttribute;
@@ -110,7 +110,7 @@ class OxyTemplateLanguageBlock extends TemplateLanguageBlock
 
     @NotNull
     @Override
-    protected Indent getChildIndent(ASTNode astNode)
+    protected Indent getChildIndent(@NotNull ASTNode astNode)
     {
         if (astNode.getPsi() instanceof MacroAttribute
                 || astNode.getElementType() == OxyTemplateTypes.T_XML_UNPAIRED_TAG_END)

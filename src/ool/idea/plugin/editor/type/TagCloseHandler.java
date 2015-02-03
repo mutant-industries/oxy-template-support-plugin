@@ -11,7 +11,7 @@ import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import ool.idea.plugin.file.OxyTemplateFileViewProvider;
-import ool.idea.plugin.file.OxyTemplateParserDefinition;
+import ool.idea.plugin.lang.parser.OxyTemplateParserDefinition;
 import ool.idea.plugin.lang.OxyTemplate;
 import ool.idea.plugin.psi.MacroAttribute;
 import ool.idea.plugin.psi.MacroName;
@@ -32,17 +32,10 @@ public class TagCloseHandler extends TypedHandlerDelegate
     public Result beforeCharTyped(char c, Project project, @NotNull Editor editor, @NotNull PsiFile file, FileType fileType)
     {
         FileViewProvider provider = file.getViewProvider();
+        int offset;
         PsiElement elementAt;
 
-        if (!(provider instanceof OxyTemplateFileViewProvider))
-        {
-            return super.beforeCharTyped(c, project, editor, file, fileType);
-        }
-
-        int offset = editor.getCaretModel().getOffset();
-
-        if (offset > editor.getDocument().getTextLength()
-                || offset < 4)
+        if (! (provider instanceof OxyTemplateFileViewProvider) || (offset = editor.getCaretModel().getOffset()) < 1)
         {
             return Result.CONTINUE;
         }
@@ -84,13 +77,6 @@ public class TagCloseHandler extends TypedHandlerDelegate
         return Result.CONTINUE;
     }
 
-    /**
-     * <m:foo.bar [param="value"] _
-     *
-     * @param elementAt
-     * @return
-     */
-    @Nullable
     private static boolean isOpenMacroEnd(@Nullable final PsiElement elementAt)
     {
         if(elementAt == null)
@@ -100,17 +86,19 @@ public class TagCloseHandler extends TypedHandlerDelegate
 
         PsiElement psiElement;
 
+        // <m:foo.bar [param="value"] _
         if(OxyTemplateParserDefinition.WHITE_SPACES.contains(elementAt.getNode().getElementType()))
         {
             psiElement = elementAt.getPrevSibling();
 
-            if(psiElement instanceof PsiErrorElement && (psiElement = psiElement.getPrevSibling()) instanceof MacroUnpairedTag
+            if(psiElement instanceof MacroUnpairedTag
                     && psiElement.getLastChild().getNode().getElementType() != OxyTemplateTypes.T_XML_UNPAIRED_TAG_END)
             {
                 return true;
             }
         }
-        else if(PsiTreeUtil.getParentOfType(elementAt, MacroName.class) != null)
+        // <m:foo.bar_
+        else if(elementAt.getNode().getElementType() == OxyTemplateTypes.T_MACRO_NAME)
         {
             if((psiElement = PsiTreeUtil.getParentOfType(elementAt, MacroUnpairedTag.class)) != null
                     && psiElement.getLastChild() instanceof PsiErrorElement
@@ -119,6 +107,7 @@ public class TagCloseHandler extends TypedHandlerDelegate
                 return true;
             }
         }
+        // <m:foo.bar param="value"_
         else if(elementAt.getNode().getElementType() == OxyTemplateTypes.T_MACRO_PARAM_BOUNDARY)
         {
             if(elementAt.getParent().getLastChild().isEquivalentTo(elementAt)
@@ -129,7 +118,7 @@ public class TagCloseHandler extends TypedHandlerDelegate
                 {
                     return true;
                 }
-                else if(psiElement.getLastChild() instanceof MacroAttribute // parser fix
+                else if(psiElement.getLastChild() instanceof MacroAttribute // parser fix - attribute missing value
                         && psiElement.getLastChild().isEquivalentTo(elementAt.getParent()))
                 {
                     return true;
@@ -140,6 +129,11 @@ public class TagCloseHandler extends TypedHandlerDelegate
         return false;
     }
 
+    /**
+     *
+     * @param elementAt anything between opening and closing tag name
+     * @return
+     */
     @Nullable
     public static String getPreviousUnclosedMacroTagName(@Nullable final PsiElement elementAt)
     {

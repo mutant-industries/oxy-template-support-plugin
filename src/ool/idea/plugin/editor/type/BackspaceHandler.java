@@ -1,14 +1,14 @@
 package ool.idea.plugin.editor.type;
 
 import com.intellij.codeInsight.editorActions.BackspaceHandlerDelegate;
-import com.intellij.lang.StdLanguages;
+import com.intellij.lang.html.HTMLLanguage;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiFile;
 import ool.idea.plugin.file.OxyTemplateFileViewProvider;
-import static ool.idea.plugin.file.OxyTemplateParserDefinition.PARAMETER_QUOTES;
+import static ool.idea.plugin.lang.parser.OxyTemplateParserDefinition.PARAMETER_QUOTES;
 import ool.idea.plugin.lang.OxyTemplate;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,7 +24,7 @@ public class BackspaceHandler extends BackspaceHandlerDelegate
     {
         int offset = editor.getCaretModel().getOffset();
 
-        if (c == '"' && isBetweenParameterQuotes(file, offset))
+        if (editor.getDocument().getTextLength() != offset && c == '"' && isBetweenParameterQuotes(file, offset))
         {
             editor.getDocument().deleteString(offset, offset + 1);
         }
@@ -51,7 +51,7 @@ public class BackspaceHandler extends BackspaceHandlerDelegate
         }
 
         return isParameterQuote(provider.findElementAt(offset - 1, OxyTemplate.INSTANCE))
-                || isParameterQuote(provider.findElementAt(offset - 1, StdLanguages.HTML));
+                || isParameterQuote(provider.findElementAt(offset - 1, HTMLLanguage.INSTANCE));
     }
 
     /**

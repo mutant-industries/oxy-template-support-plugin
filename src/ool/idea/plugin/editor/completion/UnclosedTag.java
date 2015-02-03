@@ -7,12 +7,13 @@ import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.lookup.AutoCompletionPolicy;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.lang.StdLanguages;
-import com.intellij.patterns.PlatformPatterns;
+import static com.intellij.patterns.PlatformPatterns.psiElement;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.XmlTokenType;
 import com.intellij.util.ProcessingContext;
+import java.util.regex.Pattern;
+import ool.idea.plugin.editor.completion.insert.TrailingPatternConsumer;
 import ool.idea.plugin.editor.type.TagCloseHandler;
 import ool.idea.plugin.file.OxyTemplateFileViewProvider;
 import ool.idea.plugin.lang.OxyTemplate;
@@ -25,9 +26,11 @@ import org.jetbrains.annotations.NotNull;
  */
 public class UnclosedTag extends CompletionContributor
 {
+    private static final Pattern INSERT_CONSUME = Pattern.compile("(\\w+:)?[A-Za-z][A-Za-z0-9_]*(\\.[A-Za-z][A-Za-z0-9_]*)*>");
+
     public UnclosedTag()
     {
-        extend(CompletionType.BASIC, PlatformPatterns.psiElement(XmlTokenType.XML_NAME),
+        extend(CompletionType.BASIC, psiElement(XmlTokenType.XML_NAME).afterSibling(psiElement(XmlTokenType.XML_END_TAG_START)),
             new CompletionProvider<CompletionParameters>()
             {
                 @Override
@@ -45,23 +48,15 @@ public class UnclosedTag extends CompletionContributor
                     int offset = parameters.getOffset();
 
                     PsiElement elementAt = provider.findElementAt(offset - 1, OxyTemplate.INSTANCE);
-                    PsiElement htmlElementAt = provider.findElementAt(offset - 1, StdLanguages.HTML);
 
-                    if(htmlElementAt.getNode().getElementType() == XmlTokenType.XML_END_TAG_START)
-                    {
-                        String macroTagToBeClosedName = TagCloseHandler.getPreviousUnclosedMacroTagName(elementAt);
+                    String macroTagToBeClosedName = TagCloseHandler.getPreviousUnclosedMacroTagName(elementAt);
 
-                        if(macroTagToBeClosedName != null)
-                        {
-                            resultSet.addElement(LookupElementBuilder.create("m:" + macroTagToBeClosedName + ">")
-                                    .withPresentableText("m:" + macroTagToBeClosedName)
-//                                    .withInsertHandler(new LineFormattingInsertHandler())
-                                    .withAutoCompletionPolicy(AutoCompletionPolicy.GIVE_CHANCE_TO_OVERWRITE));
-                        }
-                    }
-                    else
+                    if(macroTagToBeClosedName != null)
                     {
-                        resultSet.addElement(LookupElementBuilder.create("m:"));
+                        resultSet.consume(LookupElementBuilder.create("m:" + macroTagToBeClosedName + ">")
+                            .withPresentableText("m:" + macroTagToBeClosedName)
+                            .withInsertHandler(new TrailingPatternConsumer(INSERT_CONSUME))
+                            .withAutoCompletionPolicy(AutoCompletionPolicy.GIVE_CHANCE_TO_OVERWRITE));
                     }
                 }
             }

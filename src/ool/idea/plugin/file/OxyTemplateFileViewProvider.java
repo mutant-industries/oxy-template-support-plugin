@@ -3,7 +3,7 @@ package ool.idea.plugin.file;
 import com.intellij.lang.Language;
 import com.intellij.lang.LanguageParserDefinitions;
 import com.intellij.lang.ParserDefinition;
-import com.intellij.lang.StdLanguages;
+import com.intellij.lang.html.HTMLLanguage;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -41,16 +41,17 @@ public class OxyTemplateFileViewProvider extends MultiplePsiFilesPerDocumentFile
         implements ConfigurableTemplateLanguageFileViewProvider
 {
     @NotNull
-    private final PsiManager myManager;
-    @NotNull
-    private final VirtualFile myVirtualFile;
+    private final PsiManager psiManager;
 
-    public OxyTemplateFileViewProvider(PsiManager manager, VirtualFile file, boolean physical)
+    @NotNull
+    private final VirtualFile virtualFile;
+
+    public OxyTemplateFileViewProvider(@NotNull PsiManager manager, @NotNull VirtualFile file, boolean physical)
     {
         super(manager, file, physical);
 
-        myManager = manager;
-        myVirtualFile = file;
+        psiManager = manager;
+        virtualFile = file;
     }
 
     private Language getTemplateDataLanguage(PsiManager manager, VirtualFile file)
@@ -84,7 +85,7 @@ public class OxyTemplateFileViewProvider extends MultiplePsiFilesPerDocumentFile
     @Override
     public Language getTemplateDataLanguage()
     {
-        return getTemplateDataLanguage(myManager, myVirtualFile);
+        return getTemplateDataLanguage(psiManager, virtualFile);
     }
 
     @Override
@@ -100,7 +101,7 @@ public class OxyTemplateFileViewProvider extends MultiplePsiFilesPerDocumentFile
         return new THashSet<Language>(Arrays.asList(new Language[]{
                         OxyTemplate.INSTANCE,
                         OxyTemplateInnerJs.INSTANCE,
-                        StdLanguages.HTML}
+                        HTMLLanguage.INSTANCE}
         ));
     }
 
@@ -108,16 +109,19 @@ public class OxyTemplateFileViewProvider extends MultiplePsiFilesPerDocumentFile
     protected PsiFile createFile(@NotNull Language lang)
     {
         ParserDefinition parserDefinition = LanguageParserDefinitions.INSTANCE.forLanguage(lang);
+
         if (parserDefinition == null)
         {
             return null;
         }
 
-        Language templateDataLanguage = getTemplateDataLanguage(myManager, myVirtualFile);
+        Language templateDataLanguage = getTemplateDataLanguage(psiManager, virtualFile);
+
         if (lang == templateDataLanguage)
         {
             PsiFileImpl file = (PsiFileImpl) parserDefinition.createFile(this);
             file.setContentElementType(new TemplateDataElementType("TEMPLATE_MARKUP", OxyTemplate.INSTANCE, OxyTemplateTypes.T_TEMPLATE_HTML_CODE, OxyTemplateTypes.T_OUTER_TEMPLATE_ELEMENT));
+
             return file;
         }
         else if (lang == OxyTemplate.INSTANCE)
@@ -129,14 +133,15 @@ public class OxyTemplateFileViewProvider extends MultiplePsiFilesPerDocumentFile
             PsiFileImpl file = (PsiFileImpl) parserDefinition.createFile(this);
             file.setContentElementType(new TemplateDataElementType("TEMPLATE_JS", OxyTemplateInnerJs.INSTANCE, OxyTemplateTypes.T_TEMPLATE_JAVASCRIPT_CODE, OxyTemplateTypes.T_INNER_TEMPLATE_ELEMENT)
             {
-                private final Logger LOG = Logger.getInstance(getClass());
+                private final Logger logger = Logger.getInstance(getClass());
 
-                private final ThreadLocal<LinkedList<Integer>> ourOffsets = new ThreadLocal();
+                private final LinkedList<Integer> offsets = new LinkedList<Integer>();
 
                 @Override
                 protected CharSequence createTemplateText(CharSequence buf, Lexer lexer)
                 {
-                    ourOffsets.set(new LinkedList());
+                    offsets.clear();
+
                     return super.createTemplateText(buf, lexer);
                 }
 
@@ -144,14 +149,16 @@ public class OxyTemplateFileViewProvider extends MultiplePsiFilesPerDocumentFile
                 protected void appendCurrentTemplateToken(StringBuilder result, CharSequence buf, Lexer lexer)
                 {
                     super.appendCurrentTemplateToken(result, buf, lexer);
-                    ((LinkedList) ourOffsets.get()).add(Integer.valueOf(result.length()));
+
+                    offsets.add(result.length());
+
                     result.append("\n");
+
                 }
 
                 @Override
                 protected void prepareParsedTemplateFile(final FileElement root)
                 {
-                    final LinkedList offsets = (LinkedList) ourOffsets.get();
                     root.acceptTree(new RecursiveTreeElementVisitor()
                     {
                         private int shift = 0;
@@ -165,41 +172,49 @@ public class OxyTemplateFileViewProvider extends MultiplePsiFilesPerDocumentFile
                         @Override
                         public void visitLeaf(LeafElement leaf)
                         {
-                            if ((offsets.isEmpty()) || (this.shift + leaf.getTextOffset() + leaf.getTextLength() < ((Integer) offsets.peekFirst()).intValue()))
+                            if (offsets.isEmpty() || (this.shift + leaf.getTextOffset() + leaf.getTextLength() < offsets.peekFirst()))
                             {
                                 return;
                             }
 
-                            while ((!offsets.isEmpty()) && ((Integer) offsets.peekFirst() < this.shift + leaf.getTextOffset()))
+                            while ( ! offsets.isEmpty() && offsets.peekFirst() < this.shift + leaf.getTextOffset())
                             {
                                 offsets.pollFirst();
                             }
 
                             String newText = leaf.getText();
                             int localShift = 0;
-                            while ((!offsets.isEmpty()) && ((Integer) offsets.peekFirst() < this.shift + leaf.getTextOffset() + leaf.getTextLength()))
+
+                            while ( ! offsets.isEmpty() && offsets.peekFirst() < this.shift + leaf.getTextOffset() + leaf.getTextLength())
                             {
-                                int index = (Integer) offsets.pollFirst() - (this.shift + localShift + leaf.getTextOffset());
+                                int index = offsets.pollFirst() - (this.shift + localShift + leaf.getTextOffset());
                                 newText = removeChar(newText, index);
                                 localShift++;
                             }
+
                             this.shift += localShift;
-                            if (!newText.isEmpty())
+
+                            if ( ! newText.isEmpty())
                             {
                                 TreeElement newAnchor;
-                                if ((leaf instanceof PsiComment))
+
+                                if (leaf instanceof PsiComment)
                                 {
                                     newAnchor = new PsiCommentImpl(((PsiComment) leaf).getTokenType(), newText);
-                                } else
+                                }
+                                else
                                 {
                                     newAnchor = Factory.createSingleLeafElement(leaf.getElementType(), newText, 0, newText.length(), null, leaf.getManager());
                                 }
+
                                 if (leaf.getClass() != newAnchor.getClass())
                                 {
-                                    LOG.warn("Bad leaf: " + leaf.getText() + " in \n" + root.getText());
+                                    logger.warn("Bad leaf: " + leaf.getText() + " in \n" + root.getText());
                                 }
+
                                 leaf.rawInsertBeforeMe(newAnchor);
                             }
+
                             leaf.rawRemove();
                         }
 
@@ -208,11 +223,12 @@ public class OxyTemplateFileViewProvider extends MultiplePsiFilesPerDocumentFile
                             if ((index < 0) || (index >= text.length())) return text;
                             if (index == 0) return text.substring(1);
                             if (index == text.length() - 1) return text.substring(0, text.length() - 1);
+
                             return text.substring(0, index) + text.substring(index + 1);
                         }
                     });
 
-                    ourOffsets.set(null);
+                    this.offsets.clear();
                 }
 
                 @Override

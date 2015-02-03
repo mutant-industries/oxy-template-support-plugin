@@ -20,8 +20,8 @@ import com.intellij.psi.tree.IElementType;
 import java.util.LinkedList;
 import java.util.List;
 import ool.idea.plugin.file.OxyTemplateFileType;
-import ool.idea.plugin.file.OxyTemplateParserDefinition;
-import ool.idea.plugin.highlighter.OxyTemplateSyntaxHighlighter;
+import ool.idea.plugin.lang.parser.OxyTemplateParserDefinition;
+import ool.idea.plugin.editor.highlighter.OxyTemplateSyntaxHighlighter;
 import ool.idea.plugin.psi.OxyTemplateTypes;
 import org.jetbrains.annotations.NotNull;
 

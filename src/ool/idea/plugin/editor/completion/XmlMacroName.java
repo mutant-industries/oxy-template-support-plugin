@@ -2,17 +2,26 @@ package ool.idea.plugin.editor.completion;
 
 import com.intellij.codeInsight.completion.CompletionContributor;
 import com.intellij.codeInsight.completion.CompletionParameters;
-import com.intellij.codeInsight.completion.CompletionProvider;
 import com.intellij.codeInsight.completion.CompletionResultSet;
-import com.intellij.codeInsight.completion.CompletionType;
-import com.intellij.patterns.PlatformPatterns;
+import com.intellij.codeInsight.completion.CompletionUtilCore;
+import com.intellij.codeInsight.completion.impl.CamelHumpMatcher;
+import com.intellij.codeInsight.lookup.AutoCompletionPolicy;
+import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.codeInsight.lookup.LookupElementDecorator;
+import com.intellij.openapi.actionSystem.IdeActions;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.ProcessingContext;
-import ool.idea.plugin.editor.completion.lookupElement.XmlMacroNameLookupElementProvider;
+import java.util.Collection;
+import java.util.Map;
+import java.util.regex.Pattern;
+import ool.idea.plugin.editor.completion.insert.IncludeAutoInsertHandler;
+import ool.idea.plugin.editor.completion.insert.TrailingPatternConsumer;
+import ool.idea.plugin.file.OxyTemplateFileType;
 import ool.idea.plugin.file.index.OxyTemplateIndexUtil;
-import ool.idea.plugin.lang.OxyTemplate;
 import ool.idea.plugin.psi.MacroName;
 import ool.idea.plugin.psi.OxyTemplateTypes;
+import ool.idea.plugin.psi.impl.OxyTemplatePsiUtil;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -22,28 +31,50 @@ import org.jetbrains.annotations.NotNull;
  */
 public class XmlMacroName extends CompletionContributor
 {
-    public XmlMacroName()
+    private static final Pattern INSERT_CONSUME = Pattern.compile("[A-Za-z0-9_]*(\\.[A-Za-z][A-Za-z0-9_]*)*");
+
+    @Override
+    public void fillCompletionVariants(@NotNull CompletionParameters parameters, @NotNull CompletionResultSet result)
     {
-        extend(CompletionType.BASIC, PlatformPatterns.psiElement(OxyTemplateTypes.T_MACRO_NAME_IDENTIFIER).withLanguage(OxyTemplate.INSTANCE),
-            new CompletionProvider<CompletionParameters>()
-            {
-                @Override
-                public void addCompletions(@NotNull CompletionParameters parameters,
-                                           ProcessingContext context,
-                                           @NotNull CompletionResultSet resultSet)
-                {
-                    MacroName elementAt = PsiTreeUtil.getParentOfType(parameters.getPosition(), MacroName.class);
+        MacroName elementAt;
 
-                    String partialText = elementAt.getText().substring(0, parameters.getPosition().getParent().getStartOffsetInParent());
+        if(parameters.getPosition().getNode().getElementType() != OxyTemplateTypes.T_MACRO_NAME
+                || (elementAt= PsiTreeUtil.getParentOfType(parameters.getPosition(), MacroName.class)) == null
+                || elementAt.getPrevSibling().getPrevSibling().getNode().getElementType() != OxyTemplateTypes.T_XML_TAG_START)
+        {
+            return;
+        }
 
+        Collection<VirtualFile> restriction = null;
 
-                    if(elementAt.getPrevSibling().getPrevSibling().getNode().getElementType() == OxyTemplateTypes.T_XML_TAG_START)
-                    {
-                        OxyTemplateIndexUtil.addMacroNameCompletions(partialText, elementAt.getProject(), resultSet, XmlMacroNameLookupElementProvider.INSTANCE);
-                    }
-                }
-            }
-        );
+        if(parameters.getInvocationCount() == 1)
+        {
+            final String shortcut = getActionShortcut(IdeActions.ACTION_CODE_COMPLETION);
+            result.addLookupAdvertisement("Press " + shortcut + " again to search for all matching macros");
+
+            restriction = OxyTemplatePsiUtil.getIncludedFiles(parameters.getOriginalFile()).values();
+        }
+
+        for(Map.Entry<String, PsiElement> entry : OxyTemplateIndexUtil.getMacros(elementAt.getProject(),
+                restriction).entrySet())
+        {
+            String key = entry.getKey();
+            PsiElement element = entry.getValue();
+
+            int namespaceEnd = key.lastIndexOf('.');
+            String macroNamespace = key.substring(0, namespaceEnd);
+            String macroName = key.substring(namespaceEnd + 1);
+
+            result.withPrefixMatcher(new CamelHumpMatcher(elementAt.getText().replace(CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED, "")))
+                .consume(LookupElementDecorator.withInsertHandler(LookupElementBuilder
+                    .create(element, key)
+                    .withIcon(OxyTemplateFileType.INSTANCE.getIcon())
+                    .withPresentableText(macroName + " (" + macroNamespace + ")")
+                    .withTailText(" " + element.getContainingFile().getVirtualFile().getPath().replaceFirst("^.+((src)|(WEB_INF))/", ""), true)
+                    .withInsertHandler(new TrailingPatternConsumer(INSERT_CONSUME))
+                    .withAutoCompletionPolicy(AutoCompletionPolicy.GIVE_CHANCE_TO_OVERWRITE),
+                new IncludeAutoInsertHandler()));
+        }
     }
 
 }

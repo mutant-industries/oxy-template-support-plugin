@@ -14,12 +14,6 @@ import org.jetbrains.annotations.NotNull;
 public class OxyTemplateElementFactory
 {
     @NotNull
-    public static MacroNameIdentifier createMacroNameIdentifier(@NotNull Project project, String name)
-    {
-        return createMacroName(project, name).getMacroNameIdentifierList().get(0);
-    }
-
-    @NotNull
     public static MacroName createMacroName(@NotNull Project project, String name)
     {
         return  createMacroUnpairedTag(project, name).getMacroName();
@@ -51,7 +45,5 @@ public class OxyTemplateElementFactory
     {
         return (OxyTemplateFile) PsiFileFactory.getInstance(project).createFileFromText("dummy.jsm", OxyTemplateFileType.INSTANCE, text);
     }
-
-
 
 }

@@ -8,7 +8,6 @@ import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.util.ProcessingContext;
-import ool.idea.plugin.lang.OxyTemplate;
 import ool.idea.plugin.psi.OxyTemplateTypes;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,19 +20,18 @@ public class ExpressionStatement extends CompletionContributor
 {
     public ExpressionStatement()
     {
-        extend(CompletionType.BASIC, PlatformPatterns.psiElement(OxyTemplateTypes.T_MACRO_PARAM).withLanguage(OxyTemplate.INSTANCE),
-                new CompletionProvider<CompletionParameters>()
+        extend(CompletionType.BASIC, PlatformPatterns.psiElement(OxyTemplateTypes.T_MACRO_PARAM),
+            new CompletionProvider<CompletionParameters>()
+            {
+
+                @Override
+                public void addCompletions(@NotNull CompletionParameters parameters,
+                                           ProcessingContext context,
+                                           @NotNull CompletionResultSet resultSet)
                 {
-
-                    @Override
-                    public void addCompletions(@NotNull CompletionParameters parameters,
-                                               ProcessingContext context,
-                                               @NotNull CompletionResultSet resultSet)
-                    {
-
-                        resultSet.addElement(LookupElementBuilder.create("expr: "));
-                    }
+                    resultSet.consume(LookupElementBuilder.create("expr: "));
                 }
+            }
         );
     }
 

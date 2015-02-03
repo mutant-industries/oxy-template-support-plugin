@@ -31,7 +31,7 @@ public class JavaMacroNameDataIndexer implements DataIndexer<String, Void, FileC
         {
             String macroName = matcher.group(1);
 
-            return Collections.singletonMap((macroName.equals("generatedCode") ?
+            return Collections.singletonMap((macroName.equals("GeneratedCode") ?
                 "debug." : "oxy.") + StringUtil.decapitalize(macroName), null);
         }
 

@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>ool.idea.plugin</id>
     <name>Oxy template support</name>
-    <version>0.7.1</version>
+    <version>0.7.2</version>
     <vendor email="p.mayr@oxyonline.cz" url="http://stash.oxyonline.local/projects/CZC/repos/macro-support-plugin">
         oXy Online s.r.o.
     </vendor>
@@ -184,12 +184,12 @@
         <colorSettingsPage implementation="ool.idea.plugin.editor.highlighter.OxyTemplateColorSettingsPage"/>
         <completion.contributor language="OxyTemplate" implementationClass="ool.idea.plugin.editor.completion.ExpressionStatement"/>
         <completion.contributor language="OxyTemplate" implementationClass="ool.idea.plugin.editor.completion.Directive"/>
-        <completion.contributor language="OxyTemplate" implementationClass="ool.idea.plugin.editor.completion.UnclosedMacroTag"/>
-        <completion.contributor language="OxyTemplate" implementationClass="ool.idea.plugin.editor.completion.XmlMacroParam"/>
-        <completion.contributor language="OxyTemplate" implementationClass="ool.idea.plugin.editor.completion.XmlMacroName"/>
+        <completion.contributor language="OxyTemplate" implementationClass="ool.idea.plugin.editor.completion.macro.UnclosedMacroTag"/>
+        <completion.contributor language="OxyTemplate" implementationClass="ool.idea.plugin.editor.completion.macro.XmlMacroParamName"/>
+        <completion.contributor language="OxyTemplate" implementationClass="ool.idea.plugin.editor.completion.macro.name.XmlMacroName"/>
         <completion.contributor language="HTML" implementationClass="ool.idea.plugin.editor.completion.UnclosedTag" order="first"/>
-        <completion.contributor language="HTML" implementationClass="ool.idea.plugin.editor.completion.XmlMacroNamespace" order="first"/>
-        <completion.contributor language="OxyTemplateInnerJs" implementationClass="ool.idea.plugin.editor.completion.JsMacroName" order="first"/>
+        <completion.contributor language="HTML" implementationClass="ool.idea.plugin.editor.completion.macro.XmlMacroNamespace" order="first"/>
+        <completion.contributor language="OxyTemplateInnerJs" implementationClass="ool.idea.plugin.editor.completion.macro.name.JsMacroName" order="first"/>
         <completion.contributor language="OxyTemplateInnerJs" implementationClass="ool.idea.plugin.editor.completion.JsGlobalVariable"/>
         <typedHandler implementation="ool.idea.plugin.editor.type.BlockMarkerHandler"/>
         <typedHandler implementation="ool.idea.plugin.editor.type.ParamQuoteHandler"/>
@@ -204,11 +204,14 @@
                                  implementationClass="ool.idea.plugin.psi.manipulator.DirectiveParamFileReferenceManipulator"/>
         <lang.elementManipulator forClass="ool.idea.plugin.psi.MacroName"
                                  implementationClass="ool.idea.plugin.psi.manipulator.MacroNameManipulator"/>
-        <localInspection language="OxyTemplate" shortName="UnresolvedInclude" groupName="Oxy template" enabledByDefault="true" level="WARNING"
-                         implementationClass="ool.idea.plugin.editor.inspection.UnresolvedIncludeInspection" />
-        <localInspection language="OxyTemplate" shortName="NotMatchingTag" groupName="Oxy template" enabledByDefault="true" level="WARNING"
-                         implementationClass="ool.idea.plugin.editor.inspection.NotMatchingTagsInspection" />
-        <localInspection language="OxyTemplate" shortName="MissingIncludeDirective" groupName="Oxy template" enabledByDefault="true" level="WARNING"
+        <annotator language="OxyTemplate" implementationClass="ool.idea.plugin.editor.annotator.NotMatchingTagsAnnotator"/>
+        <annotator language="OxyTemplate" implementationClass="ool.idea.plugin.editor.annotator.UnresolvedXmlMacroReferenceAnnotator"/>
+        <annotator language="OxyTemplateInnerJs" implementationClass="ool.idea.plugin.editor.annotator.UnresolvedJsMacroReferenceAnnotator"/>
+        <localInspection language="OxyTemplate" shortName="UnresolvedInclude" bundle="I18n.messages" key="inspection.unresolved.include.tooltip"
+                         groupName="Oxy template" enabledByDefault="true" level="WARNING"
+                         implementationClass="ool.idea.plugin.editor.inspection.UnresolvedIncludeInspection"/>
+        <localInspection language="OxyTemplate" shortName="MissingInclude" groupName="Oxy template"  bundle="I18n.messages" key="inspection.missing.include.tooltip"
+                         enabledByDefault="true" level="WARNING"
                          implementationClass="ool.idea.plugin.editor.inspection.MissingIncludeInspection" />
         <fileBasedIndex implementation="ool.idea.plugin.file.index.globals.JsGlobalsIndex"/>
         <fileBasedIndex implementation="ool.idea.plugin.file.index.nacros.java.JavaMacroNameIndex"/>

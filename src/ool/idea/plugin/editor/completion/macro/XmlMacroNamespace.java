@@ -1,4 +1,4 @@
-package ool.idea.plugin.editor.completion;
+package ool.idea.plugin.editor.completion.macro;
 
 import com.intellij.codeInsight.AutoPopupController;
 import com.intellij.codeInsight.completion.CompletionContributor;
@@ -15,7 +15,7 @@ import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.xml.XmlTokenType;
 import com.intellij.util.ProcessingContext;
 import java.util.regex.Pattern;
-import ool.idea.plugin.editor.completion.insert.TrailingPatternConsumer;
+import ool.idea.plugin.editor.completion.handler.TrailingPatternConsumer;
 import ool.idea.plugin.file.OxyTemplateFileViewProvider;
 import org.jetbrains.annotations.NotNull;
 

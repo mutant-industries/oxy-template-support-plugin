@@ -11,12 +11,11 @@ import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import ool.idea.plugin.file.OxyTemplateFileViewProvider;
-import ool.idea.plugin.lang.parser.OxyTemplateParserDefinition;
 import ool.idea.plugin.lang.OxyTemplate;
+import ool.idea.plugin.lang.parser.OxyTemplateParserDefinition;
 import ool.idea.plugin.psi.MacroAttribute;
-import ool.idea.plugin.psi.MacroName;
-import ool.idea.plugin.psi.MacroTag;
 import ool.idea.plugin.psi.MacroUnpairedTag;
+import ool.idea.plugin.psi.OxyTemplateHelper;
 import ool.idea.plugin.psi.OxyTemplateTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -49,7 +48,7 @@ public class TagCloseHandler extends TypedHandlerDelegate
             PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
             elementAt = provider.findElementAt(offset, OxyTemplate.INSTANCE);
 
-            if((macroTagToBeClosedName = getPreviousUnclosedMacroTagName(elementAt)) != null)
+            if((macroTagToBeClosedName = OxyTemplateHelper.getPreviousUnclosedMacroTagName(elementAt)) != null)
             {
                 String closeTag = "</m:" + macroTagToBeClosedName + ">";
                 editor.getDocument().insertString(offset + 1, closeTag);
@@ -127,56 +126,6 @@ public class TagCloseHandler extends TypedHandlerDelegate
         }
 
         return false;
-    }
-
-    /**
-     *
-     * @param elementAt anything between opening and closing tag name
-     * @return
-     */
-    @Nullable
-    public static String getPreviousUnclosedMacroTagName(@Nullable final PsiElement elementAt)
-    {
-        if(elementAt == null)
-        {
-            return null;
-        }
-
-        PsiElement psiElement = elementAt;
-
-        do
-        {
-            if(psiElement instanceof MacroName)
-            {
-                String name = psiElement.getText();
-
-                psiElement = elementAt;
-
-                while((psiElement = psiElement.getNextSibling()) != null)
-                {
-                    if(psiElement instanceof MacroName)
-                    {
-                        if(psiElement.getText().equals(name))
-                        {
-                            if((psiElement = PsiTreeUtil.getTopmostParentOfType(elementAt, MacroTag.class)) != null
-                                    && ((MacroTag) psiElement).getMacroNameList().size() == 1)
-                            {
-                                return name;
-                            }
-
-                            return null;
-                        }
-
-                        return name;
-                    }
-                }
-
-                return name;
-            }
-        }
-        while((psiElement = psiElement.getPrevSibling()) != null);
-
-        return null;
     }
 
 }

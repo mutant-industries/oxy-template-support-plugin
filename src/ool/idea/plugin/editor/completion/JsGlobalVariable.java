@@ -15,7 +15,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.indexing.FileBasedIndex;
 import java.util.regex.Pattern;
-import ool.idea.plugin.editor.completion.insert.TrailingPatternConsumer;
+import ool.idea.plugin.editor.completion.handler.TrailingPatternConsumer;
 import ool.idea.plugin.file.index.globals.JsGlobalsIndex;
 import org.jetbrains.annotations.NotNull;
 

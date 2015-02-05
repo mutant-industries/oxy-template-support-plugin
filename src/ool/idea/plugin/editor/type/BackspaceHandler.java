@@ -8,8 +8,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiFile;
 import ool.idea.plugin.file.OxyTemplateFileViewProvider;
-import static ool.idea.plugin.lang.parser.OxyTemplateParserDefinition.PARAMETER_QUOTES;
 import ool.idea.plugin.lang.OxyTemplate;
+import static ool.idea.plugin.lang.parser.OxyTemplateParserDefinition.PARAMETER_QUOTES;
 import org.jetbrains.annotations.Nullable;
 
 /**

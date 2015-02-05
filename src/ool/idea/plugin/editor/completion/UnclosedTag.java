@@ -13,10 +13,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.XmlTokenType;
 import com.intellij.util.ProcessingContext;
 import java.util.regex.Pattern;
-import ool.idea.plugin.editor.completion.insert.TrailingPatternConsumer;
-import ool.idea.plugin.editor.type.TagCloseHandler;
+import ool.idea.plugin.editor.completion.handler.TrailingPatternConsumer;
 import ool.idea.plugin.file.OxyTemplateFileViewProvider;
 import ool.idea.plugin.lang.OxyTemplate;
+import ool.idea.plugin.psi.OxyTemplateHelper;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -49,7 +49,7 @@ public class UnclosedTag extends CompletionContributor
 
                     PsiElement elementAt = provider.findElementAt(offset - 1, OxyTemplate.INSTANCE);
 
-                    String macroTagToBeClosedName = TagCloseHandler.getPreviousUnclosedMacroTagName(elementAt);
+                    String macroTagToBeClosedName = OxyTemplateHelper.getPreviousUnclosedMacroTagName(elementAt);
 
                     if(macroTagToBeClosedName != null)
                     {

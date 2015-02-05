@@ -35,6 +35,7 @@ public class OxyTemplateFileType extends LanguageFileType
         return "OxyTemplate";
     }
 
+    @NonNls
     @NotNull
     @Override
     public String getDescription()

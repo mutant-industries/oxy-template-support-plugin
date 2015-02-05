@@ -1,4 +1,4 @@
-package ool.idea.plugin.editor.completion.insert;
+package ool.idea.plugin.editor.completion.handler;
 
 import com.intellij.codeInsight.completion.InsertHandler;
 import com.intellij.codeInsight.completion.InsertionContext;

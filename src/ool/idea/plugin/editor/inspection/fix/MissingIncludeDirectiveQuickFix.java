@@ -4,13 +4,12 @@ import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
-import java.util.List;
 import ool.idea.plugin.file.RelativePathCalculator;
+import ool.idea.plugin.lang.I18nSupport;
 import ool.idea.plugin.lang.OxyTemplate;
 import ool.idea.plugin.psi.DirectiveStatement;
 import ool.idea.plugin.psi.OxyTemplateElementFactory;
+import ool.idea.plugin.psi.OxyTemplateHelper;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -44,7 +43,7 @@ public class MissingIncludeDirectiveQuickFix  implements LocalQuickFix
     @Override
     public String getName()
     {
-        return "Add " + directiveType + " \"" + includePath + "\"";
+        return I18nSupport.message("inspection.missing.include.fix", directiveType, includePath);
     }
 
     @NotNull
@@ -62,21 +61,11 @@ public class MissingIncludeDirectiveQuickFix  implements LocalQuickFix
 
     public void applyFix(Project project)
     {
-        final PsiFile file = macroCallMissingInclude.getContainingFile()
-                .getViewProvider().getPsi(OxyTemplate.INSTANCE);
         final DirectiveStatement includeDirective = OxyTemplateElementFactory.createDirectiveStatement(project,
                 directiveType, includePath);
 
-        List<DirectiveStatement> statements = PsiTreeUtil.getChildrenOfTypeAsList(file, DirectiveStatement.class);
-
-        if (statements.size() > 0)
-        {
-            file.addAfter(includeDirective, statements.get(statements.size() - 1));
-        }
-        else
-        {
-            file.addBefore(includeDirective, file.getFirstChild());
-        }
+        OxyTemplateHelper.addDirective(includeDirective, macroCallMissingInclude.getContainingFile()
+                .getViewProvider().getPsi(OxyTemplate.INSTANCE));
     }
 
 }

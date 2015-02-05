@@ -13,7 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import ool.idea.plugin.editor.inspection.fix.MissingIncludeDirectiveQuickFix;
-import ool.idea.plugin.psi.impl.OxyTemplatePsiUtil;
+import ool.idea.plugin.lang.I18nSupport;
+import ool.idea.plugin.psi.OxyTemplateHelper;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,7 +31,7 @@ public class MissingIncludeInspection extends LocalInspectionTool
     @Override
     public String getDisplayName()
     {
-        return "Missing include directive";
+        return I18nSupport.message("inspection.missing.include.display.name");
     }
 
     @Nullable
@@ -39,15 +40,14 @@ public class MissingIncludeInspection extends LocalInspectionTool
     {
         final List<ProblemDescriptor> result = new ArrayList<ProblemDescriptor>();
 
-        for (Map.Entry<PsiElement, JSProperty> pair : OxyTemplatePsiUtil.getUsedJsMacros(file).entrySet())
+        for (Map.Entry<PsiElement, JSProperty> pair : OxyTemplateHelper.getUsedJsMacros(file).entrySet())
         {
             PsiElement macroCall = pair.getKey();
             PsiElement reference = pair.getValue();
 
-            if (OxyTemplatePsiUtil.isJsMacroMissingInclude(file, reference))
+            if (OxyTemplateHelper.isJsMacroMissingInclude(file, reference))
             {
-                result.add(manager.createProblemDescriptor(macroCall, TextRange.create(0, macroCall.getTextLength()),
-                        MissingIncludeInspection.this.getDisplayName(),
+                result.add(manager.createProblemDescriptor(macroCall, TextRange.create(0, macroCall.getTextLength()), getDisplayName(),
                         ProblemHighlightType.ERROR, isOnTheFly, new MissingIncludeDirectiveQuickFix(macroCall, reference, "include_once"),
                         new MissingIncludeDirectiveQuickFix(macroCall, reference, "include")));
             }

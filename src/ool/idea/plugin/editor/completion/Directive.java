@@ -12,7 +12,7 @@ import com.intellij.openapi.editor.CaretModel;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
 import java.util.regex.Pattern;
-import ool.idea.plugin.editor.completion.insert.TrailingPatternConsumer;
+import ool.idea.plugin.editor.completion.handler.TrailingPatternConsumer;
 import ool.idea.plugin.psi.DirectiveOpenStatement;
 import ool.idea.plugin.psi.DirectiveParamWrapper;
 import ool.idea.plugin.psi.OxyTemplateTypes;

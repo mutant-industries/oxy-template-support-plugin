@@ -1,4 +1,4 @@
-package ool.idea.plugin.editor.completion;
+package ool.idea.plugin.editor.completion.macro;
 
 import com.intellij.codeInsight.completion.CompletionContributor;
 import com.intellij.codeInsight.completion.CompletionParameters;
@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import ool.idea.plugin.editor.completion.insert.TrailingPatternConsumer;
+import ool.idea.plugin.editor.completion.handler.TrailingPatternConsumer;
 import ool.idea.plugin.lang.OxyTemplate;
 import ool.idea.plugin.psi.MacroAttribute;
 import ool.idea.plugin.psi.MacroCall;
@@ -40,11 +40,11 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Petr Mayr <p.mayr@oxyonline.cz>
  */
-public class XmlMacroParam extends CompletionContributor
+public class XmlMacroParamName extends CompletionContributor
 {
     private static final Pattern INSERT_CONSUME = Pattern.compile("\"\\w+=\"");
 
-    public XmlMacroParam()
+    public XmlMacroParamName()
     {
         extend(CompletionType.BASIC, PlatformPatterns.psiElement(OxyTemplateTypes.T_MACRO_PARAM_NAME).withLanguage(OxyTemplate.INSTANCE),
             new CompletionProvider<CompletionParameters>()

@@ -8,6 +8,7 @@ import com.intellij.openapi.options.colors.ColorSettingsPage;
 import java.util.Map;
 import javax.swing.Icon;
 import ool.idea.plugin.file.OxyTemplateFileType;
+import ool.idea.plugin.lang.I18nSupport;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,18 +19,6 @@ import org.jetbrains.annotations.Nullable;
  */
 public class OxyTemplateColorSettingsPage implements ColorSettingsPage
 {
-    private static final AttributesDescriptor[] DESCRIPTORS = new AttributesDescriptor[] {
-            new AttributesDescriptor("Inner block boundary marker", OxyTemplateSyntaxHighlighter.BLOCK),
-            new AttributesDescriptor("Directive", OxyTemplateSyntaxHighlighter.KEY),
-            new AttributesDescriptor("Directive param", OxyTemplateSyntaxHighlighter.VALUE),
-            new AttributesDescriptor("Macro tag boundary", OxyTemplateSyntaxHighlighter.MACRO_TAG_BOUNDARY),
-            new AttributesDescriptor("Macro name xml namespace", OxyTemplateSyntaxHighlighter.MACRO_XML_NAMESPACE),
-            new AttributesDescriptor("Macro name", OxyTemplateSyntaxHighlighter.MACRO_NAME),
-            new AttributesDescriptor("Macro parameter name", OxyTemplateSyntaxHighlighter.MACRO_PARAM_NAME),
-            new AttributesDescriptor("Macro parameter value", OxyTemplateSyntaxHighlighter.MACRO_PARAM_VALUE),
-            new AttributesDescriptor("Macro parameter expression statement", OxyTemplateSyntaxHighlighter.MACRO_PARAM_EXPRESSION_STATEMENT),
-    };
-
     @Nullable
     @Override
     public Icon getIcon()
@@ -66,7 +55,17 @@ public class OxyTemplateColorSettingsPage implements ColorSettingsPage
     @Override
     public AttributesDescriptor[] getAttributeDescriptors()
     {
-        return DESCRIPTORS;
+        return new AttributesDescriptor[] {
+            new AttributesDescriptor(I18nSupport.message("color.settings.inner.block.boundary.marker"), OxyTemplateSyntaxHighlighter.BLOCK),
+            new AttributesDescriptor(I18nSupport.message("color.settings.directive"), OxyTemplateSyntaxHighlighter.KEY),
+            new AttributesDescriptor(I18nSupport.message("color.settings.directive.param"), OxyTemplateSyntaxHighlighter.VALUE),
+            new AttributesDescriptor(I18nSupport.message("color.settings.macro.tag.boundary"), OxyTemplateSyntaxHighlighter.MACRO_TAG_BOUNDARY),
+            new AttributesDescriptor(I18nSupport.message("color.settings.macro.name.xml.namespace"), OxyTemplateSyntaxHighlighter.MACRO_XML_NAMESPACE),
+            new AttributesDescriptor(I18nSupport.message("color.settings.macro.name"), OxyTemplateSyntaxHighlighter.MACRO_NAME),
+            new AttributesDescriptor(I18nSupport.message("color.settings.macro.parameter.name"), OxyTemplateSyntaxHighlighter.MACRO_PARAM_NAME),
+            new AttributesDescriptor(I18nSupport.message("color.settings.macro.parameter.value"), OxyTemplateSyntaxHighlighter.MACRO_PARAM_VALUE),
+            new AttributesDescriptor(I18nSupport.message("color.settings.macro.parameter.expression.statement"), OxyTemplateSyntaxHighlighter.MACRO_PARAM_EXPRESSION_STATEMENT),
+        };
     }
 
     @NotNull

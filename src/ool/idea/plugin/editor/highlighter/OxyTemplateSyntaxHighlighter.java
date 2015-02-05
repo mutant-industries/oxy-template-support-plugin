@@ -2,7 +2,6 @@ package ool.idea.plugin.editor.highlighter;
 
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
-import com.intellij.openapi.editor.SyntaxHighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import static com.intellij.openapi.editor.colors.TextAttributesKey.createTextAttributesKey;
 import com.intellij.openapi.editor.markup.TextAttributes;

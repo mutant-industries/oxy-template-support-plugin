@@ -1,4 +1,4 @@
-package ool.idea.plugin.editor.completion;
+package ool.idea.plugin.editor.completion.macro;
 
 import com.intellij.codeInsight.completion.CompletionContributor;
 import com.intellij.codeInsight.completion.CompletionParameters;
@@ -9,9 +9,9 @@ import com.intellij.codeInsight.lookup.AutoCompletionPolicy;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.psi.util.PsiTreeUtil;
 import java.util.regex.Pattern;
-import ool.idea.plugin.editor.completion.insert.TrailingPatternConsumer;
-import ool.idea.plugin.editor.type.TagCloseHandler;
+import ool.idea.plugin.editor.completion.handler.TrailingPatternConsumer;
 import ool.idea.plugin.psi.MacroName;
+import ool.idea.plugin.psi.OxyTemplateHelper;
 import ool.idea.plugin.psi.OxyTemplateTypes;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,7 +36,7 @@ public class UnclosedMacroTag extends CompletionContributor
             return;
         }
 
-        String macroTagToBeClosedName = TagCloseHandler.getPreviousUnclosedMacroTagName(elementAt.getPrevSibling());
+        String macroTagToBeClosedName = OxyTemplateHelper.getPreviousUnclosedMacroTagName(elementAt.getPrevSibling());
 
         if (macroTagToBeClosedName != null)
         {

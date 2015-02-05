@@ -18,7 +18,7 @@ public class InnerJsPredefinedLibrary extends JSPredefinedLibraryProvider
     private static final String LIBRARY_NAME = "oxy-predefined";
 
     private String[] jsFiles = {
-            "/inner-js-predefined.js"
+            "/js/inner-js-predefined.js"
     };
 
     @Override

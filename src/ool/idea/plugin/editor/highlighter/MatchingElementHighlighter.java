@@ -7,6 +7,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
 import ool.idea.plugin.lang.parser.OxyTemplateParserDefinition;
 import ool.idea.plugin.psi.OxyTemplateTypes;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -158,7 +159,7 @@ public class MatchingElementHighlighter implements BraceMatcher
     }
 
     @Override
-    public boolean isPairedBracesAllowedBeforeType(IElementType lbraceType, @Nullable IElementType contextType)
+    public boolean isPairedBracesAllowedBeforeType(@NotNull IElementType lbraceType, @Nullable IElementType contextType)
     {
         return true;
     }

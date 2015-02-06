@@ -64,7 +64,7 @@ abstract public class AbstractMacroName extends CompletionContributor
         }
 
         for (Map.Entry<String, PsiElement> entry : OxyTemplateIndexUtil.getMacros(position.getProject(),
-                restriction).entrySet())
+                restriction).entries())
         {
             String fqn = entry.getKey();
             int namespaceEnd = fqn.lastIndexOf('.');

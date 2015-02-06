@@ -17,6 +17,7 @@ import com.intellij.psi.templateLanguages.TemplateDataElementType;
 import com.intellij.psi.templateLanguages.TemplateLanguageFileViewProvider;
 import com.intellij.psi.tree.IElementType;
 import java.util.LinkedList;
+import org.jetbrains.annotations.NonNls;
 
 /**
  * 2/5/15
@@ -25,10 +26,10 @@ import java.util.LinkedList;
  */
 public class OxyTemplateInnerJsElementType extends TemplateDataElementType
 {
-    private final LinkedList<Integer> offsets = new LinkedList<Integer>();
-    private final LinkedList<TextRange> variables = new LinkedList<TextRange>();
+    private final ThreadLocal<LinkedList<Integer>> offsets = new ThreadLocal<LinkedList<Integer>>();
+    private final ThreadLocal<LinkedList<TextRange>> variables = new ThreadLocal<LinkedList<TextRange>>();
 
-    public OxyTemplateInnerJsElementType(String debugName, Language language, IElementType templateElementType, IElementType outerElementType)
+    public OxyTemplateInnerJsElementType(@NonNls String debugName, Language language, IElementType templateElementType, IElementType outerElementType)
     {
         super(debugName, language, templateElementType, outerElementType);
     }
@@ -36,8 +37,8 @@ public class OxyTemplateInnerJsElementType extends TemplateDataElementType
     @Override
     protected CharSequence createTemplateText(CharSequence buf, Lexer lexer)
     {
-        offsets.clear();
-        variables.clear();
+        offsets.set(new LinkedList<Integer>());
+        variables.set(new LinkedList<TextRange>());
 
         return super.createTemplateText(buf, lexer);
     }
@@ -49,10 +50,10 @@ public class OxyTemplateInnerJsElementType extends TemplateDataElementType
 
         if(lexer.getBufferSequence().charAt(lexer.getTokenStart() - 1) == '"')
         {
-            variables.add(TextRange.create(result.length() - lexer.getTokenEnd() + lexer.getTokenStart(), result.length()));
+            variables.get().add(TextRange.create(result.length() - lexer.getTokenEnd() + lexer.getTokenStart(), result.length()));
         }
 
-        offsets.add(result.length());
+        offsets.get().add(result.length());
         result.append("\n");
     }
 
@@ -71,7 +72,7 @@ public class OxyTemplateInnerJsElementType extends TemplateDataElementType
 
     private void convertReferencesToVariables(final FileElement root)
     {
-        for(TextRange range : variables)
+        for(TextRange range : variables.get())
         {
             LeafElement elementAt = root.findLeafElementAt(range.getStartOffset());
             CompositeElement parent;
@@ -95,7 +96,7 @@ public class OxyTemplateInnerJsElementType extends TemplateDataElementType
             parent.getTreeParent().replaceChild(parent, replacement);
         }
 
-        variables.clear();
+        variables.set(null);
     }
 
     private void fixLineBreaks(final FileElement root)
@@ -113,22 +114,22 @@ public class OxyTemplateInnerJsElementType extends TemplateDataElementType
             @Override
             public void visitLeaf(LeafElement leaf)
             {
-                if (offsets.isEmpty() || (shift + leaf.getTextOffset() + leaf.getTextLength() < offsets.peekFirst()))
+                if (offsets.get().isEmpty() || (shift + leaf.getTextOffset() + leaf.getTextLength() < offsets.get().peekFirst()))
                 {
                     return;
                 }
 
-                while ( ! offsets.isEmpty() && offsets.peekFirst() < shift + leaf.getTextOffset())
+                while ( ! offsets.get().isEmpty() && offsets.get().peekFirst() < shift + leaf.getTextOffset())
                 {
-                    offsets.pollFirst();
+                    offsets.get().pollFirst();
                 }
 
                 StringBuilder newText = new StringBuilder(leaf.getText());
                 int localShift = 0;
 
-                while ( ! offsets.isEmpty() && offsets.peekFirst() < shift + leaf.getTextOffset() + leaf.getTextLength())
+                while ( ! offsets.get().isEmpty() && offsets.get().peekFirst() < shift + leaf.getTextOffset() + leaf.getTextLength())
                 {
-                    int index = offsets.pollFirst() - (shift + localShift + leaf.getTextOffset());
+                    int index = offsets.get().pollFirst() - (shift + localShift + leaf.getTextOffset());
                     newText.deleteCharAt(index);
                     localShift++;
                 }
@@ -147,7 +148,7 @@ public class OxyTemplateInnerJsElementType extends TemplateDataElementType
             }
         });
 
-        offsets.clear();
+        offsets.set(null);
     }
 
 }

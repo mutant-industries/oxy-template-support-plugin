@@ -10,6 +10,7 @@ import ool.idea.plugin.lang.OxyTemplate;
 import ool.idea.plugin.psi.DirectiveStatement;
 import ool.idea.plugin.psi.OxyTemplateElementFactory;
 import ool.idea.plugin.psi.OxyTemplateHelper;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -46,6 +47,7 @@ public class MissingIncludeDirectiveQuickFix  implements LocalQuickFix
         return I18nSupport.message("inspection.missing.include.fix", directiveType, includePath);
     }
 
+    @NonNls
     @NotNull
     @Override
     public String getFamilyName()

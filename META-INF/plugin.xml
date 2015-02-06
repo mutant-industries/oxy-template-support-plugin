@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>ool.idea.plugin</id>
     <name>Oxy template support</name>
-    <version>0.7.3</version>
+    <version>0.8</version>
     <vendor email="p.mayr@oxyonline.cz" url="http://stash.oxyonline.local/projects/CZC/repos/macro-support-plugin">
         oXy Online s.r.o.
     </vendor>
@@ -15,6 +15,15 @@
     ]]></description>
 
     <change-notes><![CDATA[
+        <b>0.8</b>
+        <ul>
+            <li>
+                goto symbol - vyhledání makra podle fully qualified name
+            </li>
+            <li>
+                structure view
+            </li>
+        </ul>
         <b>0.7.1</b>
         <ul>
             <li>
@@ -220,11 +229,14 @@
         <psi.referenceContributor implementation="ool.idea.plugin.psi.reference.java.GlobalVariableDefinitionReferenceContributor" order="first"/>
         <referencesSearch implementation="ool.idea.plugin.editor.usages.OxyTemplateReferenceSearch"/>
         <!--<documentationProvider implementation="ool.idea.plugin.editor.documentation.MacroParamDocumentationProvider"/>-->
+        <gotoSymbolContributor implementation="ool.idea.plugin.editor.gotosymbol.MacroGotoSymbolContributor"/>
+        <lang.psiStructureViewFactory language="OxyTemplate" implementationClass="ool.idea.plugin.editor.structure.OxyTemplateStructureViewFactory"/>
     </extensions>
     <extensions defaultExtensionNs="JavaScript">
         <predefinedLibraryProvider implementation="ool.idea.plugin.editor.InnerJsPredefinedLibrary"/>
         <intentionAndInspectionFilter language="OxyTemplate" implementationClass="ool.idea.plugin.editor.inspection.filter.JsIntentionAndInspectionFilter"/>
         <dialectSpecificHandlersFactory language="OxyTemplateInnerJs" implementationClass="ool.idea.plugin.file.OxyTemplateJsSpecificHandlersFactory"/>
+        <elementScopeProvider implementationClass="ool.idea.plugin.psi.reference.innerjs.InnerJsResolveScopeProvider" language="OxyTemplateInnerJs"/>
     </extensions>
 
     <application-components>

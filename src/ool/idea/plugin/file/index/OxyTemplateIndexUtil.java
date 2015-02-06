@@ -1,5 +1,6 @@
 package ool.idea.plugin.file.index;
 
+import com.google.common.collect.HashMultimap;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -34,7 +35,7 @@ import org.jetbrains.annotations.Nullable;
 public class OxyTemplateIndexUtil
 {
     @NotNull
-    public static List<PsiElement> getMacroNameReferences(String macroName, @NotNull Project project)
+    public static List<PsiElement> getMacroNameReferences(@NotNull String macroName, @NotNull Project project)
     {
         List<PsiElement> references = new ArrayList<PsiElement>();
         PsiClass psiClass;
@@ -50,7 +51,7 @@ public class OxyTemplateIndexUtil
     }
 
     @Nullable
-    public static PsiClass getJavaMacroNameReference(String macroName, @NotNull Project project)
+    public static PsiClass getJavaMacroNameReference(@NotNull String macroName, @NotNull Project project)
     {
         final GlobalSearchScope allScope = ProjectScope.getProjectScope(project);
         FileBasedIndex index = FileBasedIndex.getInstance();
@@ -71,7 +72,7 @@ public class OxyTemplateIndexUtil
     }
 
     @NotNull
-    public static List<JSElement> getJsMacroNameReferences(String macroName, @NotNull final Project project)
+    public static List<JSElement> getJsMacroNameReferences(@NotNull String macroName, @NotNull final Project project)
     {
         final GlobalSearchScope allScope = ProjectScope.getProjectScope(project);
         final List<JSElement> results = new ArrayList<JSElement>();
@@ -87,7 +88,7 @@ public class OxyTemplateIndexUtil
     }
 
     @NotNull
-    public static List<JSElement> getJsMacroNameReferences(String macroName, @NotNull VirtualFile file, @NotNull final Project project)
+    public static List<JSElement> getJsMacroNameReferences(@NotNull String macroName, @NotNull VirtualFile file, @NotNull final Project project)
     {
         final GlobalSearchScope allScope = ProjectScope.getProjectScope(project);
         FileBasedIndex index = FileBasedIndex.getInstance();
@@ -98,11 +99,11 @@ public class OxyTemplateIndexUtil
         return processor.getResult();   // size <= 1
     }
 
-//    @NotNull
-//    public static Map<String, PsiElement> getMacros(@NotNull Project project)
-//    {
-//        return getMacros(project, null);
-//    }
+    @NotNull
+    public static HashMultimap<String, PsiElement> getMacros(@NotNull Project project)
+    {
+        return getMacros(project, null);
+    }
 
 //    @NotNull
 //    public static Map<String, JSElement> getJsMacros(@NotNull Project project)
@@ -111,10 +112,15 @@ public class OxyTemplateIndexUtil
 //    }
 
     @NotNull
-    public static Map<String, PsiElement> getMacros(@NotNull Project project, @Nullable Collection<VirtualFile> restrictFiles)
+    public static HashMultimap<String, PsiElement> getMacros(@NotNull Project project, @Nullable Collection<VirtualFile> restrictFiles)
     {
-        Map<String, PsiElement> result = new HashMap<String, PsiElement>();
-        result.putAll(getJavaMacros(project));
+        HashMultimap<String, PsiElement> result = HashMultimap.create();
+
+        for(Map.Entry<String, PsiClass> entry : getJavaMacros(project).entrySet())
+        {
+            result.put(entry.getKey(), entry.getValue());
+        }
+
         result.putAll(getJsMacros(project, restrictFiles));
 
         return result;
@@ -147,20 +153,20 @@ public class OxyTemplateIndexUtil
     }
 
     @NotNull
-    public static Map<String, JSElement> getJsMacros(@NotNull Project project,
+    public static HashMultimap<String, JSElement> getJsMacros(@NotNull Project project,
                                                      @Nullable Collection<VirtualFile> restrictFiles)
     {
         return getJsSymbols(project, true, false, restrictFiles);
     }
 
     @NotNull
-    public static Map<String, JSElement> getJsSymbols(@NotNull Project project, boolean macros, boolean namespaces,
+    public static HashMultimap<String, JSElement> getJsSymbols(@NotNull Project project, boolean macros, boolean namespaces,
                                                      @Nullable Collection<VirtualFile> restrictFiles)
     {
         final GlobalSearchScope allScope = ProjectScope.getProjectScope(project);
         FileBasedIndex index = FileBasedIndex.getInstance();
 
-        Map<String, JSElement> result = new HashMap<String, JSElement>();
+        HashMultimap<String, JSElement> result = HashMultimap.create();
 
         for (String key : index.getAllKeys(JsMacroNameIndex.INDEX_ID, project))
         {

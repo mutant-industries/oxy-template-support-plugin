@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.swing.Icon;
 import ool.idea.plugin.file.OxyTemplateFileType;
 import ool.idea.plugin.lang.I18nSupport;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -75,6 +76,7 @@ public class OxyTemplateColorSettingsPage implements ColorSettingsPage
         return ColorDescriptor.EMPTY_ARRAY;
     }
 
+    @NonNls
     @NotNull
     @Override
     public String getDisplayName()

@@ -32,7 +32,6 @@ public class GlobalVariableDefinitionReferenceContributor extends PsiReferenceCo
                     PsiLiteralExpression literalExpression = (PsiLiteralExpression) element;
                     PsiElement ref;
 
-                    // TODO temp code -------------
                     if( ! (literalExpression.getValue() instanceof String))
                     {
                         return PsiReference.EMPTY_ARRAY;
@@ -45,7 +44,6 @@ public class GlobalVariableDefinitionReferenceContributor extends PsiReferenceCo
                     {
                         return new PsiReference[]{new GlobalVariableDefinitionReference(literalExpression)};
                     }
-                    // ----------------------------
 
                     return PsiReference.EMPTY_ARRAY;
                 }

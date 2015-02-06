@@ -44,7 +44,7 @@ public class JsGlobalsDataIndexer implements DataIndexer<String, Integer, FileCo
 
             int end = matcher.end() + 1;
 
-            while(end < content.length() && content.charAt(end) != '\"')
+            while(end < content.length() && content.charAt(end) != '"')
             {
                 name.append(content.charAt(end));
                 end++;

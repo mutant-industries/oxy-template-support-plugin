@@ -3,15 +3,13 @@ package ool.idea.plugin.psi.reference;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.ElementManipulator;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementResolveResult;
-import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiLiteralExpression;
 import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.ResolveResult;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
 import com.intellij.psi.impl.source.resolve.reference.impl.CachingReference;
 import com.intellij.util.IncorrectOperationException;
-import java.util.List;
-import ool.idea.plugin.file.index.OxyTemplateIndexUtil;
+import ool.idea.plugin.psi.OxyTemplateHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -44,6 +42,16 @@ public class MacroReference implements PsiPolyVariantReference
         if(multiResolve.length == 1)
         {
             return multiResolve[0].getElement();
+        }
+            else if(multiResolve.length > 1 && ! (referencingElement instanceof PsiLiteralExpression)
+                && referencingElement.getTextLength() == endOffset)
+        {
+            ResolveResult result;
+
+            if((result = OxyTemplateHelper.multiResolveWithIncludeSearch(referencingElement, multiResolve)) != null)
+            {
+                return result.getElement();
+            }
         }
 
         return null;
@@ -108,31 +116,6 @@ public class MacroReference implements PsiPolyVariantReference
     public PsiElement bindToElement(@NotNull PsiElement element) throws IncorrectOperationException
     {
         throw new IncorrectOperationException("bindToElement not implemented yet");
-    }
-
-    private static class MacroReferenceResolver implements ResolveCache.PolyVariantContextResolver<MacroReference>
-    {
-        static final MacroReferenceResolver INSTANCE = new MacroReferenceResolver();
-
-        @NotNull
-        @Override
-        public ResolveResult[] resolve(@NotNull MacroReference ref, @NotNull PsiFile containingFile, boolean incompleteCode)
-        {
-            String elemntText = ref.getElement().getText();
-            String macroName = elemntText.substring(elemntText.indexOf('\"') + 1, ref.endOffset);
-
-            List<PsiElement> elements = OxyTemplateIndexUtil.getMacroNameReferences(macroName, ref.getElement().getProject());
-
-            ResolveResult[] resolveResults = new ResolveResult[elements.size()];
-
-            for(int i = 0; i < elements.size(); i++)
-            {
-                resolveResults[i] = new PsiElementResolveResult(elements.get(i));
-            }
-
-            return resolveResults;
-        }
-
     }
 
 }

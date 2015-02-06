@@ -68,6 +68,7 @@ public class GlobalVariableDefinition extends FakePsiElement implements OxyTempl
         return PsiNavigationSupport.getInstance().canNavigate(literalExpression);
     }
 
+    @NotNull
     @Override
     public Project getProject()
     {

@@ -9,6 +9,7 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.util.ProcessingContext;
 import ool.idea.plugin.psi.OxyTemplateTypes;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -18,6 +19,9 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ExpressionStatement extends CompletionContributor
 {
+    @NonNls
+    public static final String EXPRESSION_STATEMENT = "expr:";
+
     public ExpressionStatement()
     {
         extend(CompletionType.BASIC, PlatformPatterns.psiElement(OxyTemplateTypes.T_MACRO_PARAM),
@@ -29,7 +33,7 @@ public class ExpressionStatement extends CompletionContributor
                                            ProcessingContext context,
                                            @NotNull CompletionResultSet resultSet)
                 {
-                    resultSet.consume(LookupElementBuilder.create("expr: "));
+                    resultSet.consume(LookupElementBuilder.create(EXPRESSION_STATEMENT + " "));
                 }
             }
         );

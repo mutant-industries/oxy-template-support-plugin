@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class OxyTemplateFileViewProviderFactory implements FileViewProviderFactory
 {
+    @NotNull
     @Override
     public FileViewProvider createFileViewProvider(@NotNull VirtualFile virtualFile, Language language,
                                                    @NotNull PsiManager psiManager, boolean physical)

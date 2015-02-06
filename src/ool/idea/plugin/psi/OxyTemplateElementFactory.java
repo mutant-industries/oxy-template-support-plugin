@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFileFactory;
 import ool.idea.plugin.file.OxyTemplateFile;
 import ool.idea.plugin.file.OxyTemplateFileType;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -26,13 +27,13 @@ public class OxyTemplateElementFactory
     }
 
     @NotNull
-    public static DirectiveStatement createDirectiveStatement(@NotNull Project project, String directive, String... params)
+    public static DirectiveStatement createDirectiveStatement(@NotNull Project project, @NonNls String directive, String... params)
     {
         StringBuilder builder = new StringBuilder("<%@ " + directive);
 
         for(String param : params)
         {
-            builder.append(" \"" + param + "\" ");
+            builder.append(" \"").append(param).append("\" ");
         }
 
         builder.append("%>");
@@ -41,7 +42,7 @@ public class OxyTemplateElementFactory
     }
 
     @NotNull
-    public static OxyTemplateFile createFile(@NotNull Project project, String text)
+    public static OxyTemplateFile createFile(@NotNull Project project, @NonNls String text)
     {
         return (OxyTemplateFile) PsiFileFactory.getInstance(project).createFileFromText("dummy.jsm", OxyTemplateFileType.INSTANCE, text);
     }

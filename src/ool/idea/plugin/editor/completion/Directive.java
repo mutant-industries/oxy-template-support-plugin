@@ -16,6 +16,7 @@ import ool.idea.plugin.editor.completion.handler.TrailingPatternConsumer;
 import ool.idea.plugin.psi.DirectiveOpenStatement;
 import ool.idea.plugin.psi.DirectiveParamWrapper;
 import ool.idea.plugin.psi.OxyTemplateTypes;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -25,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class Directive extends CompletionContributor
 {
+    @NonNls
     private static final String[] DIRECTIVES = {
             "include_once",
             "include",

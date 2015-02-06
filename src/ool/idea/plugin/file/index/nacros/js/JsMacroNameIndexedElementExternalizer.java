@@ -6,6 +6,7 @@ import com.intellij.util.io.KeyDescriptor;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * 1/15/15
@@ -15,13 +16,13 @@ import java.io.IOException;
 public class JsMacroNameIndexedElementExternalizer implements KeyDescriptor<JsMacroNameIndexedElement>
 {
     @Override
-    public void save(DataOutput out, JsMacroNameIndexedElement value) throws IOException
+    public void save(@NotNull DataOutput out, JsMacroNameIndexedElement value) throws IOException
     {
         IOUtil.writeUTF(out, new Gson().toJson(value));
     }
 
     @Override
-    public JsMacroNameIndexedElement read(DataInput in) throws IOException
+    public JsMacroNameIndexedElement read(@NotNull DataInput in) throws IOException
     {
         return new Gson().fromJson(IOUtil.readUTF(in), JsMacroNameIndexedElement.class);
     }

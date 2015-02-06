@@ -3,6 +3,7 @@ package ool.idea.plugin.editor.annotator;
 import com.intellij.lang.javascript.psi.JSCallExpression;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.validation.JavaScriptAnnotatingVisitor;
+import ool.idea.plugin.file.index.nacros.MacroIndex;
 import ool.idea.plugin.lang.I18nSupport;
 
 /**
@@ -15,8 +16,9 @@ public class InnerJsAnnotator extends JavaScriptAnnotatingVisitor
     @Override
     protected void checkCallReferences(JSCallExpression node, JSReferenceExpression referenceExpression)
     {
-        if((referenceExpression.getText().startsWith("oxy.") || referenceExpression.getText().startsWith("utils.")
-                || referenceExpression.getText().startsWith("debug."))&& referenceExpression.resolve() == null)
+        String referenceText = MacroIndex.normalizeMacroName(referenceExpression.getText());
+
+        if(MacroIndex.isInMacroNamespace(referenceText) && referenceExpression.resolve() == null)
         {
             myHolder.createWarningAnnotation(referenceExpression, I18nSupport.message("annotator.unresolved.macro.reference.tooltip"));
 
@@ -24,6 +26,17 @@ public class InnerJsAnnotator extends JavaScriptAnnotatingVisitor
         }
 
         super.checkCallReferences(node, referenceExpression);
+    }
+
+    @Override
+    public void visitJSReferenceExpression(JSReferenceExpression node)
+    {
+        if(MacroIndex.isInMacroDefinition(node))
+        {
+            return;
+        }
+
+        super.visitJSReferenceExpression(node);
     }
 
 }

@@ -8,9 +8,12 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiLiteralExpression;
 import com.intellij.psi.ResolveResult;
+import com.intellij.psi.impl.source.resolve.ResolveCache;
 import com.intellij.psi.util.PsiTreeUtil;
-import java.util.List;
 import ool.idea.plugin.file.index.OxyTemplateIndexUtil;
+import ool.idea.plugin.file.index.nacros.MacroIndex;
+import ool.idea.plugin.psi.OxyTemplateHelper;
+import ool.idea.plugin.psi.reference.MacroReferenceResolver;
 import ool.idea.plugin.psi.reference.innerjs.globals.GlobalVariableDefinition;
 
 /**
@@ -28,34 +31,36 @@ public class InnerJsReferenceExpressionResolver extends JSReferenceExpressionRes
     @Override
     public ResolveResult[] doResolve()
     {
-        if (myReferencedName == null)
+        if (myReferencedName == null || MacroIndex.isInMacroDefinition(myRef))
         {
             return ResolveResult.EMPTY_ARRAY;
         }
 
-        String text = myRef.getElement().getText();
-
         if(PsiTreeUtil.getParentOfType(myRef, JSCallExpression.class) != null)
         {
-            List<PsiElement> references = OxyTemplateIndexUtil.getMacroNameReferences(myRef.getText(),
-                    myContainingFile.getProject());
+            ResolveResult[] results = ResolveCache.getInstance(myRef.getProject())
+                    .resolveWithCaching(myRef, MacroReferenceResolver.INSTANCE, false, false, myRef.getContainingFile());
 
-            if(references.size() > 0)
+            if(results.length > 1 && myRef.getParent() instanceof JSCallExpression)
             {
-                JSResolveResult[] result = new JSResolveResult[references.size()];
+                ResolveResult result;
 
-                for(int i = 0; i < references.size(); i++)
+                if((result = OxyTemplateHelper.multiResolveWithIncludeSearch(myRef, results)) != null)
                 {
-                    result[i] = new JSResolveResult(references.get(i));
+                    return new ResolveResult[]{result};
                 }
 
-                return result;
+                return results;
+            }
+            else if(results.length > 0)
+            {
+                return results;
             }
         }
 
         ResolveResult[] parentResult = super.doResolve();
 
-        if((parentResult == null || parentResult.length == 0) && text.equals(myReferencedName))
+        if(parentResult == null || parentResult.length == 0)
         {
             PsiElement reference;
             // global

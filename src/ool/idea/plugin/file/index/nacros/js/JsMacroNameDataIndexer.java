@@ -14,6 +14,7 @@ import com.intellij.util.indexing.DataIndexer;
 import com.intellij.util.indexing.FileContent;
 import java.util.HashMap;
 import java.util.Map;
+import ool.idea.plugin.file.index.nacros.MacroIndex;
 import ool.idea.plugin.lang.OxyTemplateInnerJs;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,10 +23,8 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Petr Mayr <p.mayr@oxyonline.cz>
  */
-public class JsMacroNameDataIndexer implements DataIndexer<String, JsMacroNameIndexedElement, FileContent>
+public class JsMacroNameDataIndexer extends MacroIndex implements DataIndexer<String, JsMacroNameIndexedElement, FileContent>
 {
-    private static final String MACRO_REGISTRY_NAMESPACE = "macros.";
-    
     @Override
     @NotNull
     public Map<String, JsMacroNameIndexedElement> map(@NotNull final FileContent inputData)
@@ -39,17 +38,17 @@ public class JsMacroNameDataIndexer implements DataIndexer<String, JsMacroNameIn
                     && (psiElement = PsiTreeUtil.getChildOfAnyType(psiElement, JSAssignmentExpression.class)) != null
                     && psiElement.getFirstChild() instanceof JSDefinitionExpression)
             {
-                String namespace = psiElement.getFirstChild().getText().replace(MACRO_REGISTRY_NAMESPACE, "");
+                String root_namespace = psiElement.getFirstChild().getText().replace(MACRO_REGISTRY_NAMESPACE + ".", "");
                 boolean firstIteration = true;
 
                 for(JSReferenceExpression ref : PsiTreeUtil.findChildrenOfType(psiElement.getFirstChild(),
                         JSReferenceExpression.class))
                 {
-                    String ns = ref.getText().replace(MACRO_REGISTRY_NAMESPACE, "");
+                    String namespace = ref.getText().replace(MACRO_REGISTRY_NAMESPACE + ".", "");
 
-                    if( ! ns.equals("oxy") &&  ! ns.equals("macros"))
+                    if( ! namespace.equals(DEFAULT_NAMESPACE) &&  ! namespace.equals(MACRO_REGISTRY_NAMESPACE))
                     {
-                        result.put(ref.getText().replace(MACRO_REGISTRY_NAMESPACE, ""), new JsMacroNameIndexedElement(firstIteration &&
+                        result.put(ref.getText().replace(MACRO_REGISTRY_NAMESPACE + ".", ""), new JsMacroNameIndexedElement(firstIteration &&
                                 psiElement.getLastChild() instanceof JSFunctionExpression, ref.getTextOffset() + ref.getTextLength() - 1));
                     }
 
@@ -58,7 +57,7 @@ public class JsMacroNameDataIndexer implements DataIndexer<String, JsMacroNameIn
 
                 if(psiElement.getLastChild() instanceof JSObjectLiteralExpression)
                 {
-                    processObjectLiteralExpression((JSObjectLiteralExpression)psiElement.getLastChild(), namespace, result);
+                    processObjectLiteralExpression((JSObjectLiteralExpression)psiElement.getLastChild(), root_namespace, result);
                 }
             }
         }
@@ -66,8 +65,8 @@ public class JsMacroNameDataIndexer implements DataIndexer<String, JsMacroNameIn
         return result;
     }
 
-    private static void processObjectLiteralExpression(JSObjectLiteralExpression expression,
-                                                       String namespace, Map<String, JsMacroNameIndexedElement> result)
+    private static void processObjectLiteralExpression(@NotNull JSObjectLiteralExpression expression, @NotNull String namespace,
+                                                       @NotNull Map<String, JsMacroNameIndexedElement> result)
     {
         for(JSProperty property : expression.getProperties())
         {
@@ -80,7 +79,7 @@ public class JsMacroNameDataIndexer implements DataIndexer<String, JsMacroNameIn
 
             if(property.getLastChild() instanceof JSObjectLiteralExpression)
             {
-                result.put(namespace + "." + nameIdentifier.getText().replace(MACRO_REGISTRY_NAMESPACE, ""),
+                result.put(namespace + "." + nameIdentifier.getText().replace(MACRO_REGISTRY_NAMESPACE + ".", ""),
                         new JsMacroNameIndexedElement(nameIdentifier.getTextOffset() + nameIdentifier.getTextLength() - 1));
 
                 processObjectLiteralExpression((JSObjectLiteralExpression) property.getLastChild(),
@@ -88,7 +87,7 @@ public class JsMacroNameDataIndexer implements DataIndexer<String, JsMacroNameIn
             }
             else if(property.getLastChild() instanceof JSFunctionExpression)
             {
-                result.put(namespace + "." + nameIdentifier.getText().replace(MACRO_REGISTRY_NAMESPACE, ""),
+                result.put(namespace + "." + nameIdentifier.getText().replace(MACRO_REGISTRY_NAMESPACE + ".", ""),
                         new JsMacroNameIndexedElement(true, nameIdentifier.getTextOffset() + nameIdentifier.getTextLength() - 1));
             }
         }

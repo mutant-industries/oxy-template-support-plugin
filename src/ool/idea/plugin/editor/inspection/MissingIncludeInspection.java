@@ -4,7 +4,7 @@ import com.intellij.codeInspection.InspectionManager;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
-import com.intellij.lang.javascript.psi.JSProperty;
+import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -40,7 +40,7 @@ public class MissingIncludeInspection extends LocalInspectionTool
     {
         final List<ProblemDescriptor> result = new ArrayList<ProblemDescriptor>();
 
-        for (Map.Entry<PsiElement, JSProperty> pair : OxyTemplateHelper.getUsedJsMacros(file).entrySet())
+        for (Map.Entry<PsiElement, JSElement> pair : OxyTemplateHelper.getUsedJsMacros(file).entrySet())
         {
             PsiElement macroCall = pair.getKey();
             PsiElement reference = pair.getValue();

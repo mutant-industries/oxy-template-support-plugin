@@ -8,6 +8,7 @@ import com.intellij.psi.PsiNamedElement;
 import com.intellij.usageView.UsageViewTypeLocation;
 import ool.idea.plugin.psi.MacroName;
 import ool.idea.plugin.psi.OxyTemplatePsiElement;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -47,6 +48,7 @@ public class OxyTemplateFindUsagesProvider implements FindUsagesProvider
         return ElementDescriptionUtil.getElementDescription(element, UsageViewTypeLocation.INSTANCE);
     }
 
+    @NonNls
     @NotNull
     @Override
     public String getDescriptiveName(@NotNull PsiElement element)

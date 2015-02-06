@@ -7,6 +7,7 @@ import com.intellij.webcore.libraries.ScriptingLibraryModel;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
+import org.jetbrains.annotations.NonNls;
 
 /**
  * 1/13/15
@@ -15,8 +16,10 @@ import java.util.Set;
  */
 public class InnerJsPredefinedLibrary extends JSPredefinedLibraryProvider
 {
+    @NonNls
     private static final String LIBRARY_NAME = "oxy-predefined";
 
+    @NonNls
     private String[] jsFiles = {
             "/js/inner-js-predefined.js"
     };

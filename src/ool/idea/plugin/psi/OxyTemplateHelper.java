@@ -1,17 +1,21 @@
 package ool.idea.plugin.psi;
 
 import com.intellij.lang.javascript.psi.JSCallExpression;
-import com.intellij.lang.javascript.psi.JSProperty;
+import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.JSRecursiveElementVisitor;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.ResolveResult;
 import com.intellij.psi.util.PsiTreeUtil;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import ool.idea.plugin.file.index.OxyTemplateIndexUtil;
 import ool.idea.plugin.file.index.collector.IncludedFilesCollector;
+import ool.idea.plugin.file.index.nacros.MacroIndex;
 import ool.idea.plugin.lang.OxyTemplateInnerJs;
 import ool.idea.plugin.psi.visitor.MacroNameVisitor;
 import org.jetbrains.annotations.NotNull;
@@ -33,9 +37,9 @@ public class OxyTemplateHelper
     }
 
     @NotNull
-    public static Map<PsiElement, JSProperty> getUsedJsMacros(@NotNull PsiFile psiFile)
+    public static Map<PsiElement, JSElement> getUsedJsMacros(@NotNull PsiFile psiFile)
     {
-        final Map<PsiElement, JSProperty> usedMacros = new HashMap<PsiElement, JSProperty>();
+        final Map<PsiElement, JSElement> usedMacros = new HashMap<PsiElement, JSElement>();
 
         new MacroNameVisitor()
         {
@@ -44,11 +48,10 @@ public class OxyTemplateHelper
             {
                 PsiElement reference;
 
-                // TODO macros.oxy.neco7.neco8 = function (params) {... - JSDefinitionExpression
-                if (macroName.getReference() != null
-                        && (reference = macroName.getReference().resolve()) instanceof JSProperty)
+                if (macroName.getReference() != null && (reference = macroName.getReference().resolve()) != null
+                        && OxyTemplateIndexUtil.getJsMacroNameReferences(macroName.getName(), macroName.getProject()).size() > 0)
                 {
-                    usedMacros.put(macroName, (JSProperty) reference);
+                    usedMacros.put(macroName, (JSElement) reference);
                 }
             }
         }.visitFile(psiFile);
@@ -66,10 +69,11 @@ public class OxyTemplateHelper
                 JSReferenceExpression referenceExpression = (JSReferenceExpression) node.getFirstChild();
                 PsiElement reference;
 
-                if (referenceExpression.getReference() != null &&
-                        (reference = referenceExpression.getReference().resolve()) instanceof JSProperty)
+                if (referenceExpression.getReference() != null && (reference = referenceExpression.getReference().resolve())  != null
+                        && OxyTemplateIndexUtil.getJsMacroNameReferences(MacroIndex.normalizeMacroName(referenceExpression
+                            .getText()), referenceExpression.getProject()).size() > 0)
                 {
-                    usedMacros.put(referenceExpression, (JSProperty) reference);
+                    usedMacros.put(referenceExpression, (JSElement) reference);
                 }
             }
         }.visitFile(psiFile.getViewProvider().getPsi(OxyTemplateInnerJs.INSTANCE));
@@ -144,6 +148,23 @@ public class OxyTemplateHelper
         {
             file.addBefore(directiveStatement, file.getFirstChild());
         }
+    }
+
+    @Nullable
+    public static ResolveResult multiResolveWithIncludeSearch(@NotNull PsiElement referencing, @NotNull ResolveResult[] references)
+    {
+        Collection<VirtualFile> includedFiles = OxyTemplateHelper.getIncludedFiles(referencing
+                .getContainingFile()).values();
+
+        for(ResolveResult result : references)
+        {
+            if(includedFiles.contains(result.getElement().getContainingFile().getVirtualFile()))
+            {
+                return result;
+            }
+        }
+
+        return null;
     }
 
 }

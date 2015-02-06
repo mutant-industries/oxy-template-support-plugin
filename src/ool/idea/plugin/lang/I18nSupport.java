@@ -4,6 +4,7 @@ import com.intellij.CommonBundle;
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
 import java.util.ResourceBundle;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.PropertyKey;
 
@@ -14,6 +15,7 @@ import org.jetbrains.annotations.PropertyKey;
  */
 public class I18nSupport
 {
+    @NonNls
     private static final String BUNDLE = "I18n.messages";
 
     private static Reference<ResourceBundle> oxyTemplateSupportBundle;
@@ -24,13 +26,14 @@ public class I18nSupport
     }
 
     @NotNull
+    @SuppressWarnings("unchecked")
     private static ResourceBundle getBundle()
     {
         ResourceBundle bundle;
 
-        if (oxyTemplateSupportBundle != null && oxyTemplateSupportBundle.get() != null)
+        if (oxyTemplateSupportBundle != null && (bundle = oxyTemplateSupportBundle.get()) != null)
         {
-            return oxyTemplateSupportBundle.get();
+            return bundle;
         }
         else
         {

@@ -40,6 +40,7 @@ public class OxyTemplateInnerJsHighlighter extends JSHighlighter
 
             final Class clazz = Class.forName("com.intellij.lang.javascript._JavaScriptLexer");
 
+            @SuppressWarnings("unchecked")
             Constructor constructor = clazz.getConstructor(Boolean.TYPE, DialectOptionHolder.class);
             constructor.setAccessible(true);
 

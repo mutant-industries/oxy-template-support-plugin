@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 import ool.idea.plugin.editor.completion.handler.IncludeAutoInsert;
 import ool.idea.plugin.editor.completion.handler.TrailingPatternConsumer;
 import ool.idea.plugin.file.OxyTemplateFileType;
+import ool.idea.plugin.file.index.nacros.MacroIndex;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -40,7 +41,7 @@ public class JsMacroName extends AbstractMacroName
                 && prevSibling.getNode().getElementType() == JSTokenTypes.DOT
                 && (topReference = PsiTreeUtil.getTopmostParentOfType(position, JSReferenceExpression.class)) != null)
         {
-            namespaceFqn = topReference.getText().substring(0, position.getStartOffsetInParent());
+            namespaceFqn = MacroIndex.normalizeMacroName(topReference.getText().substring(0, position.getStartOffsetInParent()));
 
             return true;
         }

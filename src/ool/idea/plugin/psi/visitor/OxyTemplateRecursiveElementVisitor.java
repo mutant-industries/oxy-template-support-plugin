@@ -2,8 +2,8 @@ package ool.idea.plugin.psi.visitor;
 
 import com.intellij.psi.PsiFile;
 import ool.idea.plugin.file.OxyTemplateFile;
-import ool.idea.plugin.psi.OxyTemplateElement;
 import ool.idea.plugin.psi.OxyTemplateElementVisitor;
+import ool.idea.plugin.psi.OxyTemplatePsiElement;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -14,9 +14,9 @@ import org.jetbrains.annotations.NotNull;
 public class OxyTemplateRecursiveElementVisitor extends OxyTemplateElementVisitor
 {
     @Override
-    public void visitOxyTemplateElement(@NotNull OxyTemplateElement element)
+    public void visitOxyTemplatePsiElement(@NotNull OxyTemplatePsiElement element)
     {
-        super.visitOxyTemplateElement(element);
+        super.visitOxyTemplatePsiElement(element);
 
         element.acceptChildren(this);
     }

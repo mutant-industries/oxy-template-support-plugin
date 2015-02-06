@@ -1,5 +1,4 @@
 .idea/
-target/
 *.java~
 jFlex.jar
 out/
@@ -7,3 +6,5 @@ gen/
 rebel.xml
 idea-flex.skeleton
 *.dot
+OxyTemplateLexer.java
+RhinoDialectSpecificLexer.java

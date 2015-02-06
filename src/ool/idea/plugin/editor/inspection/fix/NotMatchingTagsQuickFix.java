@@ -1,4 +1,4 @@
-package ool.idea.plugin.editor.annotator.fix;
+package ool.idea.plugin.editor.inspection.fix;
 
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.LocalQuickFix;

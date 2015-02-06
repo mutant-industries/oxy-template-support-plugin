@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.usageView.UsageViewTypeLocation;
 import ool.idea.plugin.psi.MacroName;
-import ool.idea.plugin.psi.OxyTemplateElement;
+import ool.idea.plugin.psi.OxyTemplatePsiElement;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -39,7 +39,7 @@ public class OxyTemplateFindUsagesProvider implements FindUsagesProvider
     @Override
     public String getType(@NotNull PsiElement element)
     {
-        if(element instanceof OxyTemplateElement)
+        if(element instanceof OxyTemplatePsiElement)
         {
             return element.getNode().getElementType().toString();
         }

@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>ool.idea.plugin</id>
     <name>Oxy template support</name>
-    <version>0.7.2</version>
+    <version>0.7.3</version>
     <vendor email="p.mayr@oxyonline.cz" url="http://stash.oxyonline.local/projects/CZC/repos/macro-support-plugin">
         oXy Online s.r.o.
     </vendor>
@@ -204,9 +204,8 @@
                                  implementationClass="ool.idea.plugin.psi.manipulator.DirectiveParamFileReferenceManipulator"/>
         <lang.elementManipulator forClass="ool.idea.plugin.psi.MacroName"
                                  implementationClass="ool.idea.plugin.psi.manipulator.MacroNameManipulator"/>
-        <annotator language="OxyTemplate" implementationClass="ool.idea.plugin.editor.annotator.NotMatchingTagsAnnotator"/>
-        <annotator language="OxyTemplate" implementationClass="ool.idea.plugin.editor.annotator.UnresolvedXmlMacroReferenceAnnotator"/>
-        <annotator language="OxyTemplateInnerJs" implementationClass="ool.idea.plugin.editor.annotator.UnresolvedJsMacroReferenceAnnotator"/>
+        <annotator language="OxyTemplate" implementationClass="ool.idea.plugin.editor.annotator.XmlMacroNameAnnotator"/>
+        <annotator language="OxyTemplateInnerJs" implementationClass="ool.idea.plugin.editor.annotator.InnerJsAnnotator"/>
         <localInspection language="OxyTemplate" shortName="UnresolvedInclude" bundle="I18n.messages" key="inspection.unresolved.include.tooltip"
                          groupName="Oxy template" enabledByDefault="true" level="WARNING"
                          implementationClass="ool.idea.plugin.editor.inspection.UnresolvedIncludeInspection"/>

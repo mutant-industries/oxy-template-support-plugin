@@ -8,7 +8,7 @@ import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiLiteralExpression;
 import com.intellij.psi.impl.FakePsiElement;
-import ool.idea.plugin.psi.OxyTemplateNamedElement;
+import ool.idea.plugin.psi.OxyTemplateNamedPsiElement;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Petr Mayr <p.mayr@oxyonline.cz>
  */
-public class GlobalVariableDefinition extends FakePsiElement implements OxyTemplateNamedElement
+public class GlobalVariableDefinition extends FakePsiElement implements OxyTemplateNamedPsiElement
 {
     private PsiLiteralExpression literalExpression;
 

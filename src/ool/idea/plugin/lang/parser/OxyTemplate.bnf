@@ -2,7 +2,7 @@
     parserClass="ool.idea.plugin.lang.parser.OxyTemplateParser"
 
     extends="ool.idea.plugin.psi.impl.OxyTemplatePsiElementImpl"
-    implements="ool.idea.plugin.psi.OxyTemplateElement"
+    implements="ool.idea.plugin.psi.OxyTemplatePsiElement"
 
     psiImplClassSuffix="Impl"
     psiPackage="ool.idea.plugin.psi"
@@ -43,8 +43,8 @@ directive_param_wrapper ::= T_DIRECTIVE_PARAM_BOUNDARY directive_param_file_refe
 directive_param_file_reference ::= T_DIRECTIVE_PARAM {methods=[getReferences]}
 
 macro_xml_prefix ::= T_MACRO_XML_NAMESPACE T_XML_NAMESPACE_DELIMITER
-macro_name ::= T_MACRO_NAME {methods=[getReference getReferences setName getName isClosingTagMacroName] implements="ool.idea.plugin.psi.OxyTemplateNamedElement"}
-macro_attribute ::= macro_param_name T_MACRO_PARAM_ASSIGNMENT T_MACRO_PARAM_BOUNDARY (macro_param | macro_expression_param) T_MACRO_PARAM_BOUNDARY{pin=1}
+macro_name ::= T_MACRO_NAME {methods=[getReference getReferences setName getName isClosingTagMacroName] implements="ool.idea.plugin.psi.OxyTemplateNamedPsiElement"}
+macro_attribute ::= macro_param_name T_MACRO_PARAM_ASSIGNMENT T_MACRO_PARAM_BOUNDARY macro_param T_MACRO_PARAM_BOUNDARY{pin=1}
 macro_param_name ::= T_MACRO_PARAM_NAME
-macro_param ::= T_MACRO_PARAM
-macro_expression_param ::= T_MACRO_PARAM_EXPRESSION_STATEMENT T_TEMPLATE_JAVASCRIPT_CODE{pin=1}
+macro_param ::= T_MACRO_PARAM | T_TEMPLATE_JAVASCRIPT_CODE | macro_expression_param
+private macro_expression_param ::= T_MACRO_PARAM_EXPRESSION_STATEMENT T_TEMPLATE_JAVASCRIPT_CODE{pin=1}

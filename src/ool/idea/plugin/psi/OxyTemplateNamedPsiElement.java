@@ -7,7 +7,7 @@ import com.intellij.psi.PsiNamedElement;
  *
  * @author Petr Mayr <p.mayr@oxyonline.cz>
  */
-public interface OxyTemplateNamedElement extends PsiNamedElement, OxyTemplateElement
+public interface OxyTemplateNamedPsiElement extends PsiNamedElement, OxyTemplatePsiElement
 {
 
 }

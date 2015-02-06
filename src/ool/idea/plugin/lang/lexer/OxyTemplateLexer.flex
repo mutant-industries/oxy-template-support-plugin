@@ -10,6 +10,7 @@ import com.intellij.util.containers.Stack;
 
 %public
 %class OxyTemplateLexer
+%extends AbstractOxyTemplateLexer
 %implements FlexLexer
 %function advance
 %type IElementType
@@ -17,11 +18,6 @@ import com.intellij.util.containers.Stack;
 
 %{
     private Stack<Integer> stack = new Stack();
-
-    public OxyTemplateLexer()
-    {
-        // dummy
-    }
 
     private void yypushstate(int newState)
     {
@@ -274,6 +270,7 @@ NON_SPECIAL_CHARS = !([^]*({SPECIAL_CHARS}|{WHITE_SPACE})[^]*)
     {NON_SPECIAL_CHARS}+
     {
         yypushstate(S_MACRO_PARAM_ASIGNMENT);
+        lastSeenAttributeName = yytext();
         return T_MACRO_PARAM_NAME;
     }
     {XML_TAG_END}
@@ -302,6 +299,7 @@ NON_SPECIAL_CHARS = !([^]*({SPECIAL_CHARS}|{WHITE_SPACE})[^]*)
     {MACRO_NAME}
     {
         yypopstate();
+        lastSeenMacroName = yytext();
         return T_MACRO_NAME;
     }
     .
@@ -337,7 +335,7 @@ NON_SPECIAL_CHARS = !([^]*({SPECIAL_CHARS}|{WHITE_SPACE})[^]*)
 {
     !([^]*({MACRO_PARAM_EXPRESSION_STATEMENT_START}|\")[^]*)
     {
-        return T_MACRO_PARAM;
+        return decideParameterType();
     }
     {MACRO_PARAM_EXPRESSION_STATEMENT_START}
     {

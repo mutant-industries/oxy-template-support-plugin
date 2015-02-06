@@ -1,14 +1,13 @@
 package ool.idea.plugin.editor.annotator;
 
 import com.intellij.lang.annotation.Annotation;
-import com.intellij.lang.annotation.AnnotationHolder;
-import com.intellij.lang.annotation.Annotator;
-import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
-import ool.idea.plugin.editor.annotator.fix.NotMatchingTagsQuickFix;
+import ool.idea.plugin.editor.inspection.fix.NotMatchingTagsQuickFix;
 import ool.idea.plugin.lang.I18nSupport;
 import ool.idea.plugin.psi.MacroName;
 import ool.idea.plugin.psi.MacroTag;
+import ool.idea.plugin.psi.visitor.OxyTemplateAnnotatingVisitor;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -16,18 +15,23 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Petr Mayr <p.mayr@oxyonline.cz>
  */
-public class NotMatchingTagsAnnotator implements Annotator
+public class XmlMacroNameAnnotator extends OxyTemplateAnnotatingVisitor
 {
     @Override
-    public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder)
+    public void visitMacroName(@NotNull MacroName macroName)
     {
-        MacroName macroName;
+        PsiReference reference;
 
-        if(element instanceof MacroName && (macroName = (MacroName)element).isClosingTagMacroName())
+        if((reference = macroName.getReference()) == null || reference.resolve() == null)
         {
-            MacroTag tag = PsiTreeUtil.getParentOfType(macroName, MacroTag.class);
+            holder.createWarningAnnotation(macroName, I18nSupport.message("annotator.unresolved.macro.reference.tooltip"));
+        }
 
-            if(tag == null) // redundant np check
+        if(macroName.isClosingTagMacroName())
+        {
+            MacroTag tag;
+
+            if((tag = PsiTreeUtil.getParentOfType(macroName, MacroTag.class)) == null)
             {
                 return;
             }
@@ -35,7 +39,7 @@ public class NotMatchingTagsAnnotator implements Annotator
             if( ! tag.getMacroName().getText().equals(macroName.getText()))
             {
                 Annotation annotation = holder.createWarningAnnotation(macroName,
-                        I18nSupport.message("annotator.not.matching.tags.reference.name"));
+                        I18nSupport.message("annotator.not.matching.tags.reference.tooltip"));
 
                 annotation.registerFix(new NotMatchingTagsQuickFix(macroName, tag.getMacroName()));
                 annotation.registerFix(new NotMatchingTagsQuickFix(tag.getMacroName(), macroName));

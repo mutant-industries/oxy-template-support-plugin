@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author Petr Mayr <p.mayr@oxyonline.cz>
  */
-public interface MacroCall extends OxyTemplateElement
+public interface MacroCall extends OxyTemplatePsiElement
 {
     @Nullable
     MacroName getMacroName();

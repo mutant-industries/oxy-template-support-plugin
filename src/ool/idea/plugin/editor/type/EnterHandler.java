@@ -5,15 +5,18 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler;
 import com.intellij.openapi.util.Ref;
-import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.tree.IElementType;
 import ool.idea.plugin.file.OxyTemplateFileViewProvider;
 import ool.idea.plugin.lang.OxyTemplate;
-import ool.idea.plugin.psi.BlockStatement;
+import ool.idea.plugin.lang.parser.OxyTemplateParserDefinition;
+import ool.idea.plugin.psi.BlockCloseStatement;
+import ool.idea.plugin.psi.BlockOpenStatement;
 import ool.idea.plugin.psi.OxyTemplateTypes;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * 1/3/15
@@ -30,8 +33,10 @@ public class EnterHandler extends EnterHandlerDelegateAdapter
                                   @NotNull final DataContext dataContext,
                                   final EditorActionHandler originalHandler)
     {
+        PsiElement elementAt = file.getViewProvider().findElementAt(caretOffset.get(), OxyTemplate.INSTANCE);
+
         if ((file.getViewProvider() instanceof OxyTemplateFileViewProvider)
-            && (isBetweenMacroTags(file.getViewProvider(), caretOffset.get()) || isBetweenBlockMarkers(file.getViewProvider(), caretOffset.get())))
+            && (isBetweenMacroTags(elementAt) || isBetweenBlockMarkers(elementAt)))
         {
             originalHandler.execute(editor, editor.getCaretModel().getCurrentCaret(), dataContext);
 
@@ -41,23 +46,50 @@ public class EnterHandler extends EnterHandlerDelegateAdapter
         return Result.Continue;
     }
 
-    private static boolean isBetweenMacroTags(FileViewProvider provider, int offset)
+    private static boolean isBetweenMacroTags(@Nullable PsiElement element)
     {
-        PsiElement element = provider.findElementAt(offset, OxyTemplate.INSTANCE);
-
         return element != null && element.getNode().getElementType() == OxyTemplateTypes.T_XML_CLOSE_TAG_START
                 && (element = element.getPrevSibling()) != null && element.getNode().getElementType() == OxyTemplateTypes.T_XML_OPEN_TAG_END;
     }
 
-    private static boolean isBetweenBlockMarkers(FileViewProvider provider, int offset)
+    private static boolean isBetweenBlockMarkers(@Nullable PsiElement element)
     {
-        PsiElement element = provider.findElementAt(offset, OxyTemplate.INSTANCE);
-        BlockStatement blockStatement;
+        if(element == null)
+        {
+            return false;
+        }
 
-        return (blockStatement = PsiTreeUtil.getParentOfType(element, BlockStatement.class)) != null
-                && (element = blockStatement.getBlockOpenStatement().getNextSibling()) != null
-                && element.getNode().getElementType() != OxyTemplateTypes.T_TEMPLATE_JAVASCRIPT_CODE;
+        IElementType elementType = element.getNode().getElementType();
 
+        if(OxyTemplateParserDefinition.CLOSE_BLOCK_MARKERS.contains(elementType))
+        {
+            element = element.getParent().getPrevSibling();
+
+            if(element instanceof PsiWhiteSpace)
+            {
+                element = element.getPrevSibling();
+            }
+
+            return element != null && OxyTemplateParserDefinition.OPEN_BLOCK_MARKERS.contains(element.getNode().getElementType());
+        }
+        else if(OxyTemplateParserDefinition.OPEN_BLOCK_MARKERS.contains(elementType))
+        {
+            element = element.getParent().getNextSibling();
+
+            if(element instanceof PsiWhiteSpace)
+            {
+                element = element.getNextSibling();
+            }
+
+            return element != null && OxyTemplateParserDefinition.CLOSE_BLOCK_MARKERS.contains(element.getNode().getElementType());
+        }
+        else if(element instanceof PsiWhiteSpace)
+        {
+            return element.getNextSibling() instanceof BlockCloseStatement && element.getPrevSibling() instanceof BlockOpenStatement
+                    && ! element.textContains('\n');
+        }
+
+        return false;
     }
 
 }

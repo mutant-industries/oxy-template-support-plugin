@@ -43,7 +43,7 @@ public class MacroReference implements PsiPolyVariantReference
         {
             return multiResolve[0].getElement();
         }
-            else if(multiResolve.length > 1 && ! (referencingElement instanceof PsiLiteralExpression)
+        else if(multiResolve.length > 1 && ! (referencingElement instanceof PsiLiteralExpression)
                 && referencingElement.getTextLength() == endOffset)
         {
             ResolveResult result;

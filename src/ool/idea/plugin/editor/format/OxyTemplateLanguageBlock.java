@@ -19,7 +19,6 @@ import com.intellij.webcore.template.formatter.TemplateLanguageBlock;
 import java.util.List;
 import ool.idea.plugin.lang.OxyTemplateInnerJs;
 import ool.idea.plugin.lang.parser.OxyTemplateParserDefinition;
-import ool.idea.plugin.psi.BlockStatement;
 import ool.idea.plugin.psi.MacroAttribute;
 import ool.idea.plugin.psi.MacroTag;
 import ool.idea.plugin.psi.MacroUnpairedTag;
@@ -118,8 +117,8 @@ class OxyTemplateLanguageBlock extends TemplateLanguageBlock
             return Indent.getNormalIndent();
         }
         else if(getNode().getPsi() instanceof MacroTag &&
-                (astNode instanceof HtmlTag || astNode.getPsi() instanceof BlockStatement
-                        || astNode.getPsi() instanceof MacroUnpairedTag || astNode.getPsi() instanceof MacroTag))
+                (astNode instanceof HtmlTag || astNode.getPsi() instanceof MacroUnpairedTag
+                        || astNode.getPsi() instanceof MacroTag))
         {
             return Indent.getNormalIndent();
         }

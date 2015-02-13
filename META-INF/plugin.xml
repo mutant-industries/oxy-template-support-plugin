@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>ool.idea.plugin</id>
     <name>Oxy template support</name>
-    <version>0.8</version>
+    <version>0.8.1</version>
     <vendor email="p.mayr@oxyonline.cz" url="http://stash.oxyonline.local/projects/CZC/repos/macro-support-plugin">
         oXy Online s.r.o.
     </vendor>
@@ -15,6 +15,12 @@
     ]]></description>
 
     <change-notes><![CDATA[
+        <b>0.8.1</b>
+        <ul>
+            <li>
+                include optimizer
+            </li>
+        </ul>
         <b>0.8</b>
         <ul>
             <li>
@@ -231,6 +237,8 @@
         <!--<documentationProvider implementation="ool.idea.plugin.editor.documentation.MacroParamDocumentationProvider"/>-->
         <gotoSymbolContributor implementation="ool.idea.plugin.editor.gotosymbol.MacroGotoSymbolContributor"/>
         <lang.psiStructureViewFactory language="OxyTemplate" implementationClass="ool.idea.plugin.editor.structure.OxyTemplateStructureViewFactory"/>
+        <lang.importOptimizer language="OxyTemplate" implementationClass="ool.idea.plugin.action.IncludeOptimizer"/>
+        <highlightErrorFilter implementation="ool.idea.plugin.lang.parser.ErrorFilter"/>
     </extensions>
     <extensions defaultExtensionNs="JavaScript">
         <predefinedLibraryProvider implementation="ool.idea.plugin.editor.InnerJsPredefinedLibrary"/>

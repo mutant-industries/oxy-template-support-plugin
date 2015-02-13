@@ -1,6 +1,5 @@
 package ool.idea.plugin.psi.visitor;
 
-import ool.idea.plugin.psi.BlockStatement;
 import ool.idea.plugin.psi.MacroTag;
 import ool.idea.plugin.psi.MacroUnpairedTag;
 import org.jetbrains.annotations.NotNull;
@@ -12,12 +11,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public class DirectiveStatementVisitor extends OxyTemplateRecursiveElementVisitor
 {
-    @Override
-    public void visitBlockStatement(@NotNull BlockStatement o)
-    {
-
-    }
-
     @Override
     public void visitMacroTag(@NotNull MacroTag o)
     {

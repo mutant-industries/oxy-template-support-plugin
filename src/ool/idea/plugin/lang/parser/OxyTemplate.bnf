@@ -28,7 +28,7 @@ private item_ ::= (block_statement|block_open_statement|block_close_statement|
     T_MACRO_XML_NAMESPACE|T_MACRO_NAME|
     T_MACRO_PARAM_NAME|T_MACRO_PARAM_ASSIGNMENT|T_MACRO_PARAM_BOUNDARY|T_MACRO_PARAM|T_MACRO_PARAM_EXPRESSION_STATEMENT)
 
-block_statement ::= block_open_statement T_TEMPLATE_JAVASCRIPT_CODE* block_close_statement{pin=2}
+private block_statement ::= block_open_statement T_TEMPLATE_JAVASCRIPT_CODE* block_close_statement{pin=2}
 directive_statement ::= directive_open_statement T_DIRECTIVE directive_param_wrapper+ block_close_statement{pin=2 methods=[getName]}
 macro_unpaired_tag ::= T_XML_TAG_START macro_xml_prefix macro_name macro_attribute* T_XML_UNPAIRED_TAG_END{pin=2 extends="ool.idea.plugin.psi.impl.MacroCallImpl"}
 macro_tag ::= T_XML_TAG_START macro_xml_prefix macro_name macro_attribute* T_XML_OPEN_TAG_END
@@ -44,7 +44,7 @@ directive_param_file_reference ::= T_DIRECTIVE_PARAM {methods=[getReferences]}
 
 macro_xml_prefix ::= T_MACRO_XML_NAMESPACE T_XML_NAMESPACE_DELIMITER
 macro_name ::= T_MACRO_NAME {methods=[getReference getReferences setName getName isClosingTagMacroName] implements="ool.idea.plugin.psi.OxyTemplateNamedPsiElement"}
-macro_attribute ::= macro_param_name T_MACRO_PARAM_ASSIGNMENT T_MACRO_PARAM_BOUNDARY macro_param T_MACRO_PARAM_BOUNDARY{pin=1}
+macro_attribute ::= macro_param_name T_MACRO_PARAM_ASSIGNMENT T_MACRO_PARAM_BOUNDARY macro_param? T_MACRO_PARAM_BOUNDARY{pin=1}
 macro_param_name ::= T_MACRO_PARAM_NAME
 macro_param ::= T_MACRO_PARAM | T_TEMPLATE_JAVASCRIPT_CODE | macro_expression_param
 private macro_expression_param ::= T_MACRO_PARAM_EXPRESSION_STATEMENT T_TEMPLATE_JAVASCRIPT_CODE{pin=1}

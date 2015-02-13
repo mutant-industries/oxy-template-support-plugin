@@ -46,7 +46,7 @@ public class JsMacroNameDataIndexer extends MacroIndex implements DataIndexer<St
                 {
                     String namespace = ref.getText().replace(MACRO_REGISTRY_NAMESPACE + ".", "");
 
-                    if( ! namespace.equals(DEFAULT_NAMESPACE) &&  ! namespace.equals(MACRO_REGISTRY_NAMESPACE))
+                    if( ! namespace.equals(DEFAULT_NAMESPACE) && ! namespace.equals(MACRO_REGISTRY_NAMESPACE))
                     {
                         result.put(ref.getText().replace(MACRO_REGISTRY_NAMESPACE + ".", ""), new JsMacroNameIndexedElement(firstIteration &&
                                 psiElement.getLastChild() instanceof JSFunctionExpression, ref.getTextOffset() + ref.getTextLength() - 1));

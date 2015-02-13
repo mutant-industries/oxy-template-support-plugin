@@ -27,7 +27,7 @@ public class MissingIncludeDirectiveQuickFix  implements LocalQuickFix
     private final String includePath;
 
     public MissingIncludeDirectiveQuickFix(@NotNull PsiElement macroCallMissingInclude,
-                                           @NotNull PsiElement macroReference, String directiveType)
+                                           @NotNull PsiElement macroReference, @NonNls String directiveType)
     {
         this.macroCallMissingInclude = macroCallMissingInclude;
         this.directiveType = directiveType;

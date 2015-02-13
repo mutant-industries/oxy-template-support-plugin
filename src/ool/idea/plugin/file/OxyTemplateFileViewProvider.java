@@ -37,6 +37,12 @@ public class OxyTemplateFileViewProvider extends MultiplePsiFilesPerDocumentFile
     @NotNull
     private final VirtualFile virtualFile;
 
+    private static final TemplateDataElementType TEMPLATE_MARKUP_DATA_TYPE = new TemplateDataElementType("TEMPLATE_MARKUP", OxyTemplate.INSTANCE,
+            OxyTemplateTypes.T_TEMPLATE_HTML_CODE, OxyTemplateTypes.T_OUTER_TEMPLATE_ELEMENT);
+
+    private static final TemplateDataElementType TEMPLATE_INNERJS_DATA_TYPE = new OxyTemplateInnerJsElementType("TEMPLATE_JS", OxyTemplateInnerJs.INSTANCE,
+            OxyTemplateTypes.T_TEMPLATE_JAVASCRIPT_CODE, OxyTemplateTypes.T_INNER_TEMPLATE_ELEMENT);
+
     public OxyTemplateFileViewProvider(@NotNull PsiManager manager, @NotNull VirtualFile file, boolean physical)
     {
         super(manager, file, physical);
@@ -112,8 +118,7 @@ public class OxyTemplateFileViewProvider extends MultiplePsiFilesPerDocumentFile
         if (lang == templateDataLanguage)
         {
             PsiFileImpl file = (PsiFileImpl) parserDefinition.createFile(this);
-            file.setContentElementType(new TemplateDataElementType("TEMPLATE_MARKUP", OxyTemplate.INSTANCE,
-                    OxyTemplateTypes.T_TEMPLATE_HTML_CODE, OxyTemplateTypes.T_OUTER_TEMPLATE_ELEMENT));
+            file.setContentElementType(TEMPLATE_MARKUP_DATA_TYPE);
 
             return file;
         }
@@ -124,8 +129,7 @@ public class OxyTemplateFileViewProvider extends MultiplePsiFilesPerDocumentFile
         else if (lang == OxyTemplateInnerJs.INSTANCE)
         {
             PsiFileImpl file = (PsiFileImpl) parserDefinition.createFile(this);
-            file.setContentElementType(new OxyTemplateInnerJsElementType("TEMPLATE_JS", OxyTemplateInnerJs.INSTANCE,
-                    OxyTemplateTypes.T_TEMPLATE_JAVASCRIPT_CODE, OxyTemplateTypes.T_INNER_TEMPLATE_ELEMENT));
+            file.setContentElementType(TEMPLATE_INNERJS_DATA_TYPE);
 
             return file;
         }

@@ -2,6 +2,7 @@ package ool.idea.plugin.psi;
 
 import com.intellij.psi.tree.IElementType;
 import ool.idea.plugin.lang.OxyTemplate;
+import org.apache.commons.lang.WordUtils;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,7 +21,7 @@ public class OxyTemplateTokenType extends IElementType
     @Override
     public String toString()
     {
-        return super.toString().toLowerCase().replace("t_", "").replaceAll("_", " ");
+        return WordUtils.capitalize(super.toString().toLowerCase().replace("t_", "").replaceAll("_", " "));
     }
 
 }

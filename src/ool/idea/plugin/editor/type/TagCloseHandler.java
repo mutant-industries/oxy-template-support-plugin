@@ -107,21 +107,15 @@ public class TagCloseHandler extends TypedHandlerDelegate
             }
         }
         // <m:foo.bar param="value"_
-        else if(elementAt.getNode().getElementType() == OxyTemplateTypes.T_MACRO_PARAM_BOUNDARY)
+        else if((psiElement = PsiTreeUtil.getParentOfType(elementAt, MacroAttribute.class)) != null)
         {
-            if(elementAt.getParent().getLastChild().isEquivalentTo(elementAt)
-                    && (psiElement = PsiTreeUtil.getParentOfType(elementAt, MacroUnpairedTag.class)) != null)
+            MacroUnpairedTag tag = PsiTreeUtil.getParentOfType(psiElement, MacroUnpairedTag.class);
+
+            if(tag != null && psiElement.getLastChild().isEquivalentTo(elementAt)
+                    && tag.getLastChild() instanceof PsiErrorElement
+                    && tag.getLastChild().getPrevSibling().isEquivalentTo(psiElement))
             {
-                if(psiElement.getLastChild() instanceof PsiErrorElement
-                        && psiElement.getLastChild().getPrevSibling().isEquivalentTo(elementAt.getParent()))
-                {
-                    return true;
-                }
-                else if(psiElement.getLastChild() instanceof MacroAttribute // parser fix - attribute missing value
-                        && psiElement.getLastChild().isEquivalentTo(elementAt.getParent()))
-                {
-                    return true;
-                }
+                return true;
             }
         }
 

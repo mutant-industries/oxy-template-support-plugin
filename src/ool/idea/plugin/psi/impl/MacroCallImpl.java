@@ -1,8 +1,8 @@
 package ool.idea.plugin.psi.impl;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import ool.idea.plugin.psi.MacroCall;
-import ool.idea.plugin.psi.MacroName;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -20,9 +20,12 @@ abstract public class MacroCallImpl extends OxyTemplatePsiElementImpl implements
     @Override
     public String toString()
     {
-        MacroName macroName = getMacroName();
+        return super.toString() + " " + getMacroName().getName();
+    }
 
-        return super.toString() + (macroName == null ? "" : " " + macroName.getName());
+    public PsiElement setName(String newName)
+    {
+        return getMacroName().setName(newName);
     }
 
 }

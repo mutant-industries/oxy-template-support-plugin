@@ -9,8 +9,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.formatter.xml.XmlFormattingPolicy;
+import com.intellij.psi.formatter.xml.XmlTagBlock;
 import com.intellij.webcore.template.formatter.AbstractTemplateLanguageFormattingModelBuilder;
 import ool.idea.plugin.file.OxyTemplateFile;
+import ool.idea.plugin.psi.MacroCall;
 import ool.idea.plugin.psi.OxyTemplateTypes;
 
 /**
@@ -41,7 +43,18 @@ public class OxyTemplateFormatter extends AbstractTemplateLanguageFormattingMode
     @Override
     protected Block createTemplateLanguageBlock(ASTNode astNode, CodeStyleSettings codeStyleSettings, XmlFormattingPolicy xmlFormattingPolicy, Indent indent, Alignment alignment, Wrap wrap)
     {
-        return new OxyTemplateLanguageBlock(this, astNode, wrap, alignment, codeStyleSettings, xmlFormattingPolicy, indent);
+        if(astNode.getPsi() instanceof MacroCall)
+        {
+            return new MacroTagBlock(this, astNode, wrap, alignment, codeStyleSettings, xmlFormattingPolicy, indent);
+        }
+
+        return new OxyTemplateBlock(this, astNode, wrap, alignment, codeStyleSettings, xmlFormattingPolicy, indent);
+    }
+
+    @Override
+    protected XmlTagBlock createXmlTagBlock(ASTNode astNode, Wrap wrap, Alignment alignment, XmlFormattingPolicy xmlFormattingPolicy, Indent indent)
+    {
+        return new OxyTemplateXmlTagBlock(this, astNode, wrap, alignment, xmlFormattingPolicy, indent);
     }
 
 }

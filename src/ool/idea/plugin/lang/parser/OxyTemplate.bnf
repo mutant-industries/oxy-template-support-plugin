@@ -13,6 +13,10 @@
     tokenTypeClass="ool.idea.plugin.psi.OxyTemplateTokenType"
     psiImplUtilClass="ool.idea.plugin.psi.impl.OxyTemplatePsiUtil"
     psiVisitorName="OxyTemplateElementVisitor"
+
+    extends("macro_unpaired_tag|macro_tag")="ool.idea.plugin.psi.impl.MacroCallImpl"
+    implements("macro_unpaired_tag|macro_tag")="ool.idea.plugin.psi.MacroCall"
+    implements("macro_name")="ool.idea.plugin.psi.OxyTemplateNamedPsiElement"
 }
 
 oxyTemplate ::= item_*
@@ -30,10 +34,10 @@ private item_ ::= (block_statement|block_open_statement|block_close_statement|
 
 private block_statement ::= block_open_statement T_TEMPLATE_JAVASCRIPT_CODE* block_close_statement{pin=2}
 directive_statement ::= directive_open_statement T_DIRECTIVE directive_param_wrapper+ block_close_statement{pin=2 methods=[getName]}
-macro_unpaired_tag ::= T_XML_TAG_START macro_xml_prefix macro_name macro_attribute* T_XML_UNPAIRED_TAG_END{pin=2 extends="ool.idea.plugin.psi.impl.MacroCallImpl"}
+macro_unpaired_tag ::= T_XML_TAG_START macro_xml_prefix macro_name macro_attribute* T_XML_UNPAIRED_TAG_END{pin=3}
 macro_tag ::= T_XML_TAG_START macro_xml_prefix macro_name macro_attribute* T_XML_OPEN_TAG_END
     (macro_tag | macro_unpaired_tag | block_statement | T_TEMPLATE_HTML_CODE)* T_XML_CLOSE_TAG_START macro_xml_prefix macro_name T_XML_CLOSE_TAG_END{pin=5
-        methods=[macroName="/macro_name[first]"] extends="ool.idea.plugin.psi.impl.MacroCallImpl"}
+        methods=[macroName="/macro_name[first]" getContentRange]}
 
 block_open_statement ::= T_OPEN_BLOCK_MARKER | T_OPEN_BLOCK_MARKER_PRINT
 block_close_statement ::= T_CLOSE_BLOCK_MARKER
@@ -43,7 +47,7 @@ directive_param_wrapper ::= T_DIRECTIVE_PARAM_BOUNDARY directive_param_file_refe
 directive_param_file_reference ::= T_DIRECTIVE_PARAM {methods=[getReferences]}
 
 macro_xml_prefix ::= T_MACRO_XML_NAMESPACE T_XML_NAMESPACE_DELIMITER
-macro_name ::= T_MACRO_NAME {methods=[getReference getReferences setName getName isClosingTagMacroName] implements="ool.idea.plugin.psi.OxyTemplateNamedPsiElement"}
+macro_name ::= T_MACRO_NAME {methods=[getReference getReferences setName getName isClosingTagMacroName]}
 macro_attribute ::= macro_param_name T_MACRO_PARAM_ASSIGNMENT T_MACRO_PARAM_BOUNDARY macro_param? T_MACRO_PARAM_BOUNDARY{pin=1}
 macro_param_name ::= T_MACRO_PARAM_NAME
 macro_param ::= T_MACRO_PARAM | T_TEMPLATE_JAVASCRIPT_CODE | macro_expression_param

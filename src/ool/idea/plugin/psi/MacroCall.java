@@ -2,19 +2,18 @@ package ool.idea.plugin.psi;
 
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * 1/16/15
  *
  * @author Petr Mayr <p.mayr@oxyonline.cz>
  */
-public interface MacroCall extends OxyTemplatePsiElement
+public interface MacroCall extends OxyTemplateNamedPsiElement
 {
-    @Nullable
-    MacroName getMacroName();
+    @NotNull
+    public MacroName getMacroName();
 
     @NotNull
-    List<MacroAttribute> getMacroAttributeList();
+    public List<MacroAttribute> getMacroAttributeList();
 
 }

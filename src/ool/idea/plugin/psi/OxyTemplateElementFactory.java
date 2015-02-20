@@ -21,9 +21,32 @@ public class OxyTemplateElementFactory
     }
 
     @NotNull
-    public static MacroUnpairedTag createMacroUnpairedTag(@NotNull Project project, String name)
+    public static MacroParamName createMacroParamName(@NotNull Project project, String name)
     {
-        return  ((MacroUnpairedTag) createFile(project, "<m:" + name + " />").getFirstChild());
+        MacroAttribute attribute = createMacroAttribute(project, name, "dummy");
+
+        return attribute.getMacroParamName();
+    }
+
+    @NotNull
+    public static MacroAttribute createMacroAttribute(@NotNull Project project, String name, String value)
+    {
+        MacroUnpairedTag tag = createMacroUnpairedTag(project, "dummy", name + "\"" + value + "\"");
+
+        return tag.getMacroAttributeList().get(0);
+    }
+
+    @NotNull
+    public static MacroUnpairedTag createMacroUnpairedTag(@NotNull Project project, String name, String... attributes)
+    {
+        StringBuilder attributeListBulder = new StringBuilder();
+
+        for(String attribute : attributes)
+        {
+            attributeListBulder.append(attribute + " ");
+        }
+
+        return  ((MacroUnpairedTag) createFile(project, "<m:" + name + " " + attributeListBulder + "/>").getFirstChild());
     }
 
     @NotNull

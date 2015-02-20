@@ -13,7 +13,7 @@ import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.search.UsageSearchContext;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.util.Processor;
-import ool.idea.plugin.file.OxyTemplateFileType;
+import ool.idea.plugin.file.type.OxyTemplateFileType;
 import ool.idea.plugin.psi.MacroName;
 import ool.idea.plugin.psi.reference.innerjs.globals.GlobalVariableDefinition;
 import org.jetbrains.annotations.NotNull;

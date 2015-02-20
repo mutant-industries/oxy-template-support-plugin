@@ -9,7 +9,7 @@ import com.intellij.util.indexing.ID;
 import com.intellij.util.io.DataExternalizer;
 import com.intellij.util.io.EnumeratorStringDescriptor;
 import com.intellij.util.io.KeyDescriptor;
-import ool.idea.plugin.file.OxyTemplateFileType;
+import ool.idea.plugin.file.type.OxyTemplateFileType;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 

@@ -11,7 +11,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import java.util.regex.Pattern;
 import ool.idea.plugin.editor.completion.handler.IncludeAutoInsert;
 import ool.idea.plugin.editor.completion.handler.TrailingPatternConsumer;
-import ool.idea.plugin.file.OxyTemplateFileType;
+import ool.idea.plugin.file.type.OxyTemplateFileType;
 import ool.idea.plugin.psi.MacroName;
 import ool.idea.plugin.psi.OxyTemplateTypes;
 import org.jetbrains.annotations.NotNull;

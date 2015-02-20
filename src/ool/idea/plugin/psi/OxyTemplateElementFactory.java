@@ -3,7 +3,7 @@ package ool.idea.plugin.psi;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFileFactory;
 import ool.idea.plugin.file.OxyTemplateFile;
-import ool.idea.plugin.file.OxyTemplateFileType;
+import ool.idea.plugin.file.type.OxyTemplateFileType;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 

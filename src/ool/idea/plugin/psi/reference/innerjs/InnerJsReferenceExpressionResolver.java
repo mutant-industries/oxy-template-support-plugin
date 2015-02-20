@@ -15,6 +15,7 @@ import ool.idea.plugin.file.index.nacros.MacroIndex;
 import ool.idea.plugin.psi.OxyTemplateHelper;
 import ool.idea.plugin.psi.reference.MacroReferenceResolver;
 import ool.idea.plugin.psi.reference.innerjs.globals.GlobalVariableDefinition;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * 1/9/15
@@ -39,7 +40,7 @@ public class InnerJsReferenceExpressionResolver extends JSReferenceExpressionRes
         if(PsiTreeUtil.getParentOfType(myRef, JSCallExpression.class) != null)
         {
             ResolveResult[] results = ResolveCache.getInstance(myRef.getProject())
-                    .resolveWithCaching(myRef, MacroReferenceResolver.INSTANCE, false, false, myRef.getContainingFile());
+                    .resolveWithCaching(myRef, getMacroReferenceResolver(), false, false, myRef.getContainingFile());
 
             if(results.length > 1 && myRef.getParent() instanceof JSCallExpression)
             {
@@ -72,6 +73,12 @@ public class InnerJsReferenceExpressionResolver extends JSReferenceExpressionRes
         }
 
         return parentResult;
+    }
+
+    @NotNull
+    protected MacroReferenceResolver getMacroReferenceResolver()
+    {
+        return new MacroReferenceResolver();
     }
 
 }

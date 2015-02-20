@@ -76,7 +76,7 @@ public class MacroReference implements PsiPolyVariantReference
     public ResolveResult[] multiResolve(boolean incompleteCode)
     {
         return ResolveCache.getInstance(referencingElement.getProject())
-                .resolveWithCaching(this, MacroReferenceResolver.INSTANCE, false, false, referencingElement.getContainingFile());
+                .resolveWithCaching(this, new MacroReferenceResolver(), false, false, referencingElement.getContainingFile());
     }
 
     @Override

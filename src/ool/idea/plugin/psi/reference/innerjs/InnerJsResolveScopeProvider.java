@@ -9,7 +9,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.ProjectScope;
 import java.util.Arrays;
 import java.util.List;
-import ool.idea.plugin.file.OxyTemplateFileType;
+import ool.idea.plugin.file.type.OxyTemplateFileType;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,8 +31,7 @@ public class InnerJsResolveScopeProvider extends JSElementResolveScopeProvider
     @Override
     public GlobalSearchScope getElementResolveScope(@NotNull PsiElement element)
     {
-        GlobalSearchScope scope = super.getElementResolveScope(element).intersectWith(GlobalSearchScope
-                .getScopeRestrictedByFileTypes(ProjectScope.getProjectScope(element.getProject()), OxyTemplateFileType.INSTANCE));
+        GlobalSearchScope scope = getBaseScope(element);
 
         for(VirtualFile file : JSPredefinedLibraryProvider.getAllPredefinedLibraryFiles())
         {
@@ -52,6 +51,13 @@ public class InnerJsResolveScopeProvider extends JSElementResolveScopeProvider
     public GlobalSearchScope getResolveScope(@NotNull VirtualFile file, Project project)
     {
         return null;    // never called
+    }
+
+    @NotNull
+    protected GlobalSearchScope getBaseScope(@NotNull PsiElement element)
+    {
+        return super.getElementResolveScope(element).intersectWith(GlobalSearchScope
+                .getScopeRestrictedByFileTypes(ProjectScope.getProjectScope(element.getProject()), OxyTemplateFileType.INSTANCE));
     }
 
 }

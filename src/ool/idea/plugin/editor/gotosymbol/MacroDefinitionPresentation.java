@@ -2,7 +2,7 @@ package ool.idea.plugin.editor.gotosymbol;
 
 import com.intellij.navigation.ItemPresentation;
 import javax.swing.Icon;
-import ool.idea.plugin.file.OxyTemplateFileType;
+import ool.idea.plugin.file.type.OxyTemplateFileType;
 import org.jetbrains.annotations.Nullable;
 
 /**

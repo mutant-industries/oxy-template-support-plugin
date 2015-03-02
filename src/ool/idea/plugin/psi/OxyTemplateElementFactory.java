@@ -17,13 +17,13 @@ public class OxyTemplateElementFactory
     @NotNull
     public static MacroName createMacroName(@NotNull Project project, String name)
     {
-        return  createMacroUnpairedTag(project, name).getMacroName();
+        return  createMacroEmptyTag(project, name).getMacroName();
     }
 
     @NotNull
-    public static MacroUnpairedTag createMacroUnpairedTag(@NotNull Project project, String name)
+    public static MacroEmptyTag createMacroEmptyTag(@NotNull Project project, String name)
     {
-        return  ((MacroUnpairedTag) createFile(project, "<m:" + name + " />").getFirstChild());
+        return  ((MacroEmptyTag) createFile(project, "<m:" + name + " />").getFirstChild());
     }
 
     @NotNull

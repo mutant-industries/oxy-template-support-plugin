@@ -6,5 +6,5 @@ gen/
 rebel.xml
 idea-flex.skeleton
 *.dot
-OxyTemplateLexer.java
+AbstractOxyTemplateLexer.java
 RhinoDialectSpecificLexer.java

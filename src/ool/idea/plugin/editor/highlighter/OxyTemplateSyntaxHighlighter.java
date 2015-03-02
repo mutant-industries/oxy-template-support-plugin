@@ -31,6 +31,7 @@ public class OxyTemplateSyntaxHighlighter extends SyntaxHighlighterBase
     public static final TextAttributesKey MACRO_NAME = createTextAttributesKey("OXY_TEMPLATE_MACRO_NAME", DefaultLanguageHighlighterColors.MARKUP_TAG);
     public static final TextAttributesKey MACRO_PARAM_NAME = createTextAttributesKey("OXY_TEMPLATE_MACRO_PARAM_NAME", DefaultLanguageHighlighterColors.MARKUP_ENTITY);
     public static final TextAttributesKey MACRO_PARAM_VALUE = createTextAttributesKey("OXY_TEMPLATE_MACRO_PARAM_VALUE", DefaultLanguageHighlighterColors.MARKUP_ENTITY);
+    public static final TextAttributesKey MACRO_PARAM_VALUE_ENCODED_ENTITY = createTextAttributesKey("MACRO_PARAM_VALUE_ENCODED_ENTITY", DefaultLanguageHighlighterColors.MARKUP_ENTITY);
     public static final TextAttributesKey MACRO_PARAM_EXPRESSION_STATEMENT = createTextAttributesKey("OXY_TEMPLATE_MACRO_PARAM_EXPRESSION_STATEMENT", DefaultLanguageHighlighterColors.MARKUP_ENTITY);
     static final TextAttributesKey BAD_CHARACTER = createTextAttributesKey("OXY_TEMPLATE_BAD_CHARACTER",
             new TextAttributes(Color.RED, null, null, null, Font.BOLD));
@@ -45,6 +46,7 @@ public class OxyTemplateSyntaxHighlighter extends SyntaxHighlighterBase
     private static final TextAttributesKey[] MACRO_XML_NAMESPACE_KEYS = new TextAttributesKey[]{MACRO_XML_NAMESPACE};
     private static final TextAttributesKey[] XML_ELEMENT_KEYS = new TextAttributesKey[]{MACRO_TAG_BOUNDARY};
     private static final TextAttributesKey[] MACRO_PARAM_NAME_KEYS = new TextAttributesKey[]{MACRO_PARAM_NAME};
+    private static final TextAttributesKey[] MACRO_PARAM_VALUE_ENCODED_ENTITY_KEYS = new TextAttributesKey[]{MACRO_PARAM_VALUE_ENCODED_ENTITY};
     private static final TextAttributesKey[] MACRO_PARAM_VALUE_KEYS = new TextAttributesKey[]{MACRO_PARAM_VALUE};
     private static final TextAttributesKey[] MACRO_PARAM_EXPRESSION_STATEMENT_KEYS = new TextAttributesKey[]{MACRO_PARAM_EXPRESSION_STATEMENT};
     // ------------------------------------------------------------------------------------
@@ -78,7 +80,7 @@ public class OxyTemplateSyntaxHighlighter extends SyntaxHighlighterBase
         }
         else if (tokenType.equals(OxyTemplateTypes.T_XML_CLOSE_TAG_END) || tokenType.equals(OxyTemplateTypes.T_XML_OPEN_TAG_END)
                 || tokenType.equals(OxyTemplateTypes.T_XML_TAG_START) || tokenType.equals(OxyTemplateTypes.T_XML_CLOSE_TAG_START)
-                || tokenType.equals(OxyTemplateTypes.T_XML_UNPAIRED_TAG_END))
+                || tokenType.equals(OxyTemplateTypes.T_XML_EMPTY_TAG_END))
         {
             return XML_ELEMENT_KEYS;
         }
@@ -97,6 +99,10 @@ public class OxyTemplateSyntaxHighlighter extends SyntaxHighlighterBase
         else if(tokenType.equals(OxyTemplateTypes.T_MACRO_PARAM_BOUNDARY) || tokenType.equals(OxyTemplateTypes.T_MACRO_PARAM))
         {
             return MACRO_PARAM_VALUE_KEYS;
+        }
+        else if(tokenType.equals(OxyTemplateTypes.T_XML_ENCODED_ENTITY))
+        {
+            return MACRO_PARAM_VALUE_ENCODED_ENTITY_KEYS;
         }
         else if(tokenType.equals(OxyTemplateTypes.T_MACRO_PARAM_EXPRESSION_STATEMENT))
         {

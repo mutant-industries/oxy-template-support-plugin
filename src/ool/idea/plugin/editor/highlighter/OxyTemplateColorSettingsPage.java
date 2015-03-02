@@ -41,7 +41,7 @@ public class OxyTemplateColorSettingsPage implements ColorSettingsPage
         return "<%@ layout \"_layout.jst\" %>\n" +
                 "\n" +
                 "<m:foo.bar asdf=\"expr: __js__\">\n" +
-                "    <m:bar.baz param_key=\"value\" />\n" +
+                "    <m:bar.baz param_key=\"va&quot;lue\" />\n" +
                 "</m:foo.bar>\n";
     }
 
@@ -65,6 +65,7 @@ public class OxyTemplateColorSettingsPage implements ColorSettingsPage
             new AttributesDescriptor(I18nSupport.message("color.settings.macro.name"), OxyTemplateSyntaxHighlighter.MACRO_NAME),
             new AttributesDescriptor(I18nSupport.message("color.settings.macro.parameter.name"), OxyTemplateSyntaxHighlighter.MACRO_PARAM_NAME),
             new AttributesDescriptor(I18nSupport.message("color.settings.macro.parameter.value"), OxyTemplateSyntaxHighlighter.MACRO_PARAM_VALUE),
+            new AttributesDescriptor(I18nSupport.message("color.settings.macro.parameter.encoded.entity"), OxyTemplateSyntaxHighlighter.MACRO_PARAM_VALUE_ENCODED_ENTITY),
             new AttributesDescriptor(I18nSupport.message("color.settings.macro.parameter.expression.statement"), OxyTemplateSyntaxHighlighter.MACRO_PARAM_EXPRESSION_STATEMENT),
         };
     }

@@ -4,6 +4,7 @@ import com.intellij.execution.filters.TextConsoleBuilder;
 import com.intellij.execution.filters.TextConsoleBuilderFactory;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
+import com.intellij.notification.NotificationGroup;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.components.AbstractProjectComponent;
@@ -18,6 +19,7 @@ import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
 import com.intellij.openapi.fileEditor.impl.EditorWindow;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
@@ -36,12 +38,11 @@ import javax.swing.JComponent;
 import javax.swing.SwingConstants;
 import ool.idea.plugin.file.type.CompiledPreviewFileType;
 import ool.idea.plugin.file.type.OxyTemplateFileType;
-import ool.idea.plugin.file.index.OxyTemplateIndexUtil;
 import ool.idea.plugin.lang.CompiledPreview;
 import ool.idea.plugin.lang.I18nSupport;
 import ool.web.template.exception.CouldNotResolveSourceException;
+import ool.web.template.exception.ErrorInformation;
 import ool.web.template.exception.TemplateCompilerException;
-import org.antlr.runtime.NoViableAltException;
 import org.apache.commons.net.ntp.TimeStamp;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -61,6 +62,8 @@ public class CompiledPreviewController extends AbstractProjectComponent
     private ToolWindow consoleWindow;
 
     private ConsoleView console;
+
+    private NotificationGroup compilerNotificationGroup;
 
     private MergingUpdateQueue updateQueue;
 
@@ -91,9 +94,9 @@ public class CompiledPreviewController extends AbstractProjectComponent
 
     public boolean showCompiledCode(@NotNull final PsiFile originalFile)
     {
+        PsiFile psiFile;
         Document document = null;
         VirtualFile virtualFile = null;
-        PsiFile psiFile = null;
         EditorWindow editorWindow = null;
         boolean result, newTabCreated = false;
 
@@ -147,17 +150,6 @@ public class CompiledPreviewController extends AbstractProjectComponent
             assert document != null;
 
             psiFile.putUserData(OFIGINAL_FILE_KEY, originalFile);
-            document.addDocumentListener(new DocumentAdapter(){
-                @Override
-                public void documentChanged(DocumentEvent event)
-                {
-                    PsiFile psiFile = PsiDocumentManager.getInstance(myProject).getPsiFile(event.getDocument());
-
-                    assert psiFile != null;
-
-                    OxyTemplateIndexUtil.triggerReindexing(psiFile);
-                }
-            });
 
             editorWindow = fileEditorManager.getCurrentWindow();
             newTabCreated = true;
@@ -170,7 +162,6 @@ public class CompiledPreviewController extends AbstractProjectComponent
             if(newTabCreated)
             {
                 editorWindow.split(SwingConstants.HORIZONTAL, false, virtualFile, false);
-                OxyTemplateIndexUtil.triggerReindexing(psiFile);
             }
             if(editorWindow.findFileIndex(virtualFile) == -1)
             {
@@ -199,12 +190,6 @@ public class CompiledPreviewController extends AbstractProjectComponent
 
             return false;
         }
-        catch (RuntimeException e)
-        {
-            onCompilerError(e, originalFile.getVirtualFile());
-
-            return false;
-        }
         catch (CouldNotResolveSourceException e)
         {
             throw new AssertionError("Should not happen", e);
@@ -216,7 +201,7 @@ public class CompiledPreviewController extends AbstractProjectComponent
         return true;
     }
 
-    public void showCompiledCode(@NotNull final Document document, @NotNull final String source)
+    public void showCompiledCode(@NotNull final Document document, @NotNull final CharSequence source)
     {
         CommandProcessor.getInstance().executeCommand(myProject, new Runnable()
         {
@@ -276,26 +261,47 @@ public class CompiledPreviewController extends AbstractProjectComponent
         consoleWindow = toolWindowManager.registerToolWindow(I18nSupport.message("action.live.update.compiler.output"), true, ToolWindowAnchor.BOTTOM);
         consoleWindow.getContentManager().addContent(content);
         consoleWindow.setIcon(OxyTemplateFileType.INSTANCE.getIcon());
+
+        compilerNotificationGroup = NotificationGroup.toolWindowGroup("Template compiler messages", I18nSupport.message("action.live.update.compiler.output"));
     }
 
-    private void onCompilerError(@NotNull final Throwable exception, @NotNull final VirtualFile virtualFile)
+    private void onCompilerError(@NotNull final TemplateCompilerException exception, @NotNull final VirtualFile virtualFile)
     {
-        if(exception instanceof RuntimeException && ! (exception.getCause() instanceof NoViableAltException))
+        ErrorInformation errorInformation;
+
+        if( ! consoleWindow.isVisible())
         {
-            throw (RuntimeException)exception;
+            compilerNotificationGroup.createNotification(I18nSupport.message("action.live.update.compilation.error.message"),
+                    MessageType.ERROR).notify(myProject);
         }
 
         console.print(I18nSupport.message("action.live.update.compilation.error", virtualFile.getPath()) + ":\n",
                 ConsoleViewContentType.NORMAL_OUTPUT);
 
-        StringWriter stringWriter = new StringWriter();
-        PrintWriter printWriter = new PrintWriter(stringWriter);
+        if((errorInformation = exception.getErrorInformation()) != null)
+        {
+            console.print(errorInformation.getMessage() + " - ", ConsoleViewContentType.ERROR_OUTPUT);
+            console.print(I18nSupport.message("action.live.update.compilation.error.description", errorInformation.getFileName(),
+                            errorInformation.getLineNumber()) + ":\n", ConsoleViewContentType.ERROR_OUTPUT);
 
-        exception.printStackTrace(printWriter);
+            for (int i = 0; i < errorInformation.getSurrounding().size(); i++)
+            {
+                boolean highlightLine = errorInformation.getSurroundingStart() + i == errorInformation.getLineNumber();
 
-        consoleWindow.show(null);
-        console.print(stringWriter.toString(), ConsoleViewContentType.ERROR_OUTPUT);
-        printWriter.close();
+                console.print((highlightLine ? "-->" : "") + errorInformation.getSurrounding().get(i) + '\n',
+                        ConsoleViewContentType.ERROR_OUTPUT);
+            }
+        }
+        else
+        {
+            StringWriter stringWriter = new StringWriter();
+            PrintWriter printWriter = new PrintWriter(stringWriter);
+
+            exception.printStackTrace(printWriter);
+            console.print(stringWriter.toString(), ConsoleViewContentType.ERROR_OUTPUT);
+
+            printWriter.close();
+        }
     }
 
 }

@@ -9,6 +9,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.ProjectScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +27,7 @@ abstract public class MacroIndex
     @NonNls
     public static final String JAVA_MACRO_INTERFACE_FQN = "ool.web.template.Macro";
     @NonNls
-    public static final List<String> macrosInDebugNamespace = Arrays.asList("GeneratedCodeMacro");
+    public static final List<String> macrosInDebugNamespace = new LinkedList<String>();
     @NonNls
     public static final List<String> javaMacroNamespaces = Arrays.asList("oxy", "debug");
     @NonNls

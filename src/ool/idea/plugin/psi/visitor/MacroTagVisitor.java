@@ -1,6 +1,6 @@
 package ool.idea.plugin.psi.visitor;
 
-import ool.idea.plugin.psi.MacroUnpairedTag;
+import ool.idea.plugin.psi.MacroEmptyTag;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 public class MacroTagVisitor extends MacroCallVisitor
 {
     @Override
-    public void visitMacroUnpairedTag(@NotNull MacroUnpairedTag o)
+    public void visitMacroEmptyTag(@NotNull MacroEmptyTag o)
     {
 
     }

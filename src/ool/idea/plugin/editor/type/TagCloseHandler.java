@@ -14,7 +14,7 @@ import ool.idea.plugin.file.OxyTemplateFileViewProvider;
 import ool.idea.plugin.lang.OxyTemplate;
 import ool.idea.plugin.lang.parser.OxyTemplateParserDefinition;
 import ool.idea.plugin.psi.MacroAttribute;
-import ool.idea.plugin.psi.MacroUnpairedTag;
+import ool.idea.plugin.psi.MacroEmptyTag;
 import ool.idea.plugin.psi.OxyTemplateHelper;
 import ool.idea.plugin.psi.OxyTemplateTypes;
 import org.jetbrains.annotations.NotNull;
@@ -90,8 +90,8 @@ public class TagCloseHandler extends TypedHandlerDelegate
         {
             psiElement = elementAt.getPrevSibling();
 
-            if(psiElement instanceof MacroUnpairedTag
-                    && psiElement.getLastChild().getNode().getElementType() != OxyTemplateTypes.T_XML_UNPAIRED_TAG_END)
+            if(psiElement instanceof MacroEmptyTag
+                    && psiElement.getLastChild().getNode().getElementType() != OxyTemplateTypes.T_XML_EMPTY_TAG_END)
             {
                 return true;
             }
@@ -99,7 +99,7 @@ public class TagCloseHandler extends TypedHandlerDelegate
         // <m:foo.bar_
         else if(elementAt.getNode().getElementType() == OxyTemplateTypes.T_MACRO_NAME)
         {
-            if((psiElement = PsiTreeUtil.getParentOfType(elementAt, MacroUnpairedTag.class)) != null
+            if((psiElement = PsiTreeUtil.getParentOfType(elementAt, MacroEmptyTag.class)) != null
                     && psiElement.getLastChild() instanceof PsiErrorElement
                     && elementAt.getParent().isEquivalentTo(psiElement.getLastChild().getPrevSibling()))
             {
@@ -109,7 +109,7 @@ public class TagCloseHandler extends TypedHandlerDelegate
         // <m:foo.bar param="value"_
         else if((psiElement = PsiTreeUtil.getParentOfType(elementAt, MacroAttribute.class)) != null)
         {
-            MacroUnpairedTag tag = PsiTreeUtil.getParentOfType(psiElement, MacroUnpairedTag.class);
+            MacroEmptyTag tag = PsiTreeUtil.getParentOfType(psiElement, MacroEmptyTag.class);
 
             if(tag != null && psiElement.getLastChild().isEquivalentTo(elementAt)
                     && tag.getLastChild() instanceof PsiErrorElement

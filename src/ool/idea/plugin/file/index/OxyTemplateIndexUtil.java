@@ -22,14 +22,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import ool.idea.plugin.file.index.collector.JsMacroCollector;
 import ool.idea.plugin.file.index.collector.MacroCollector;
 import ool.idea.plugin.file.index.globals.JsGlobalsIndex;
 import ool.idea.plugin.file.index.nacros.MacroIndex;
-import ool.idea.plugin.file.index.nacros.js.JsMacroNameDataIndexer;
 import ool.idea.plugin.file.index.nacros.js.JsMacroNameIndex;
 import ool.idea.plugin.file.index.nacros.js.JsMacroNameIndexedElement;
 import org.apache.commons.lang.StringUtils;
@@ -265,37 +263,6 @@ public class OxyTemplateIndexUtil
         }
 
         return null;
-    }
-
-    // ------------------ compiled templates
-    @NotNull
-    public static List<JSElement> getJsMacroNameReferencesForCompiledTemplate(@NotNull String macroName, @NotNull PsiFile psiFile)
-    {
-        List<JSElement> result = new LinkedList<JSElement>();
-
-        Multimap<String, JsMacroNameIndexedElement> index = psiFile.getUserData(COMPILED_PREVIEW_MACRO_INDEX);
-
-        if(index == null)
-        {
-            return result;
-        }
-
-        for(JsMacroNameIndexedElement indexedElement : index.get(macroName))
-        {
-            PsiElement psiElement = psiFile.getViewProvider().findElementAt(indexedElement.getOffserInFile() - 1);
-
-            if (psiElement != null && psiElement.getParent() instanceof JSElement)
-            {
-                result.add((JSElement) psiElement.getParent());
-            }
-        }
-
-        return result;
-    }
-
-    public static void triggerReindexing(@NotNull PsiFile psiFile)
-    {
-        psiFile.putUserData(COMPILED_PREVIEW_MACRO_INDEX, new JsMacroNameDataIndexer().map(psiFile));
     }
 
 }

@@ -21,7 +21,7 @@ import ool.idea.plugin.lang.OxyTemplateInnerJs;
 import ool.idea.plugin.lang.parser.OxyTemplateParserDefinition;
 import ool.idea.plugin.psi.MacroAttribute;
 import ool.idea.plugin.psi.MacroTag;
-import ool.idea.plugin.psi.MacroUnpairedTag;
+import ool.idea.plugin.psi.MacroEmptyTag;
 import ool.idea.plugin.psi.OxyTemplateTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -74,9 +74,9 @@ class OxyTemplateLanguageBlock extends TemplateLanguageBlock
                 return Spacing.createSpacing(1, 1, 0, true, 0);
             }
             else if ((firstBlock.getNode().getElementType() == OxyTemplateTypes.MACRO_NAME
-                    && secondBlock.getNode().getElementType() == OxyTemplateTypes.T_XML_UNPAIRED_TAG_END) ||
+                    && secondBlock.getNode().getElementType() == OxyTemplateTypes.T_XML_EMPTY_TAG_END) ||
                     (firstBlock.getNode().getElementType() == OxyTemplateTypes.MACRO_ATTRIBUTE
-                            && secondBlock.getNode().getElementType() == OxyTemplateTypes.T_XML_UNPAIRED_TAG_END))
+                            && secondBlock.getNode().getElementType() == OxyTemplateTypes.T_XML_EMPTY_TAG_END))
             {
                 return Spacing.createSpacing(1, 1, 0, true, 0);
             }
@@ -112,12 +112,12 @@ class OxyTemplateLanguageBlock extends TemplateLanguageBlock
     protected Indent getChildIndent(@NotNull ASTNode astNode)
     {
         if (astNode.getPsi() instanceof MacroAttribute
-                || astNode.getElementType() == OxyTemplateTypes.T_XML_UNPAIRED_TAG_END)
+                || astNode.getElementType() == OxyTemplateTypes.T_XML_EMPTY_TAG_END)
         {
             return Indent.getNormalIndent();
         }
         else if(getNode().getPsi() instanceof MacroTag &&
-                (astNode instanceof HtmlTag || astNode.getPsi() instanceof MacroUnpairedTag
+                (astNode instanceof HtmlTag || astNode.getPsi() instanceof MacroEmptyTag
                         || astNode.getPsi() instanceof MacroTag))
         {
             return Indent.getNormalIndent();

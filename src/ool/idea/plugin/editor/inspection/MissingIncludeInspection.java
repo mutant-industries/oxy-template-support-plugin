@@ -15,6 +15,8 @@ import java.util.Map;
 import ool.idea.plugin.editor.inspection.fix.MissingIncludeDirectiveQuickFix;
 import ool.idea.plugin.lang.I18nSupport;
 import ool.idea.plugin.psi.OxyTemplateHelper;
+import ool.web.template.impl.chunk.directive.IncludeDirective;
+import ool.web.template.impl.chunk.directive.IncludeOnceDirective;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -48,8 +50,8 @@ public class MissingIncludeInspection extends LocalInspectionTool
             if (OxyTemplateHelper.isJsMacroMissingInclude(file, reference))
             {
                 result.add(manager.createProblemDescriptor(macroCall, TextRange.create(0, macroCall.getTextLength()), getDisplayName(),
-                        ProblemHighlightType.ERROR, isOnTheFly, new MissingIncludeDirectiveQuickFix(macroCall, reference, "include_once"),
-                        new MissingIncludeDirectiveQuickFix(macroCall, reference, "include")));
+                        ProblemHighlightType.ERROR, isOnTheFly, new MissingIncludeDirectiveQuickFix(macroCall, reference, IncludeOnceDirective.NAME),
+                        new MissingIncludeDirectiveQuickFix(macroCall, reference, IncludeDirective.NAME)));
             }
         }
 

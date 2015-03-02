@@ -1,6 +1,8 @@
 package ool.idea.plugin.lang.lexer;
 
+import com.intellij.lexer.FlexLexer;
 import com.intellij.psi.tree.IElementType;
+import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
 import ool.idea.plugin.psi.OxyTemplateTypes;
@@ -12,15 +14,11 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Petr Mayr <p.mayr@oxyonline.cz>
  */
-abstract public class AbstractOxyTemplateLexer
+public class OxyTemplateLexer extends AbstractOxyTemplateLexer implements FlexLexer
 {
     @NonNls
     private static final Map<CharSequence, CharSequence[]> macroAttributesContainingJavascript
             = new HashMap<CharSequence, CharSequence[]>();
-
-    protected CharSequence lastSeenMacroName;
-
-    protected CharSequence lastSeenAttributeName;
 
     static
     {
@@ -30,14 +28,25 @@ abstract public class AbstractOxyTemplateLexer
         });
     }
 
+    public OxyTemplateLexer(Reader in)
+    {
+        super(in);
+    }
+
     /**
      * Ugly but effective
      *
      * @return
      */
     @NotNull
+    @Override
     protected IElementType decideParameterType()
     {
+        if(lastSeenMacroName == null)
+        {
+            return OxyTemplateTypes.T_MACRO_PARAM;
+        }
+
         names:
         for(Map.Entry<CharSequence, CharSequence[]> entry : macroAttributesContainingJavascript.entrySet())
         {
@@ -77,6 +86,12 @@ abstract public class AbstractOxyTemplateLexer
         }
 
         return OxyTemplateTypes.T_MACRO_PARAM;
+    }
+
+    @Override
+    protected CharSequence getTokenText()
+    {
+        return yytext();
     }
 
 }

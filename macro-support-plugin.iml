@@ -14,10 +14,7 @@
     <orderEntry type="library" name="ide libs" level="project" />
     <orderEntry type="library" name="oxyshop2-common-web-0.0.1" level="project" />
     <orderEntry type="library" name="commons-io-2.4" level="project" />
-    <orderEntry type="library" name="antlr-3.0" level="project" />
     <orderEntry type="library" name="commons-lang3-3.3.2" level="project" />
-    <orderEntry type="library" name="oxyshop2-common-core-0.0.1" level="project" />
     <orderEntry type="library" name="slf4j-api-1.7.8" level="project" />
-    <orderEntry type="library" name="ke compileru" level="project" />
   </component>
 </module>

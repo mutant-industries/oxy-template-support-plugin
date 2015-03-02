@@ -78,7 +78,7 @@ public class InnerJsReferenceExpressionResolver extends JSReferenceExpressionRes
     @NotNull
     protected MacroReferenceResolver getMacroReferenceResolver()
     {
-        return new MacroReferenceResolver();
+        return MacroReferenceResolver.DEFAULT;
     }
 
 }

@@ -50,7 +50,7 @@ public class MacroTest extends AbstractLexerTest
     }
 
     @Test
-    public void unpairedMacroWithParamTest() throws IOException
+    public void emptyMacroWithParamTest() throws IOException
     {
         String input = "<m:foo.bar param_name=\"param_value\" />";
         lexer.start(input);
@@ -66,7 +66,7 @@ public class MacroTest extends AbstractLexerTest
         assertEquals(OxyTemplateTypes.T_MACRO_PARAM, nextToken());
         assertEquals(OxyTemplateTypes.T_MACRO_PARAM_BOUNDARY, nextToken());
         assertEquals(WHITE_SPACE, nextToken());
-        assertEquals(OxyTemplateTypes.T_XML_UNPAIRED_TAG_END, nextToken());
+        assertEquals(OxyTemplateTypes.T_XML_EMPTY_TAG_END, nextToken());
 
         assertEquals(null, nextToken());
     }
@@ -92,7 +92,7 @@ public class MacroTest extends AbstractLexerTest
 
         assertEquals(OxyTemplateTypes.T_MACRO_PARAM_BOUNDARY, nextToken());
         assertEquals(WHITE_SPACE, nextToken());
-        assertEquals(OxyTemplateTypes.T_XML_UNPAIRED_TAG_END, nextToken());
+        assertEquals(OxyTemplateTypes.T_XML_EMPTY_TAG_END, nextToken());
 
         assertEquals(null, nextToken());
     }
@@ -125,7 +125,7 @@ public class MacroTest extends AbstractLexerTest
         assertEquals(OxyTemplateTypes.T_XML_NAMESPACE_DELIMITER, nextToken());
         assertEquals(OxyTemplateTypes.T_MACRO_NAME, nextToken());
         assertEquals(WHITE_SPACE, nextToken());
-        assertEquals(OxyTemplateTypes.T_XML_UNPAIRED_TAG_END, nextToken());
+        assertEquals(OxyTemplateTypes.T_XML_EMPTY_TAG_END, nextToken());
 
         assertEquals(OxyTemplateTypes.T_TEMPLATE_HTML_CODE, nextToken());
 

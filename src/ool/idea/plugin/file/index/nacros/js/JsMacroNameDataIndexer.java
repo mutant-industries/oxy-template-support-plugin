@@ -1,7 +1,5 @@
 package ool.idea.plugin.file.index.nacros.js;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 import com.intellij.lang.javascript.psi.JSAssignmentExpression;
 import com.intellij.lang.javascript.psi.JSDefinitionExpression;
 import com.intellij.lang.javascript.psi.JSExpressionStatement;
@@ -34,26 +32,6 @@ public class JsMacroNameDataIndexer extends MacroIndex implements DataIndexer<St
         PsiFile jsFile = inputData.getPsiFile().getViewProvider().getPsi(OxyTemplateInnerJs.INSTANCE);
 
         Map<String, JsMacroNameIndexedElement> result = new HashMap<String, JsMacroNameIndexedElement>();
-
-        for(Map.Entry<String, JsMacroNameIndexedElement> entry : map(jsFile).entries())
-        {
-            result.put(entry.getKey(), entry.getValue());
-        }
-
-        return result;
-    }
-
-    /**
-     * In compiled code preview there can be a single file included multiple times or two included files
-     * containing macros in the same namespace with the same names => multimap.
-     *
-     * @param jsFile
-     * @return
-     */
-    @NotNull
-    public Multimap<String, JsMacroNameIndexedElement> map(@NotNull final PsiFile jsFile)
-    {
-        HashMultimap<String, JsMacroNameIndexedElement> result = HashMultimap.create();
 
         for(PsiElement psiElement : jsFile.getChildren())
         {
@@ -89,7 +67,7 @@ public class JsMacroNameDataIndexer extends MacroIndex implements DataIndexer<St
     }
 
     private static void processObjectLiteralExpression(@NotNull JSObjectLiteralExpression expression, @NotNull String namespace,
-                                                       @NotNull Multimap<String, JsMacroNameIndexedElement> result)
+                                                       @NotNull Map<String, JsMacroNameIndexedElement> result)
     {
         for(JSProperty property : expression.getProperties())
         {

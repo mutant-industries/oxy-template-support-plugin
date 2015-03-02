@@ -21,6 +21,8 @@ import org.jetbrains.annotations.NotNull;
 */
 public class MacroReferenceResolver implements ResolveCache.PolyVariantContextResolver<PsiPolyVariantReference>
 {
+    public static final MacroReferenceResolver DEFAULT = new MacroReferenceResolver();
+
     private final boolean resolveJavaMacros;
 
     private final boolean resolveJsMacros;

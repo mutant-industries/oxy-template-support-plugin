@@ -1,7 +1,7 @@
 package ool.idea.plugin.psi.visitor;
 
 import ool.idea.plugin.psi.MacroTag;
-import ool.idea.plugin.psi.MacroUnpairedTag;
+import ool.idea.plugin.psi.MacroEmptyTag;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -18,7 +18,7 @@ public class DirectiveStatementVisitor extends OxyTemplateRecursiveElementVisito
     }
 
     @Override
-    public void visitMacroUnpairedTag(@NotNull MacroUnpairedTag o)
+    public void visitMacroEmptyTag(@NotNull MacroEmptyTag o)
     {
 
     }

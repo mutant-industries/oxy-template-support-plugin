@@ -18,6 +18,8 @@ import ool.idea.plugin.editor.inspection.fix.MissingIncludeDirectiveQuickFix;
 import ool.idea.plugin.file.OxyTemplateFile;
 import ool.idea.plugin.psi.DirectiveStatement;
 import ool.idea.plugin.psi.OxyTemplateHelper;
+import ool.web.template.impl.chunk.directive.IncludeDirective;
+import ool.web.template.impl.chunk.directive.IncludeOnceDirective;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,7 +32,7 @@ public class IncludeOptimizer implements ImportOptimizer
 {
     @NonNls
     private static final List<String> INCLUDE_DIRECTIVES = Arrays.asList(
-            "include", "include_once"
+            IncludeDirective.NAME, IncludeOnceDirective.NAME
     );
 
     @Override
@@ -94,7 +96,7 @@ public class IncludeOptimizer implements ImportOptimizer
 
                 for(MissingDirectiveDescriptor descriptor : missingDirectiveDescriptors)
                 {
-                    new MissingIncludeDirectiveQuickFix(descriptor.getMacroCall(), descriptor.getReference(), "include_once")
+                    new MissingIncludeDirectiveQuickFix(descriptor.getMacroCall(), descriptor.getReference(), IncludeOnceDirective.NAME)
                             .applyFix(file.getProject());
                 }
             }

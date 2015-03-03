@@ -2,9 +2,18 @@ package ool.idea.plugin.file.index.nacros;
 
 import com.intellij.lang.javascript.psi.JSDefinitionExpression;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
+import com.intellij.openapi.project.Project;
+import com.intellij.psi.JavaPsiFacade;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.ProjectScope;
 import com.intellij.psi.util.PsiTreeUtil;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * 2/6/15
@@ -13,6 +22,14 @@ import org.jetbrains.annotations.NotNull;
  */
 abstract public class MacroIndex
 {
+    @NonNls
+    public static final String JAVA_MACRO_SUFFIX = "Macro";
+    @NonNls
+    public static final String JAVA_MACRO_INTERFACE_FQN = "ool.web.template.Macro";
+    @NonNls
+    public static final List<String> macrosInDebugNamespace = new LinkedList<String>();
+    @NonNls
+    public static final List<String> javaMacroNamespaces = Arrays.asList("oxy", "debug");
     @NonNls
     public static final String MACRO_REGISTRY_NAMESPACE = "macros";
     @NonNls
@@ -54,6 +71,20 @@ abstract public class MacroIndex
     public static String normalizeMacroName(@NotNull String expression)
     {
         return expression.replaceAll("\\s*\\.\\s*", ".");
+    }
+
+    public static boolean checkJavaMacroNamespace(@NotNull String macroName)
+    {
+        return macroName.contains(".") && javaMacroNamespaces.contains(macroName.substring(0, macroName.indexOf(".")));
+
+    }
+
+    @Nullable
+    public static PsiClass getJavaMacroInterface(@NotNull Project project)
+    {
+        final GlobalSearchScope allScope = ProjectScope.getProjectScope(project);
+
+        return JavaPsiFacade.getInstance(project).findClass(MacroIndex.JAVA_MACRO_INTERFACE_FQN, allScope);
     }
 
 }

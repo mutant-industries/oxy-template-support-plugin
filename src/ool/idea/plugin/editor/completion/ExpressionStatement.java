@@ -33,7 +33,10 @@ public class ExpressionStatement extends CompletionContributor
                                            ProcessingContext context,
                                            @NotNull CompletionResultSet resultSet)
                 {
-                    resultSet.consume(LookupElementBuilder.create(EXPRESSION_STATEMENT + " "));
+                    if(parameters.getPosition().getPrevSibling() == null)
+                    {
+                        resultSet.consume(LookupElementBuilder.create(EXPRESSION_STATEMENT + " "));
+                    }
                 }
             }
         );

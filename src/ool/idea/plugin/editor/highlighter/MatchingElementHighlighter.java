@@ -69,7 +69,7 @@ public class MatchingElementHighlighter implements BraceMatcher
     {
         IElementType tokenType = iterator.getTokenType();
 
-        if(tokenType == OxyTemplateTypes.T_CLOSE_BLOCK_MARKER || tokenType == OxyTemplateTypes.T_XML_UNPAIRED_TAG_END)
+        if(tokenType == OxyTemplateTypes.T_CLOSE_BLOCK_MARKER || tokenType == OxyTemplateTypes.T_XML_EMPTY_TAG_END)
         {
             return true;
         }
@@ -110,8 +110,8 @@ public class MatchingElementHighlighter implements BraceMatcher
     {
         return tokenType == OxyTemplateTypes.T_XML_TAG_START && tokenType2 == OxyTemplateTypes.T_XML_CLOSE_TAG_END
                 || tokenType == OxyTemplateTypes.T_XML_CLOSE_TAG_END && tokenType2 == OxyTemplateTypes.T_XML_TAG_START
-                || tokenType == OxyTemplateTypes.T_XML_TAG_START && tokenType2 == OxyTemplateTypes.T_XML_UNPAIRED_TAG_END
-                || tokenType == OxyTemplateTypes.T_XML_UNPAIRED_TAG_END && tokenType2 == OxyTemplateTypes.T_XML_TAG_START
+                || tokenType == OxyTemplateTypes.T_XML_TAG_START && tokenType2 == OxyTemplateTypes.T_XML_EMPTY_TAG_END
+                || tokenType == OxyTemplateTypes.T_XML_EMPTY_TAG_END && tokenType2 == OxyTemplateTypes.T_XML_TAG_START
                 || OxyTemplateParserDefinition.OPEN_BLOCK_MARKERS.contains(tokenType) && OxyTemplateParserDefinition.CLOSE_BLOCK_MARKERS.contains(tokenType2)
                 || OxyTemplateParserDefinition.CLOSE_BLOCK_MARKERS.contains(tokenType) && OxyTemplateParserDefinition.OPEN_BLOCK_MARKERS.contains(tokenType2)
                 || tokenType2 == OxyTemplateTypes.T_DIRECTIVE_PARAM_BOUNDARY && tokenType == OxyTemplateTypes.T_DIRECTIVE_PARAM_BOUNDARY

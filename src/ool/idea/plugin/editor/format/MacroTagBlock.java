@@ -109,7 +109,7 @@ public class MacroTagBlock extends TemplateLanguageBlock
 
                     child = processChild(localResult, child, wrap, alignment, null);
                 }
-                else if (child.getElementType() == OxyTemplateTypes.T_XML_UNPAIRED_TAG_END)
+                else if (child.getElementType() == OxyTemplateTypes.T_XML_EMPTY_TAG_END)
                 {
                     child = processChild(localResult, child, wrap, alignment, null);
                     result.add(createTagDescriptionNode(localResult));

@@ -30,6 +30,7 @@ public class JsMacroNameDataIndexer extends MacroIndex implements DataIndexer<St
     public Map<String, JsMacroNameIndexedElement> map(@NotNull final FileContent inputData)
     {
         PsiFile jsFile = inputData.getPsiFile().getViewProvider().getPsi(OxyTemplateInnerJs.INSTANCE);
+
         Map<String, JsMacroNameIndexedElement> result = new HashMap<String, JsMacroNameIndexedElement>();
 
         for(PsiElement psiElement : jsFile.getChildren())

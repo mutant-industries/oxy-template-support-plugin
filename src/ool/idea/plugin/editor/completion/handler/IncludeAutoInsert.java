@@ -10,6 +10,7 @@ import ool.idea.plugin.lang.OxyTemplate;
 import ool.idea.plugin.psi.DirectiveStatement;
 import ool.idea.plugin.psi.OxyTemplateElementFactory;
 import ool.idea.plugin.psi.OxyTemplateHelper;
+import ool.web.template.impl.chunk.directive.IncludeOnceDirective;
 
 /**
  * 1/21/15
@@ -37,7 +38,7 @@ public class IncludeAutoInsert implements InsertHandlerDecorator<LookupElement>
             pathCalculator.execute();
 
             DirectiveStatement includeDirective = OxyTemplateElementFactory
-                    .createDirectiveStatement(context.getProject(), "include_once", pathCalculator.getResult());
+                    .createDirectiveStatement(context.getProject(), IncludeOnceDirective.NAME, pathCalculator.getResult());
 
             OxyTemplateHelper.addDirective(includeDirective, context.getFile());
         }

@@ -2,6 +2,7 @@ package ool.idea.plugin.file;
 
 import com.intellij.openapi.fileTypes.FileTypeConsumer;
 import com.intellij.openapi.fileTypes.FileTypeFactory;
+import ool.idea.plugin.file.type.OxyTemplateFileType;
 import org.jetbrains.annotations.NotNull;
 
 /**

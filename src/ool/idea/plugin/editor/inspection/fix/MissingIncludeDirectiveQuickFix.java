@@ -22,15 +22,15 @@ public class MissingIncludeDirectiveQuickFix  implements LocalQuickFix
 {
     private final PsiElement macroCallMissingInclude;
 
-    private final String directiveType;
+    private final String directiveName;
 
     private final String includePath;
 
     public MissingIncludeDirectiveQuickFix(@NotNull PsiElement macroCallMissingInclude,
-                                           @NotNull PsiElement macroReference, @NonNls String directiveType)
+                                           @NotNull PsiElement macroReference, @NonNls String directiveName)
     {
         this.macroCallMissingInclude = macroCallMissingInclude;
-        this.directiveType = directiveType;
+        this.directiveName = directiveName;
 
         RelativePathCalculator pathCalculator = new RelativePathCalculator(macroCallMissingInclude.getContainingFile()
                 .getVirtualFile().getPath(), macroReference.getContainingFile().getVirtualFile().getPath());
@@ -44,7 +44,7 @@ public class MissingIncludeDirectiveQuickFix  implements LocalQuickFix
     @Override
     public String getName()
     {
-        return I18nSupport.message("inspection.missing.include.fix", directiveType, includePath);
+        return I18nSupport.message("inspection.missing.include.fix", directiveName, includePath);
     }
 
     @NonNls
@@ -64,7 +64,7 @@ public class MissingIncludeDirectiveQuickFix  implements LocalQuickFix
     public void applyFix(Project project)
     {
         final DirectiveStatement includeDirective = OxyTemplateElementFactory.createDirectiveStatement(project,
-                directiveType, includePath);
+                directiveName, includePath);
 
         OxyTemplateHelper.addDirective(includeDirective, macroCallMissingInclude.getContainingFile()
                 .getViewProvider().getPsi(OxyTemplate.INSTANCE));

@@ -20,7 +20,7 @@ import com.intellij.psi.tree.IElementType;
 import java.util.LinkedList;
 import java.util.List;
 import ool.idea.plugin.editor.highlighter.OxyTemplateSyntaxHighlighter;
-import ool.idea.plugin.file.OxyTemplateFileType;
+import ool.idea.plugin.file.type.OxyTemplateFileType;
 import ool.idea.plugin.lang.parser.OxyTemplateParserDefinition;
 import ool.idea.plugin.psi.OxyTemplateTypes;
 import org.jetbrains.annotations.NotNull;
@@ -83,7 +83,7 @@ public class MatchingTagsAndJsBlock extends CustomFoldingBuilder
                     }
                     while( ! iterator.atEnd() && iterator.getTokenType() != OxyTemplateTypes.T_XML_OPEN_TAG_END
                             && iterator.getTokenType() != OxyTemplateTypes.T_XML_CLOSE_TAG_END
-                            && iterator.getTokenType() != OxyTemplateTypes.T_XML_UNPAIRED_TAG_END);
+                            && iterator.getTokenType() != OxyTemplateTypes.T_XML_EMPTY_TAG_END);
 
                     if(iterator.atEnd())
                     {
@@ -106,7 +106,7 @@ public class MatchingTagsAndJsBlock extends CustomFoldingBuilder
                 range = new TextRange(last.first, iterator.getEnd() -
                         (iterator.getTokenType() == OxyTemplateTypes.T_XML_CLOSE_TAG_END ? 1 : 2));
 
-                if (last.third != OxyTemplateTypes.T_XML_UNPAIRED_TAG_END
+                if (last.third != OxyTemplateTypes.T_XML_EMPTY_TAG_END
                     && StringUtil.countChars(document.getText(range), '\n') >= 2)
                 {
                     descriptors.add(new FoldingDescriptor(root, range));

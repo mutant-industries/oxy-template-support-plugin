@@ -13,7 +13,7 @@ import ool.idea.plugin.psi.DirectiveStatement;
 import ool.idea.plugin.psi.MacroCall;
 import ool.idea.plugin.psi.MacroName;
 import ool.idea.plugin.psi.MacroTag;
-import ool.idea.plugin.psi.MacroUnpairedTag;
+import ool.idea.plugin.psi.MacroEmptyTag;
 import ool.idea.plugin.psi.OxyTemplateElementFactory;
 import ool.idea.plugin.psi.OxyTemplateTypes;
 import ool.idea.plugin.psi.reference.MacroReferenceSet;
@@ -63,7 +63,7 @@ public class OxyTemplatePsiUtil
 
     public static boolean isClosingTagMacroName(@NotNull final MacroName macroName)
     {
-        if(PsiTreeUtil.getParentOfType(macroName, MacroUnpairedTag.class) != null)
+        if(PsiTreeUtil.getParentOfType(macroName, MacroEmptyTag.class) != null)
         {
             return false;
         }

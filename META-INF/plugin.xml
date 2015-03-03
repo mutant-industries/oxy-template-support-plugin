@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>ool.idea.plugin</id>
     <name>Oxy template support</name>
-    <version>0.8.1</version>
+    <version>0.8.3</version>
     <vendor email="p.mayr@oxyonline.cz" url="http://stash.oxyonline.local/projects/CZC/repos/macro-support-plugin">
         oXy Online s.r.o.
     </vendor>
@@ -15,6 +15,18 @@
     ]]></description>
 
     <change-notes><![CDATA[
+        <b>0.8.3</b>
+        <ul>
+            <li>
+                sjednocení gramatiky pluginu a webu
+            </li>
+        </ul>
+        <b>0.8.2</b>
+        <ul>
+            <li>
+                zobrazení zkompilovaného kódu
+            </li>
+        </ul>
         <b>0.8.1</b>
         <ul>
             <li>
@@ -191,8 +203,13 @@
                                implementationClass="ool.idea.plugin.lang.parser.OxyTemplateParserDefinition"/>
         <lang.parserDefinition language="OxyTemplateInnerJs"
                                implementationClass="ool.idea.plugin.lang.parser.OxyTemplateInnerJsParserDefinition"/>
+        <lang.treePatcher implementationClass="ool.idea.plugin.lang.InnerJsTreePatcher" language="OxyTemplateInnerJs"/>
+        <lang.parserDefinition language="CompiledPreview"
+                               implementationClass="ool.idea.plugin.lang.parser.CompiledPreviewParserDefinition"/>
         <editorHighlighterProvider filetype="OxyTemplate"
                                    implementationClass="ool.idea.plugin.editor.highlighter.OxyTemplateHighlighterProvider"/>
+        <lang.syntaxHighlighterFactory key="CompiledPreview"
+                                   implementationClass="ool.idea.plugin.editor.highlighter.CimpiledPreviewHighlighterFactory"/>
         <lang.fileViewProviderFactory language="OxyTemplate"
                                       implementationClass="ool.idea.plugin.file.OxyTemplateFileViewProviderFactory"/>
         <braceMatcher filetype="OxyTemplate" implementationClass="ool.idea.plugin.editor.highlighter.MatchingElementHighlighter" />
@@ -211,7 +228,7 @@
         <typedHandler implementation="ool.idea.plugin.editor.type.TagCloseHandler"/>
         <backspaceHandlerDelegate implementation="ool.idea.plugin.editor.type.BackspaceHandler"/>
         <enterHandlerDelegate implementation="ool.idea.plugin.editor.type.EnterHandler"/>
-        <lang.commenter language="OxyTemplate" implementationClass="com.intellij.lang.xml.XmlCommenter"/>
+        <lang.commenter language="OxyTemplate" implementationClass="ool.idea.plugin.editor.comment.OxyTemplateCommenter"/>
         <multiLangCommenter implementation="ool.idea.plugin.editor.comment.OxyTemplateCommentProvider"/>
         <lang.formatter language="OxyTemplate" implementationClass="ool.idea.plugin.editor.format.OxyTemplateFormatter"/>
         <lang.foldingBuilder language="OxyTemplate" implementationClass="ool.idea.plugin.editor.folding.MatchingTagsAndJsBlock"/>
@@ -220,6 +237,7 @@
         <lang.elementManipulator forClass="ool.idea.plugin.psi.MacroName"
                                  implementationClass="ool.idea.plugin.psi.manipulator.MacroNameManipulator"/>
         <annotator language="OxyTemplate" implementationClass="ool.idea.plugin.editor.annotator.XmlMacroNameAnnotator"/>
+        <annotator language="OxyTemplate" implementationClass="ool.idea.plugin.editor.annotator.EncodedEntityAnnotator"/>
         <annotator language="OxyTemplateInnerJs" implementationClass="ool.idea.plugin.editor.annotator.InnerJsAnnotator"/>
         <localInspection language="OxyTemplate" shortName="UnresolvedInclude" bundle="I18n.messages" key="inspection.unresolved.include.tooltip"
                          groupName="Oxy template" enabledByDefault="true" level="WARNING"
@@ -228,7 +246,6 @@
                          enabledByDefault="true" level="WARNING"
                          implementationClass="ool.idea.plugin.editor.inspection.MissingIncludeInspection" />
         <fileBasedIndex implementation="ool.idea.plugin.file.index.globals.JsGlobalsIndex"/>
-        <fileBasedIndex implementation="ool.idea.plugin.file.index.nacros.java.JavaMacroNameIndex"/>
         <fileBasedIndex implementation="ool.idea.plugin.file.index.nacros.js.JsMacroNameIndex"/>
         <lang.findUsagesProvider language="OxyTemplate" implementationClass="ool.idea.plugin.editor.usages.OxyTemplateFindUsagesProvider"/>
         <psi.referenceContributor implementation="ool.idea.plugin.psi.reference.java.LiteralJsMacroReferenceContributor" order="first"/>
@@ -244,7 +261,9 @@
         <predefinedLibraryProvider implementation="ool.idea.plugin.editor.InnerJsPredefinedLibrary"/>
         <intentionAndInspectionFilter language="OxyTemplate" implementationClass="ool.idea.plugin.editor.inspection.filter.JsIntentionAndInspectionFilter"/>
         <dialectSpecificHandlersFactory language="OxyTemplateInnerJs" implementationClass="ool.idea.plugin.file.OxyTemplateJsSpecificHandlersFactory"/>
-        <elementScopeProvider implementationClass="ool.idea.plugin.psi.reference.innerjs.InnerJsResolveScopeProvider" language="OxyTemplateInnerJs"/>
+        <dialectSpecificHandlersFactory language="CompiledPreview" implementationClass="ool.idea.plugin.file.OxyTemplateJsSpecificHandlersFactory"/>
+        <elementScopeProvider language="OxyTemplateInnerJs" implementationClass="ool.idea.plugin.psi.reference.innerjs.InnerJsResolveScopeProvider"/>
+        <elementScopeProvider language="CompiledPreview" implementationClass="ool.idea.plugin.psi.reference.innerjs.CompiledPreviewResolveScopeProvider"/>
     </extensions>
 
     <application-components>
@@ -252,10 +271,16 @@
     </application-components>
 
     <project-components>
-        <!-- Add your project components here -->
+        <component>
+            <implementation-class>ool.idea.plugin.action.compile.CompiledPreviewController</implementation-class>
+        </component>
     </project-components>
 
     <actions>
-        <!-- Add your actions here -->
+        <action id="oxy.compiledCode" class="ool.idea.plugin.action.compile.CompiledPreviewAction" text="Compiled Code"
+                icon="/icons/default.png">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="alt C"/>
+        </action>
     </actions>
 </idea-plugin>

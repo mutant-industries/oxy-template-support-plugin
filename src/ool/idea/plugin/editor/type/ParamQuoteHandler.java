@@ -14,7 +14,7 @@ import ool.idea.plugin.lang.OxyTemplate;
 import ool.idea.plugin.lang.parser.OxyTemplateParserDefinition;
 import ool.idea.plugin.psi.DirectiveStatement;
 import ool.idea.plugin.psi.MacroAttribute;
-import ool.idea.plugin.psi.MacroUnpairedTag;
+import ool.idea.plugin.psi.MacroEmptyTag;
 import ool.idea.plugin.psi.OxyTemplateTypes;
 import org.jetbrains.annotations.NotNull;
 
@@ -52,7 +52,7 @@ public class ParamQuoteHandler extends TypedHandlerDelegate
             {
                 elementAt = elementAt.getPrevSibling();
 
-                if(elementAt instanceof MacroUnpairedTag)
+                if(elementAt instanceof MacroEmptyTag)
                 {
                     elementAt = elementAt.getLastChild();
                 }

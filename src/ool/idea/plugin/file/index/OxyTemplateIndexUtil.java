@@ -1,29 +1,36 @@
 package ool.idea.plugin.file.index;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiLiteralExpression;
 import com.intellij.psi.PsiManager;
+import com.intellij.psi.PsiModifier;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.ProjectScope;
+import com.intellij.psi.search.searches.ClassInheritorsSearch;
 import com.intellij.util.indexing.FileBasedIndex;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import ool.idea.plugin.file.index.collector.JavaMacroCollector;
 import ool.idea.plugin.file.index.collector.JsMacroCollector;
 import ool.idea.plugin.file.index.collector.MacroCollector;
 import ool.idea.plugin.file.index.globals.JsGlobalsIndex;
-import ool.idea.plugin.file.index.nacros.java.JavaMacroNameIndex;
+import ool.idea.plugin.file.index.nacros.MacroIndex;
 import ool.idea.plugin.file.index.nacros.js.JsMacroNameIndex;
 import ool.idea.plugin.file.index.nacros.js.JsMacroNameIndexedElement;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,6 +41,8 @@ import org.jetbrains.annotations.Nullable;
  */
 public class OxyTemplateIndexUtil
 {
+    private static final Key<Multimap<String, JsMacroNameIndexedElement>> COMPILED_PREVIEW_MACRO_INDEX = Key.create("COMPILED_PREVIEW_MACRO_INDEX");
+
     @NotNull
     public static List<PsiElement> getMacroNameReferences(@NotNull String macroName, @NotNull Project project)
     {
@@ -42,7 +51,7 @@ public class OxyTemplateIndexUtil
 
         references.addAll(getJsMacroNameReferences(macroName, project));
 
-        if((psiClass = getJavaMacroNameReference(macroName, project)) != null)
+        if(references.size() == 0 && (psiClass = getJavaMacroNameReference(macroName, project)) != null)
         {
             references.add(psiClass);
         }
@@ -53,22 +62,42 @@ public class OxyTemplateIndexUtil
     @Nullable
     public static PsiClass getJavaMacroNameReference(@NotNull String macroName, @NotNull Project project)
     {
-        final GlobalSearchScope allScope = ProjectScope.getProjectScope(project);
-        FileBasedIndex index = FileBasedIndex.getInstance();
-        JavaMacroCollector processor = new JavaMacroCollector(project);
-
-        for(VirtualFile file : index.getContainingFiles(JavaMacroNameIndex.INDEX_ID,
-                macroName, allScope))   // single iteration
+        if( ! MacroIndex.checkJavaMacroNamespace(macroName))
         {
-            index.processValues(JavaMacroNameIndex.INDEX_ID, macroName, file, processor, allScope);
-
-            if(processor.getResult().size() == 1) // always true
-            {
-                return processor.getResult().get(0);
-            }
+            return null;
         }
 
-        return null;
+        final String namespace = macroName.substring(0, macroName.indexOf("."));
+        final String javaMacroName = StringUtils.capitalize(macroName.substring(macroName.indexOf(".") + 1)) +
+                MacroIndex.JAVA_MACRO_SUFFIX;
+
+        if(StringUtils.isEmpty(javaMacroName) || MacroIndex.macrosInDebugNamespace.contains(javaMacroName)
+                && ! MacroIndex.DEBUG_NAMESPACE.equals(namespace))
+        {
+            return null;
+        }
+
+        PsiClass macroInterface;
+
+        if((macroInterface = MacroIndex.getJavaMacroInterface(project)) == null)
+        {
+            return null;
+        }
+
+        final GlobalSearchScope allScope = ProjectScope.getProjectScope(project);
+
+        PsiClass macroClass = ClassInheritorsSearch.INSTANCE.createUniqueResultsQuery(new ClassInheritorsSearch.SearchParameters(macroInterface,
+                allScope, true, true, false, new Condition<String>()
+        {
+            @Override
+            public boolean value(String name)
+            {
+                return javaMacroName.equals(name);
+            }
+        })).findFirst();
+
+        return macroClass == null || macroClass.isInterface() || Arrays.asList(macroClass.getModifierList())
+                .contains(PsiModifier.ABSTRACT) ? null : macroClass;
     }
 
     @NotNull
@@ -130,23 +159,33 @@ public class OxyTemplateIndexUtil
     public static Map<String, PsiClass> getJavaMacros(@NotNull Project project)
     {
         final GlobalSearchScope allScope = ProjectScope.getProjectScope(project);
-        FileBasedIndex index = FileBasedIndex.getInstance();
 
         Map<String, PsiClass> result = new HashMap<String, PsiClass>();
 
-        for (String key : index.getAllKeys(JavaMacroNameIndex.INDEX_ID, project))
+        PsiClass macroInterface;
+
+        if((macroInterface = MacroIndex.getJavaMacroInterface(project)) == null)
         {
-            JavaMacroCollector processor = new JavaMacroCollector(project);
+            return result;
+        }
 
-            for(VirtualFile file : index.getContainingFiles(JavaMacroNameIndex.INDEX_ID, key, allScope))    // single iter
+        for(PsiClass javaMacro : ClassInheritorsSearch.INSTANCE.createQuery(new ClassInheritorsSearch.SearchParameters(macroInterface,
+                allScope, true, true, false, new Condition<String>()
+        {
+            @Override
+            public boolean value(String name)
             {
-                index.processValues(JavaMacroNameIndex.INDEX_ID, key, file, processor, allScope);
+                return name.endsWith(MacroIndex.JAVA_MACRO_SUFFIX);
+            }
+        })).findAll())
+        {
+            if(javaMacro.isInterface() || Arrays.asList(javaMacro.getModifierList()).contains(PsiModifier.ABSTRACT))
+            {
+                continue;
             }
 
-            if(processor.getResult().size() == 1) // always true
-            {
-                result.put(key, processor.getResult().get(0));
-            }
+            result.put((MacroIndex.macrosInDebugNamespace.contains(javaMacro.getName()) ? MacroIndex.DEBUG_NAMESPACE : MacroIndex.DEFAULT_NAMESPACE)
+                    + "." + StringUtil.decapitalize(javaMacro.getName().replaceFirst(MacroIndex.JAVA_MACRO_SUFFIX + "$", "")), javaMacro);
         }
 
         return result;

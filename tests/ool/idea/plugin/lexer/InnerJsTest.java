@@ -1,5 +1,6 @@
 package ool.idea.plugin.lexer;
 
+import com.intellij.psi.TokenType;
 import java.io.IOException;
 import ool.idea.plugin.psi.OxyTemplateTypes;
 import static org.junit.Assert.assertEquals;
@@ -32,15 +33,21 @@ public class InnerJsTest extends AbstractLexerTest
 
         assertEquals(OxyTemplateTypes.T_TEMPLATE_HTML_CODE, nextToken());
         assertEquals(OxyTemplateTypes.T_OPEN_BLOCK_MARKER, nextToken());
+        assertEquals(TokenType.WHITE_SPACE, nextToken());
         assertEquals(OxyTemplateTypes.T_TEMPLATE_JAVASCRIPT_CODE, nextToken());
+        assertEquals(TokenType.WHITE_SPACE, nextToken());
         assertEquals(OxyTemplateTypes.T_CLOSE_BLOCK_MARKER, nextToken());
         assertEquals(OxyTemplateTypes.T_TEMPLATE_HTML_CODE, nextToken());
         assertEquals(OxyTemplateTypes.T_OPEN_BLOCK_MARKER_PRINT, nextToken());
+        assertEquals(TokenType.WHITE_SPACE, nextToken());
         assertEquals(OxyTemplateTypes.T_TEMPLATE_JAVASCRIPT_CODE, nextToken());
+        assertEquals(TokenType.WHITE_SPACE, nextToken());
         assertEquals(OxyTemplateTypes.T_CLOSE_BLOCK_MARKER, nextToken());
         assertEquals(OxyTemplateTypes.T_TEMPLATE_HTML_CODE, nextToken());
         assertEquals(OxyTemplateTypes.T_OPEN_BLOCK_MARKER, nextToken());
+        assertEquals(TokenType.WHITE_SPACE, nextToken());
         assertEquals(OxyTemplateTypes.T_TEMPLATE_JAVASCRIPT_CODE, nextToken());
+        assertEquals(TokenType.WHITE_SPACE, nextToken());
         assertEquals(OxyTemplateTypes.T_CLOSE_BLOCK_MARKER, nextToken());
         assertEquals(OxyTemplateTypes.T_TEMPLATE_HTML_CODE, nextToken());
 

@@ -1,23 +1,30 @@
 package ool.idea.plugin.lang.lexer;
 
-import com.intellij.lexer.*;
-import com.intellij.psi.TokenType;
-import com.intellij.psi.tree.IElementType;
 import static ool.idea.plugin.psi.OxyTemplateTypes.*;
-import com.intellij.util.containers.Stack;
+import static com.intellij.psi.TokenType.WHITE_SPACE;
+import static com.intellij.psi.TokenType.BAD_CHARACTER;
+import com.intellij.psi.tree.IElementType;
+import java.util.Stack;
 
 %%
 
 %public
-%class OxyTemplateLexer
-%extends AbstractOxyTemplateLexer
-%implements FlexLexer
+%class AbstractOxyTemplateLexer
 %function advance
 %type IElementType
+%abstract
 %unicode
 
 %{
+    protected CharSequence lastSeenMacroName;
+
+    protected CharSequence lastSeenAttributeName;
+
     private Stack<Integer> stack = new Stack();
+
+    abstract protected IElementType decideParameterType();
+
+    abstract protected CharSequence getTokenText();
 
     private void yypushstate(int newState)
     {
@@ -32,8 +39,12 @@ import com.intellij.util.containers.Stack;
 
     private void yypopstate(int count)
     {
-        int newState = 0;
-        while(count-- != 0 && ! stack.isEmpty()) newState = stack.pop();
+        int newState = YYINITIAL;
+
+        while(count-- != 0 && ! stack.isEmpty())
+        {
+            newState = stack.pop();
+        }
 
         yybegin(newState);
     }
@@ -48,50 +59,103 @@ import com.intellij.util.containers.Stack;
 
     private IElementType trimElement(IElementType element)
     {
-        String text = yytext().toString();
-
-        if(text.trim().length() > 0) return element;
-        if(text.length() > 0) return TokenType.WHITE_SPACE;
-
-        return null;
+        return trimElement(element, false);
     }
+
+    private IElementType trimElement(IElementType element, boolean pushbackWhitespace)
+    {
+        CharSequence text = getTokenText();
+
+        if(text.length() == 0)
+        {
+            return null;
+        }
+
+        int trailingWhitespaceCount = 0;
+
+        for(int i = text.length() - 1; i >= 0 && Character.isWhitespace(text.charAt(i)); i--)
+        {
+            trailingWhitespaceCount++;
+        }
+
+        if(pushbackWhitespace)
+        {
+            yypushback(trailingWhitespaceCount);
+        }
+
+        if(text.length() > trailingWhitespaceCount)
+        {
+            return element;
+        }
+
+        return WHITE_SPACE;
+    }
+
+    private void pushbackEncodedEntity()
+    {
+        int tokenEnd = getTokenEnd();
+
+        if(tokenEnd + 1 > zzBuffer.length())
+        {
+            return;
+        }
+        if(zzBuffer.charAt(tokenEnd) != ';')
+        {
+            return;
+        }
+
+        CharSequence text = getTokenText();
+
+        for(int i = text.length() - 1; i >= 0; i--)
+        {
+            if(text.charAt(i) == '&')
+            {
+                yypushback(text.length() - i);
+            }
+        }
+    }
+
 %}
 
 %state S_BLOCK
 %state S_DIRECTIVE_BLOCK
 %state S_JAVASCRIPT_BLOCK
+%state S_JAVASCRIPT
 %state S_DIRECTIVE_PARAM
 %state S_MACRO_TAG_START
-%state S_MACRO_OPEN_OR_UNPAIRED_TAG
+%state S_MACRO_OPEN_OR_EMPTY_TAG
 %state S_MACRO_CLOSE_TAG
 %state S_MACRO_PARAM_ASIGNMENT
 %state S_MACRO_NAME
-%state S_MACRO_PARAM
-%state S_MACRO_PARAM_EXPRESSION
+%state S_MACRO_PARAM_DQD
+%state S_MACRO_PARAM_SQD
+%state S_MACRO_PARAM_EXPRESSION_DQD
+%state S_MACRO_PARAM_EXPRESSION_SQD
 %state S_COMMENT_BLOCK
 
 OPEN_BLOCK_MARKER = <%
 OPEN_BLOCK_MARKER_PRINT = <%=
 CLOSE_BLOCK_MARKER = %>
 OPEN_BLOCK_MARKER_DIRECTIVE = <%@
-HTML_COMMENT_START = <\!--
-HTML_COMMENT_END = -->
-HTML_BLOCK = !([^]*({OPEN_BLOCK_MARKER}|{HTML_COMMENT_START}|{XML_TAG_START}{MACRO_XML_PREFIX}|{XML_CLOSE_TAG_START}{MACRO_XML_PREFIX})[^]*)
+BLOCK_COMMENT_START = <\/\/
+BLOCK_COMMENT_END = \/\/>
+HTML_BLOCK = !([^]*({OPEN_BLOCK_MARKER}|{BLOCK_COMMENT_START}|{XML_TAG_START}{MACRO_XML_PREFIX}|{XML_CLOSE_TAG_START}{MACRO_XML_PREFIX})[^]*)
 
-MACRO_NAME = [A-Za-z][A-Za-z0-9_]*(\.[A-Za-z][A-Za-z0-9_]*)*
+MACRO_NAME = [A-Za-z][A-Za-z0-9_]*(\.[A-Za-z][A-Za-z0-9_]*)*(\[[A-Za-z][A-Za-z0-9_]*(\.[A-Za-z][A-Za-z0-9_]*)*\])*
 MACRO_XML_NAMESPACE = m
 MACRO_XML_PREFIX = {MACRO_XML_NAMESPACE}{XML_NAMESPACE_DELIMITER}
 MACRO_PARAM_EXPRESSION_STATEMENT_START = expr:
+XML_ENCODED_ENTITY = &#?[a-z0-9]+;
 XML_NAMESPACE_DELIMITER = :
 XML_TAG_START = <
 XML_CLOSE_TAG_START = <\/
 XML_TAG_END = >
-XML_UNPAIRED_TAG_END = \/>
+XML_EMPTY_TAG_END = \/>
 
 LINE_TERMINATOR = \r|\n|\r\n
 CHARS = [^ \t\f\r\n\r\n\"]
 WHITE_CHARS = [\t \f]
-WHITE_SPACE = {LINE_TERMINATOR} | {WHITE_CHARS}
+WHITE_SPACE = {LINE_TERMINATOR}|{WHITE_CHARS}
 SPECIAL_CHARS = [<|>|%|\"|\\|@|:|\/|=|\.\-]
 NON_SPECIAL_CHARS = !([^]*({SPECIAL_CHARS}|{WHITE_SPACE})[^]*)
 
@@ -130,12 +194,12 @@ NON_SPECIAL_CHARS = !([^]*({SPECIAL_CHARS}|{WHITE_SPACE})[^]*)
 
         if((el = trimElement(T_TEMPLATE_HTML_CODE)) != null) return el;
     }
-    // ...<!--
-    {HTML_BLOCK}{HTML_COMMENT_START}
+    // ...<//
+    {HTML_BLOCK}{BLOCK_COMMENT_START}
     {
         IElementType el;
 
-        yypushback(4);
+        yypushback(3);
         yypushstate(S_COMMENT_BLOCK);
 
         if((el = trimElement(T_TEMPLATE_HTML_CODE)) != null) return el;
@@ -169,8 +233,27 @@ NON_SPECIAL_CHARS = !([^]*({SPECIAL_CHARS}|{WHITE_SPACE})[^]*)
         return T_CLOSE_BLOCK_MARKER;
     }
 }
-// javascript block
+
 <S_JAVASCRIPT_BLOCK>
+{
+    {CLOSE_BLOCK_MARKER}
+    {
+        yypushback(2);
+        yypopstate();
+    }
+    {WHITE_SPACE}+
+    {
+        yypushstate(S_JAVASCRIPT);
+        return WHITE_SPACE;
+    }
+    .
+    {
+        yypushback(1);
+        yypushstate(S_JAVASCRIPT);
+    }
+}
+
+<S_JAVASCRIPT>
 {
     !([^]*({CLOSE_BLOCK_MARKER})[^]*){CLOSE_BLOCK_MARKER}
     {
@@ -179,23 +262,23 @@ NON_SPECIAL_CHARS = !([^]*({SPECIAL_CHARS}|{WHITE_SPACE})[^]*)
         yypushback(2);
         yypopstate();
 
-        if((el = trimElement(T_TEMPLATE_JAVASCRIPT_CODE)) != null) return el;
+        if((el = trimElement(T_TEMPLATE_JAVASCRIPT_CODE, true)) != null) return el;
     }
     !([^]*({CLOSE_BLOCK_MARKER})[^]*)
     {
-        return trimElement(T_TEMPLATE_JAVASCRIPT_CODE);
+        return T_TEMPLATE_JAVASCRIPT_CODE;
+        // followed by eof
     }
 }
-// <!-- ... -->
+// ... //>
 <S_COMMENT_BLOCK>
 {
-    !([^]*({HTML_COMMENT_END})[^]*){HTML_COMMENT_END}
+    !([^]*({BLOCK_COMMENT_END})[^]*){BLOCK_COMMENT_END}
     {
         yypopstate();
-
         return T_BLOCK_COMMENT;
     }
-    !([^]*({HTML_COMMENT_END})[^]*)
+    !([^]*({BLOCK_COMMENT_END})[^]*)
     {
         return T_BLOCK_COMMENT;
     }
@@ -246,7 +329,7 @@ NON_SPECIAL_CHARS = !([^]*({SPECIAL_CHARS}|{WHITE_SPACE})[^]*)
 {
     {XML_TAG_START}
     {
-        yypushstate(S_MACRO_OPEN_OR_UNPAIRED_TAG);
+        yypushstate(S_MACRO_OPEN_OR_EMPTY_TAG);
         return T_XML_TAG_START;
     }
     {XML_CLOSE_TAG_START}
@@ -256,7 +339,7 @@ NON_SPECIAL_CHARS = !([^]*({SPECIAL_CHARS}|{WHITE_SPACE})[^]*)
     }
 }
 // m:foo.bar param_name="[expr:]param" [/]>
-<S_MACRO_OPEN_OR_UNPAIRED_TAG>
+<S_MACRO_OPEN_OR_EMPTY_TAG>
 {
     {MACRO_XML_NAMESPACE}
     {
@@ -270,25 +353,28 @@ NON_SPECIAL_CHARS = !([^]*({SPECIAL_CHARS}|{WHITE_SPACE})[^]*)
     {NON_SPECIAL_CHARS}+
     {
         yypushstate(S_MACRO_PARAM_ASIGNMENT);
-        lastSeenAttributeName = yytext();
+        lastSeenAttributeName = getTokenText();
         return T_MACRO_PARAM_NAME;
     }
     {XML_TAG_END}
     {
+        lastSeenAttributeName = null;
         yypopstate(2);
         return T_XML_OPEN_TAG_END;
     }
-    {XML_UNPAIRED_TAG_END}
+    {XML_EMPTY_TAG_END}
     {
+        lastSeenAttributeName = null;
         yypopstate(2);
-        return T_XML_UNPAIRED_TAG_END;
+        return T_XML_EMPTY_TAG_END;
     }
     {WHITE_SPACE}+
     {
-        return TokenType.WHITE_SPACE;
+        return WHITE_SPACE;
     }
     .
     {
+        lastSeenAttributeName = null;
         yypushback(1);
         yypopstate(2);
     }
@@ -299,7 +385,7 @@ NON_SPECIAL_CHARS = !([^]*({SPECIAL_CHARS}|{WHITE_SPACE})[^]*)
     {MACRO_NAME}
     {
         yypopstate();
-        lastSeenMacroName = yytext();
+        lastSeenMacroName = getTokenText();
         return T_MACRO_NAME;
     }
     .
@@ -308,7 +394,7 @@ NON_SPECIAL_CHARS = !([^]*({SPECIAL_CHARS}|{WHITE_SPACE})[^]*)
         yypopstate();
     }
 }
-
+// =', ="
 <S_MACRO_PARAM_ASIGNMENT>
 {
     \=
@@ -317,12 +403,17 @@ NON_SPECIAL_CHARS = !([^]*({SPECIAL_CHARS}|{WHITE_SPACE})[^]*)
     }
     \"
     {
-        yypushstate(S_MACRO_PARAM);
+        yypushstate(S_MACRO_PARAM_DQD);
+        return T_MACRO_PARAM_BOUNDARY;
+    }
+    \'
+    {
+        yypushstate(S_MACRO_PARAM_SQD);
         return T_MACRO_PARAM_BOUNDARY;
     }
     {WHITE_SPACE}+
     {
-        return TokenType.WHITE_SPACE;
+        return WHITE_SPACE;
     }
     .
     {
@@ -330,16 +421,21 @@ NON_SPECIAL_CHARS = !([^]*({SPECIAL_CHARS}|{WHITE_SPACE})[^]*)
         yypushback(1);
     }
 }
-
-<S_MACRO_PARAM>
+// ...", expr:
+<S_MACRO_PARAM_DQD>
 {
-    !([^]*({MACRO_PARAM_EXPRESSION_STATEMENT_START}|\")[^]*)
+    {XML_ENCODED_ENTITY}
     {
+        return T_XML_ENCODED_ENTITY;
+    }
+    !([^]*({MACRO_PARAM_EXPRESSION_STATEMENT_START}|{XML_ENCODED_ENTITY}|\")[^]*)
+    {
+        pushbackEncodedEntity();
         return decideParameterType();
     }
     {MACRO_PARAM_EXPRESSION_STATEMENT_START}
     {
-        yypushstate(S_MACRO_PARAM_EXPRESSION);
+        yypushstate(S_MACRO_PARAM_EXPRESSION_DQD);
         return T_MACRO_PARAM_EXPRESSION_STATEMENT;
     }
     \"
@@ -348,14 +444,50 @@ NON_SPECIAL_CHARS = !([^]*({SPECIAL_CHARS}|{WHITE_SPACE})[^]*)
         return T_MACRO_PARAM_BOUNDARY;
     }
 }
-
-<S_MACRO_PARAM_EXPRESSION>
+// ...', expr:
+<S_MACRO_PARAM_SQD>
+{
+    {XML_ENCODED_ENTITY}
+    {
+        return T_XML_ENCODED_ENTITY;
+    }
+    !([^]*({MACRO_PARAM_EXPRESSION_STATEMENT_START}|{XML_ENCODED_ENTITY}|\')[^]*)
+    {
+        pushbackEncodedEntity();
+        return decideParameterType();
+    }
+    {MACRO_PARAM_EXPRESSION_STATEMENT_START}
+    {
+        yypushstate(S_MACRO_PARAM_EXPRESSION_SQD);
+        return T_MACRO_PARAM_EXPRESSION_STATEMENT;
+    }
+    \'
+    {
+        yypopstate(2);
+        return T_MACRO_PARAM_BOUNDARY;
+    }
+}
+// ,,,"
+<S_MACRO_PARAM_EXPRESSION_DQD>
 {
     !([^]*(\")[^]*)
     {
         return trimElement(T_TEMPLATE_JAVASCRIPT_CODE);
     }
     \"
+    {
+        yypopstate(3);
+        return T_MACRO_PARAM_BOUNDARY;
+    }
+}
+// ,,,'
+<S_MACRO_PARAM_EXPRESSION_SQD>
+{
+    !([^]*(\')[^]*)
+    {
+        return trimElement(T_TEMPLATE_JAVASCRIPT_CODE);
+    }
+    \'
     {
         yypopstate(3);
         return T_MACRO_PARAM_BOUNDARY;
@@ -380,7 +512,7 @@ NON_SPECIAL_CHARS = !([^]*({SPECIAL_CHARS}|{WHITE_SPACE})[^]*)
     }
     {WHITE_SPACE}+
     {
-        return TokenType.WHITE_SPACE;
+        return WHITE_SPACE;
     }
     .
     {
@@ -391,9 +523,9 @@ NON_SPECIAL_CHARS = !([^]*({SPECIAL_CHARS}|{WHITE_SPACE})[^]*)
 
 {WHITE_SPACE}+
 {
-    return TokenType.WHITE_SPACE;
+    return WHITE_SPACE;
 }
 .
 {
-    return TokenType.BAD_CHARACTER;
+    return BAD_CHARACTER;
 }

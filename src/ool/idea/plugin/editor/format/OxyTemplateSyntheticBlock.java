@@ -90,9 +90,9 @@ public class OxyTemplateSyntheticBlock implements Block
                 return Spacing.createSpacing(1, 1, 0, true, 0);
             }
             else if ((firstBlock.getNode().getElementType() == OxyTemplateTypes.MACRO_NAME
-                    && secondBlock.getNode().getElementType() == OxyTemplateTypes.T_XML_UNPAIRED_TAG_END) ||
+                    && secondBlock.getNode().getElementType() == OxyTemplateTypes.T_XML_EMPTY_TAG_END) ||
                     (firstBlock.getNode().getElementType() == OxyTemplateTypes.MACRO_ATTRIBUTE
-                            && secondBlock.getNode().getElementType() == OxyTemplateTypes.T_XML_UNPAIRED_TAG_END))
+                            && secondBlock.getNode().getElementType() == OxyTemplateTypes.T_XML_EMPTY_TAG_END))
             {
                 return Spacing.createSpacing(0, 0, 0, false, 0);
             }

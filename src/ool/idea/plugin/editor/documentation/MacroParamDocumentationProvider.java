@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 import ool.idea.plugin.psi.MacroAttribute;
 import ool.idea.plugin.psi.MacroCall;
 import ool.idea.plugin.psi.MacroName;
-import ool.idea.plugin.psi.MacroUnpairedTag;
+import ool.idea.plugin.psi.MacroEmptyTag;
 import ool.idea.plugin.psi.OxyTemplateTypes;
 import org.jetbrains.annotations.Nullable;
 
@@ -104,12 +104,12 @@ public class MacroParamDocumentationProvider extends AbstractDocumentationProvid
     {
         return element.getNode().getElementType() == OxyTemplateTypes.T_MACRO_PARAM_NAME
                 || element.getNode().getElementType() == OxyTemplateTypes.T_XML_OPEN_TAG_END
-                || element.getNode().getElementType() == OxyTemplateTypes.T_XML_UNPAIRED_TAG_END
+                || element.getNode().getElementType() == OxyTemplateTypes.T_XML_EMPTY_TAG_END
                 || element.getNode().getElementType() == TokenType.WHITE_SPACE && (
                 element.getPrevSibling() instanceof MacroAttribute
                         || element.getPrevSibling() instanceof MacroName
                         // idea 13 fix
-                        || (element.getPrevSibling() instanceof PsiErrorElement && element.getPrevSibling().getPrevSibling() instanceof MacroUnpairedTag)
+                        || (element.getPrevSibling() instanceof PsiErrorElement && element.getPrevSibling().getPrevSibling() instanceof MacroEmptyTag)
         );
     }
 

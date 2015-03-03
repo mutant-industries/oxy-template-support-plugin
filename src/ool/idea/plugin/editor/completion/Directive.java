@@ -16,6 +16,9 @@ import ool.idea.plugin.editor.completion.handler.TrailingPatternConsumer;
 import ool.idea.plugin.psi.DirectiveOpenStatement;
 import ool.idea.plugin.psi.DirectiveParamWrapper;
 import ool.idea.plugin.psi.OxyTemplateTypes;
+import ool.web.template.impl.chunk.directive.IncludeDirective;
+import ool.web.template.impl.chunk.directive.IncludeOnceDirective;
+import ool.web.template.impl.chunk.directive.LayoutDirective;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,9 +31,9 @@ public class Directive extends CompletionContributor
 {
     @NonNls
     private static final String[] DIRECTIVES = {
-            "include_once",
-            "include",
-            "layout"
+            IncludeDirective.NAME,
+            IncludeOnceDirective.NAME,
+            LayoutDirective.NAME
     };
 
     private static final Pattern INSERT_CONSUME = Pattern.compile("\"(\\w+)?\\s+\"");

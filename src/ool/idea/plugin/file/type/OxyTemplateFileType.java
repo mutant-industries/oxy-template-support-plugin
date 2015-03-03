@@ -1,4 +1,4 @@
-package ool.idea.plugin.file;
+package ool.idea.plugin.file.type;
 
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.util.IconLoader;

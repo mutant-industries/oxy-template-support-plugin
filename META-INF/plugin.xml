@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>ool.idea.plugin</id>
     <name>Oxy template support</name>
-    <version>0.8.3</version>
+    <version>0.9</version>
     <vendor email="p.mayr@oxyonline.cz" url="http://stash.oxyonline.local/projects/CZC/repos/macro-support-plugin">
         oXy Online s.r.o.
     </vendor>
@@ -15,6 +15,12 @@
     ]]></description>
 
     <change-notes><![CDATA[
+        <b>0.9</b>
+        <ul>
+            <li>
+                formátovač
+            </li>
+        </ul>
         <b>0.8.3</b>
         <ul>
             <li>
@@ -117,7 +123,7 @@
         <b>0.4</b>
         <ul>
             <li>
-                formátovač
+                provizorní formátovač
             </li>
             <li>
                 možnost sbalení obsahu makra / js bloku
@@ -203,7 +209,8 @@
                                implementationClass="ool.idea.plugin.lang.parser.OxyTemplateParserDefinition"/>
         <lang.parserDefinition language="OxyTemplateInnerJs"
                                implementationClass="ool.idea.plugin.lang.parser.OxyTemplateInnerJsParserDefinition"/>
-        <lang.treePatcher implementationClass="ool.idea.plugin.lang.InnerJsTreePatcher" language="OxyTemplateInnerJs"/>
+        <lang.treePatcher language="OxyTemplateInnerJs" implementationClass="ool.idea.plugin.lang.InnerJsTreePatcher"/>
+        <lang.treePatcher language="HTML" implementationClass="ool.idea.plugin.lang.XmlTreePatcher" order="first"/>
         <lang.parserDefinition language="CompiledPreview"
                                implementationClass="ool.idea.plugin.lang.parser.CompiledPreviewParserDefinition"/>
         <editorHighlighterProvider filetype="OxyTemplate"
@@ -231,6 +238,7 @@
         <lang.commenter language="OxyTemplate" implementationClass="ool.idea.plugin.editor.comment.OxyTemplateCommenter"/>
         <multiLangCommenter implementation="ool.idea.plugin.editor.comment.OxyTemplateCommentProvider"/>
         <lang.formatter language="OxyTemplate" implementationClass="ool.idea.plugin.editor.format.OxyTemplateFormatter"/>
+        <lang.formatter language="OxyTemplateInnerJs" implementationClass="ool.idea.plugin.editor.format.OxyTemplateInnerJsFormatter"/>
         <lang.foldingBuilder language="OxyTemplate" implementationClass="ool.idea.plugin.editor.folding.MatchingTagsAndJsBlock"/>
         <lang.elementManipulator forClass="ool.idea.plugin.psi.DirectiveParamFileReference"
                                  implementationClass="ool.idea.plugin.psi.manipulator.DirectiveParamFileReferenceManipulator"/>

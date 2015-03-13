@@ -48,13 +48,16 @@ public class OxyTemplateInnerJsElementType extends TemplateDataElementType
     {
         super.appendCurrentTemplateToken(result, buf, lexer);
 
-        if(lexer.getBufferSequence().charAt(lexer.getTokenStart() - 1) == '"')
+        offsets.get().add(result.length());
+
+        char charBeforeTokenStart = lexer.getBufferSequence().charAt(lexer.getTokenStart() - 1);
+
+        if(charBeforeTokenStart == '"')
         {
             variables.get().add(TextRange.create(result.length() - lexer.getTokenEnd() + lexer.getTokenStart(), result.length()));
         }
 
-        offsets.get().add(result.length());
-        result.append("\n");
+        result.append(charBeforeTokenStart == ':' ? ';' : '\n');
     }
 
     @Override

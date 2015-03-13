@@ -27,12 +27,13 @@ public class OxyTemplateParserDefinition implements ParserDefinition
 {
     public static final TokenSet WHITE_SPACES = TokenSet.create(TokenType.WHITE_SPACE);
     public static final TokenSet HTML = TokenSet.create(
-            OxyTemplateTypes.T_TEMPLATE_HTML_CODE,
-            OxyTemplateTypes.T_OUTER_TEMPLATE_ELEMENT
+            OxyTemplateTypes.T_TEMPLATE_HTML_CODE
     );
     public static final TokenSet INNER_JS = TokenSet.create(
-            OxyTemplateTypes.T_TEMPLATE_JAVASCRIPT_CODE,
-            OxyTemplateTypes.T_INNER_TEMPLATE_ELEMENT
+            OxyTemplateTypes.T_TEMPLATE_JAVASCRIPT_CODE
+    );
+    public static final TokenSet COMMENTS = TokenSet.create(
+            OxyTemplateTypes.T_BLOCK_COMMENT
     );
     public static final TokenSet OPEN_BLOCK_MARKERS = TokenSet.create(
             OxyTemplateTypes.BLOCK_OPEN_STATEMENT,
@@ -74,7 +75,7 @@ public class OxyTemplateParserDefinition implements ParserDefinition
     @Override
     public TokenSet getCommentTokens()
     {
-        return TokenSet.create(OxyTemplateTypes.T_BLOCK_COMMENT);
+        return COMMENTS;
     }
 
     @NotNull

@@ -4,11 +4,20 @@ import com.intellij.lang.javascript.psi.JSCallExpression;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.JSRecursiveElementVisitor;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.ResolveResult;
+import com.intellij.psi.impl.source.tree.CompositeElement;
+import com.intellij.psi.impl.source.tree.FileElement;
+import com.intellij.psi.impl.source.tree.TreeElement;
+import com.intellij.psi.templateLanguages.OuterLanguageElement;
+import com.intellij.psi.templateLanguages.TreePatcher;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.xml.XmlElementType;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -165,6 +174,117 @@ public class OxyTemplateHelper
         }
 
         return null;
+    }
+
+    /**
+     * Handles insertion of foreign elements (T_OUTER_TEMPLATE_ELEMENT, T_INNER_TEMPLATE_ELEMENT) into js / html tree.
+     * Element is inserted before topmost parent with the same start offset as the offset of block before which
+     * it would be originally inserted. It means, that foreign element never becomes child of for example js var
+     * statement or xml attribute which would happen for example in this case:
+     *
+     * <div <m:foo>data-id="data"</m:foo>>
+     *
+     * </div>
+     *
+     *  HtmlTag:div(0,43)
+     *    XmlToken:XML_START_TAG_START('<')(0,1)
+     *    XmlToken:XML_NAME('div')(1,4)
+     *    PsiWhiteSpace(' ')(4,5)
+     *    PsiElement(XML_ATTRIBUTE)(5,26)
+     *      PsiElement(Outer Template Element)('<m:foo>')(5,12)     <-
+     *      XmlToken:XML_NAME('data-id')(12,19)
+     *      XmlToken:XML_EQ('=')(19,20)
+     *      PsiElement(XML_ATTRIBUTE_VALUE)(20,26)
+     *        XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')(20,21)
+     *        XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('data')(21,25)
+     *        XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')(25,26)
+     *    PsiElement(Outer Template Element)('</m:foo>')(26,34)
+     *    XmlToken:XML_TAG_END('>')(34,35)
+     *    XmlText(35,37)
+     *      PsiWhiteSpace('\n\n')(35,37)
+     *    XmlToken:XML_END_TAG_START('</')(37,39)
+     *    XmlToken:XML_NAME('div')(39,42)
+     *    XmlToken:XML_TAG_END('>')(42,43)
+     *
+     * @param parent
+     * @param anchorBefore
+     * @param toInsert
+     * @return true if patch was applied, false otherwise
+     * @see TreePatcher
+     */
+    public static boolean insertOuterElementToAST(CompositeElement parent, TreeElement anchorBefore, OuterLanguageElement toInsert)
+    {
+        int parentStartOffset = parent.getStartOffset();
+
+        if(anchorBefore != null && anchorBefore.getStartOffset() == parentStartOffset && ! (parent instanceof FileElement))
+        {
+            while(parent.getTreeParent() != null &&  ! (parent.getTreeParent() instanceof FileElement)
+                    && parent.getTreeParent().getStartOffset() == parentStartOffset)
+            {
+                parent = parent.getTreeParent();
+            }
+
+            parent.rawInsertBeforeMe((TreeElement)toInsert);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public static boolean containsElement(@NotNull PsiElement element, IElementType... types)
+    {
+        return containsElement(element, null, types);
+    }
+
+    public static boolean containsElement(@NotNull PsiElement element, @Nullable TextRange textRange, IElementType... types)
+    {
+        ChildElementFinder childElementFinder = new ChildElementFinder(types);
+        childElementFinder.setAllowedRange(textRange);
+        element.accept(childElementFinder);
+
+        return childElementFinder.getResult() != null;
+    }
+
+    public static boolean checkRangeContainsParent(@NotNull PsiElement element, @NotNull TextRange allowedRange,
+                                                   @NotNull IElementType outerLanguageElement)
+    {
+        PsiElement parent = element.getParent();
+
+        if(parent == null || parent instanceof PsiFile || parent.getTextRange() == null
+                || parent.getNode().getElementType() == XmlElementType.HTML_DOCUMENT || element instanceof PsiWhiteSpace)
+        {
+            return false;
+        }
+        if( ! allowedRange.contains(parent.getTextRange()))
+        {
+            return false;
+        }
+        if(allowedRange.equals(parent.getTextRange()))
+        {
+            if(parent.getPrevSibling() != null && parent.getNextSibling() != null
+                    && parent.getPrevSibling().getNode().getElementType() == outerLanguageElement
+                    && parent.getNextSibling().getNode().getElementType() == outerLanguageElement)
+            {
+                /**
+                 * parent covers fully allowed range, both siblings are outer language element type, e.g.
+                 * <m:foo><br/></m:foo>
+                 */
+                return true;
+            }
+            if((parent.getPrevSibling() == null || parent.getPrevSibling().getNode().getElementType() == XmlElementType.XML_PROLOG)
+                    && parent.getNextSibling() == null)
+            {
+                /**
+                 * parent is the unique root element in a file (has no siblings)
+                 */
+                return true;
+            }
+
+            return false;
+        }
+
+        return true;
     }
 
 }

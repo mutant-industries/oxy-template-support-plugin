@@ -1,13 +1,16 @@
 package ool.idea.plugin.editor.type;
 
-import com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegateAdapter;
+import com.intellij.codeInsight.editorActions.enter.EnterBetweenBracesHandler;
 import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.editor.CaretModel;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler;
 import com.intellij.openapi.util.Ref;
+import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.tree.IElementType;
 import ool.idea.plugin.file.OxyTemplateFileViewProvider;
 import ool.idea.plugin.lang.OxyTemplate;
@@ -23,7 +26,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author Petr Mayr <p.mayr@oxyonline.cz>
  */
-public class EnterHandler extends EnterHandlerDelegateAdapter
+public class EnterHandler extends EnterBetweenBracesHandler
 {
     @Override
     public Result preprocessEnter(@NotNull final PsiFile file,
@@ -35,12 +38,24 @@ public class EnterHandler extends EnterHandlerDelegateAdapter
     {
         PsiElement elementAt = file.getViewProvider().findElementAt(caretOffset.get(), OxyTemplate.INSTANCE);
 
-        if ((file.getViewProvider() instanceof OxyTemplateFileViewProvider)
-            && (isBetweenMacroTags(elementAt) || isBetweenBlockMarkers(elementAt)))
+        if ((file.getViewProvider() instanceof OxyTemplateFileViewProvider))
         {
-            originalHandler.execute(editor, editor.getCaretModel().getCurrentCaret(), dataContext);
+            if(isBetweenMacroTags(elementAt))
+            {
+                originalHandler.execute(editor, editor.getCaretModel().getCurrentCaret(), dataContext);
+            }
+            else if(isBetweenBlockMarkers(elementAt, caretOffset.get()))
+            {
+                originalHandler.execute(editor, editor.getCaretModel().getCurrentCaret(), dataContext);
 
-            return Result.Default;
+                PsiDocumentManager.getInstance(file.getProject()).commitDocument(editor.getDocument());
+
+                CaretModel caretModel = editor.getCaretModel();
+                CodeStyleManager codeStyleManager = CodeStyleManager.getInstance(file.getProject());
+                codeStyleManager.adjustLineIndent(file, editor.getDocument().getLineStartOffset(caretModel.getLogicalPosition().line ));
+            }
+
+            return super.preprocessEnter(file, editor, caretOffset, caretAdvance, dataContext, originalHandler);
         }
 
         return Result.Continue;
@@ -52,7 +67,7 @@ public class EnterHandler extends EnterHandlerDelegateAdapter
                 && (element = element.getPrevSibling()) != null && element.getNode().getElementType() == OxyTemplateTypes.T_XML_OPEN_TAG_END;
     }
 
-    private static boolean isBetweenBlockMarkers(@Nullable PsiElement element)
+    private static boolean isBetweenBlockMarkers(@Nullable PsiElement element, int offset)
     {
         if(element == null)
         {
@@ -63,10 +78,20 @@ public class EnterHandler extends EnterHandlerDelegateAdapter
 
         if(OxyTemplateParserDefinition.CLOSE_BLOCK_MARKERS.contains(elementType))
         {
+            if(offset > element.getNode().getStartOffset())
+            {
+                return false;
+            }
+
             element = element.getParent().getPrevSibling();
 
             if(element instanceof PsiWhiteSpace)
             {
+                if(element.textContains('\n'))
+                {
+                    return false;
+                }
+
                 element = element.getPrevSibling();
             }
 
@@ -74,10 +99,20 @@ public class EnterHandler extends EnterHandlerDelegateAdapter
         }
         else if(OxyTemplateParserDefinition.OPEN_BLOCK_MARKERS.contains(elementType))
         {
+            if(offset < element.getNode().getStartOffset() + element.getTextLength())
+            {
+                return false;
+            }
+
             element = element.getParent().getNextSibling();
 
             if(element instanceof PsiWhiteSpace)
             {
+                if(element.textContains('\n'))
+                {
+                    return false;
+                }
+
                 element = element.getNextSibling();
             }
 
@@ -90,6 +125,12 @@ public class EnterHandler extends EnterHandlerDelegateAdapter
         }
 
         return false;
+    }
+
+    @Override
+    protected boolean isBracePair(char c1, char c2)
+    {
+        return c1 == '{' && c2 == '}';
     }
 
 }

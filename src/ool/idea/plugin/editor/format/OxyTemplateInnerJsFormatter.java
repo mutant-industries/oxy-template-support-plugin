@@ -8,6 +8,7 @@ import com.intellij.lang.Language;
 import com.intellij.lang.LanguageFormatting;
 import com.intellij.lang.javascript.formatter.JavascriptFormattingModelBuilder;
 import com.intellij.lang.javascript.formatter.blocks.JSBlock;
+import com.intellij.lang.javascript.formatter.blocks.alignment.ASTNodeBasedAlignmentFactory;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.formatter.xml.XmlPolicy;
 import com.intellij.webcore.template.formatter.AbstractTemplateLanguageFormattingModelBuilder;
@@ -33,7 +34,7 @@ public class OxyTemplateInnerJsFormatter extends JavascriptFormattingModelBuilde
 
     @Override
     public JSBlock createSubBlock(@NotNull ASTNode child, Alignment childAlignment, Indent childIndent, Wrap wrap,
-                                  @NotNull CodeStyleSettings topSettings, @NotNull Language dialect)
+                                  @NotNull CodeStyleSettings topSettings, @NotNull Language dialect, ASTNodeBasedAlignmentFactory sharedAlignmentFactory)
     {
         if(child.getElementType() == OxyTemplateTypes.T_INNER_TEMPLATE_ELEMENT)
         {
@@ -42,7 +43,7 @@ public class OxyTemplateInnerJsFormatter extends JavascriptFormattingModelBuilde
         }
         else
         {
-            return new InnerJsBlock(child, childAlignment, childIndent, wrap, topSettings, dialect);
+            return new InnerJsBlock(child, childAlignment, childIndent, wrap, topSettings, sharedAlignmentFactory, dialect);
         }
     }
 

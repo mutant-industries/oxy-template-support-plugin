@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 */
 public class CompiledPreviewParserDefinition extends JavascriptParserDefinition
 {
-    public static final IFileElementType FILE = new JSFileElementType(CompiledPreview.INSTANCE);
+    public static final IFileElementType FILE = JSFileElementType.create(CompiledPreview.INSTANCE);
 
     @Override
     public IFileElementType getFileNodeType()

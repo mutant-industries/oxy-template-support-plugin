@@ -8,6 +8,7 @@ import com.intellij.formatting.Wrap;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.formatter.blocks.JSBlock;
+import com.intellij.lang.javascript.formatter.blocks.alignment.ASTNodeBasedAlignmentFactory;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.formatter.common.InjectedLanguageBlockWrapper;
@@ -39,9 +40,9 @@ public class InnerJsBlock extends JSBlock implements IndentInheritingBlock
     private Indent inheritedIndent;
 
     public InnerJsBlock(ASTNode child, Alignment childAlignment, Indent inheritedIndent, Wrap wrap, CodeStyleSettings topSettings,
-                        Language dialect)
+                        ASTNodeBasedAlignmentFactory sharedAlignmentFactory, Language dialect)
     {
-        super(child, childAlignment, inheritedIndent, wrap, topSettings, dialect);
+        super(child, childAlignment, inheritedIndent, wrap, topSettings, sharedAlignmentFactory, dialect);
     }
 
     @NotNull

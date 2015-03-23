@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 */
 public class OxyTemplateInnerJsParserDefinition extends JavascriptParserDefinition
 {
-    public static final IFileElementType FILE = new JSFileElementType(OxyTemplateInnerJs.INSTANCE);
+    public static final IFileElementType FILE = JSFileElementType.create(OxyTemplateInnerJs.INSTANCE);
 
     @Override
     public IFileElementType getFileNodeType()

@@ -21,7 +21,7 @@ public class OxyTemplateTokenType extends IElementType
     @Override
     public String toString()
     {
-        return WordUtils.capitalize(super.toString().toLowerCase().replace("t_", "").replaceAll("_", " "));
+        return WordUtils.capitalize(super.toString().toLowerCase().replaceFirst("t_", "").replaceAll("_", " "));
     }
 
 }

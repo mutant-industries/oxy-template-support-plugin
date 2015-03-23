@@ -9,6 +9,7 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import ool.idea.plugin.file.OxyTemplateFileViewProvider;
 import ool.idea.plugin.lang.OxyTemplate;
@@ -96,12 +97,14 @@ public class TagCloseHandler extends TypedHandlerDelegate
                 return true;
             }
         }
-        // <m:foo.bar_
+        // <m:foo.bar[ param]_
         else if(elementAt.getNode().getElementType() == OxyTemplateTypes.T_MACRO_NAME)
         {
             if((psiElement = PsiTreeUtil.getParentOfType(elementAt, MacroEmptyTag.class)) != null
-                    && psiElement.getLastChild() instanceof PsiErrorElement
-                    && elementAt.getParent().isEquivalentTo(psiElement.getLastChild().getPrevSibling()))
+                    && (psiElement.getLastChild() instanceof PsiErrorElement || psiElement.getLastChild() instanceof MacroAttribute
+                        && psiElement.getLastChild().getLastChild() instanceof PsiErrorElement)
+                    && elementAt.getParent().isEquivalentTo((psiElement = psiElement.getLastChild().getPrevSibling())
+                        instanceof PsiWhiteSpace ? psiElement.getPrevSibling() : psiElement))
             {
                 return true;
             }

@@ -45,7 +45,7 @@ public class VirtualFileSourceResolver implements SourceResolver
         VirtualFileSourceResolver resolver = pathChange.isEmpty() ? this :
                 new VirtualFileSourceResolver(FilenameUtils.concat(this.path, pathChange));
 
-        return new Source(readAction.getResult(), resolver);
+        return new Source(readAction.getResult().toString(), resolver);
     }
 
     @Override
@@ -65,7 +65,7 @@ public class VirtualFileSourceResolver implements SourceResolver
         {
             try
             {
-                return new URL(new URL("file:"), virtualFile.getPath());
+                return new URL(new URL("file:"), virtualFile.getUrl());
             }
             catch (MalformedURLException e)
             {

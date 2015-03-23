@@ -43,7 +43,6 @@ import ool.idea.plugin.lang.I18nSupport;
 import ool.web.template.exception.CouldNotResolveSourceException;
 import ool.web.template.exception.ErrorInformation;
 import ool.web.template.exception.TemplateCompilerException;
-import org.apache.commons.net.ntp.TimeStamp;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -118,7 +117,7 @@ public class CompiledPreviewController extends AbstractProjectComponent
             {
                 document = editor.getDocument();
 
-                // find editor witdow where the file is opened
+                // find editor window where the file is opened
                 for(EditorWindow window : fileEditorManager.getWindows())
                 {
                     if(window.findFileIndex(virtualFile) != -1)
@@ -177,7 +176,6 @@ public class CompiledPreviewController extends AbstractProjectComponent
 
     public boolean showCompiledCode(@NotNull final PsiFile originalFile, @NotNull  final Document document)
     {
-        PsiDocumentManager.getInstance(myProject).commitAllDocuments();
         long startTime = System.currentTimeMillis();
 
         try
@@ -214,11 +212,10 @@ public class CompiledPreviewController extends AbstractProjectComponent
                     public void run()
                     {
                         document.setText(source);
-                        PsiDocumentManager.getInstance(myProject).commitDocument(document);
                     }
                 });
             }
-        }, I18nSupport.message("action.live.update"), "oxy-compiled-template-live-update-" + TimeStamp.getCurrentTime());
+        }, I18nSupport.message("action.live.update"), "oxy-compiled-template-live-update-" + System.nanoTime());
     }
 
     // ----------------------------------------------------------------------------------------------------
@@ -258,7 +255,7 @@ public class CompiledPreviewController extends AbstractProjectComponent
         JComponent consoleComponent = console.getComponent();
         Content content = contentFactory.createContent(consoleComponent, "", false);
 
-        consoleWindow = toolWindowManager.registerToolWindow(I18nSupport.message("action.live.update.compiler.output"), true, ToolWindowAnchor.BOTTOM);
+        consoleWindow = toolWindowManager.registerToolWindow(I18nSupport.message("action.live.update.compiler.output"), true, ToolWindowAnchor.BOTTOM, myProject, true);
         consoleWindow.getContentManager().addContent(content);
         consoleWindow.setIcon(OxyTemplateFileType.INSTANCE.getIcon());
 

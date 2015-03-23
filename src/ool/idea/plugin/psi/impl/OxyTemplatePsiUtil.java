@@ -93,10 +93,7 @@ public class OxyTemplatePsiUtil
         ASTNode macroOpenTagEnd = macroOpenTagEndFinder.findChild(tag.getNode());
         ASTNode macroCloseTagStart = macroCloseTagStartFinder.findChild(tag.getNode());
 
-        if(macroOpenTagEnd == null)
-        {
-            return null;    // shouldn't ever happen until grammar is messed up
-        }
+        assert macroOpenTagEnd != null;
 
         if(macroCloseTagStart != null)
         {

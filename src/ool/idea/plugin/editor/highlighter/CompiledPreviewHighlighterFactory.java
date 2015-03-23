@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author Petr Mayr <p.mayr@oxyonline.cz>
  */
-public class CimpiledPreviewHighlighterFactory extends SyntaxHighlighterFactory
+public class CompiledPreviewHighlighterFactory extends SyntaxHighlighterFactory
 {
     @NotNull
     @Override

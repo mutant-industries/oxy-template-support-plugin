@@ -2,14 +2,12 @@ package ool.idea.plugin.editor.highlighter;
 
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
+import com.intellij.openapi.editor.colors.CodeInsightColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import static com.intellij.openapi.editor.colors.TextAttributesKey.createTextAttributesKey;
-import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
-import java.awt.Color;
-import java.awt.Font;
 import ool.idea.plugin.lang.parser.OxyTemplateParserDefinition;
 import ool.idea.plugin.psi.OxyTemplateTypes;
 import org.jetbrains.annotations.NotNull;
@@ -33,8 +31,7 @@ public class OxyTemplateSyntaxHighlighter extends SyntaxHighlighterBase
     public static final TextAttributesKey MACRO_PARAM_VALUE = createTextAttributesKey("OXY_TEMPLATE_MACRO_PARAM_VALUE", DefaultLanguageHighlighterColors.MARKUP_ENTITY);
     public static final TextAttributesKey MACRO_PARAM_VALUE_ENCODED_ENTITY = createTextAttributesKey("MACRO_PARAM_VALUE_ENCODED_ENTITY", DefaultLanguageHighlighterColors.MARKUP_ENTITY);
     public static final TextAttributesKey MACRO_PARAM_EXPRESSION_STATEMENT = createTextAttributesKey("OXY_TEMPLATE_MACRO_PARAM_EXPRESSION_STATEMENT", DefaultLanguageHighlighterColors.MARKUP_ENTITY);
-    static final TextAttributesKey BAD_CHARACTER = createTextAttributesKey("OXY_TEMPLATE_BAD_CHARACTER",
-            new TextAttributes(Color.RED, null, null, null, Font.BOLD));
+    public static final TextAttributesKey BAD_CHARACTER = createTextAttributesKey("OXY_TEMPLATE_BAD_CHARACTER", CodeInsightColors.ERRORS_ATTRIBUTES);
     // ------------------------------------------
 
     private static final TextAttributesKey[] BAD_CHAR_KEYS = new TextAttributesKey[]{BAD_CHARACTER};

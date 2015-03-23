@@ -13,7 +13,7 @@ public class FileContentReader implements Runnable
 {
     private final VirtualFile file;
 
-    private String result;
+    private CharSequence result;
 
     public FileContentReader(VirtualFile file)
     {
@@ -23,13 +23,18 @@ public class FileContentReader implements Runnable
     @Override
     public void run()
     {
-        Document document = FileDocumentManager.getInstance().getDocument(file);
+        Document document = FileDocumentManager.getInstance().getCachedDocument(file);
+
+        if(document == null)
+        {
+            document = FileDocumentManager.getInstance().getDocument(file);
+        }
 
         assert document != null;
-        result = document.getText();
+        result = document.getCharsSequence();
     }
 
-    public String getResult()
+    public CharSequence getResult()
     {
         return result;
     }

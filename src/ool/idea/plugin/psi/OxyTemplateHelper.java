@@ -79,8 +79,8 @@ public class OxyTemplateHelper
                 PsiElement reference;
 
                 if (referenceExpression.getReference() != null && (reference = referenceExpression.getReference().resolve())  != null
-                        && OxyTemplateIndexUtil.getJsMacroNameReferences(MacroIndex.normalizeMacroName(referenceExpression
-                            .getText()), referenceExpression.getProject()).size() > 0)
+                        && OxyTemplateIndexUtil.getJsMacroNameReferences(MacroIndex.normalizeMacroName(referenceExpression.getText()),
+                            referenceExpression.getProject()).size() > 0)
                 {
                     usedMacros.put(referenceExpression, (JSElement) reference);
                 }

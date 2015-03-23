@@ -7,7 +7,6 @@ import com.intellij.lang.javascript.psi.jsdoc.JSDocComment;
 import com.intellij.lang.javascript.psi.jsdoc.JSDocTag;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.javadoc.PsiDocComment;
@@ -16,10 +15,10 @@ import com.intellij.psi.javadoc.PsiDocToken;
 import com.intellij.psi.util.PsiTreeUtil;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import ool.idea.plugin.lang.parser.OxyTemplateParserDefinition;
 import ool.idea.plugin.psi.MacroAttribute;
 import ool.idea.plugin.psi.MacroCall;
 import ool.idea.plugin.psi.MacroName;
-import ool.idea.plugin.psi.MacroEmptyTag;
 import ool.idea.plugin.psi.OxyTemplateTypes;
 import org.jetbrains.annotations.Nullable;
 
@@ -105,12 +104,8 @@ public class MacroParamDocumentationProvider extends AbstractDocumentationProvid
         return element.getNode().getElementType() == OxyTemplateTypes.T_MACRO_PARAM_NAME
                 || element.getNode().getElementType() == OxyTemplateTypes.T_XML_OPEN_TAG_END
                 || element.getNode().getElementType() == OxyTemplateTypes.T_XML_EMPTY_TAG_END
-                || element.getNode().getElementType() == TokenType.WHITE_SPACE && (
-                element.getPrevSibling() instanceof MacroAttribute
-                        || element.getPrevSibling() instanceof MacroName
-                        // idea 13 fix
-                        || (element.getPrevSibling() instanceof PsiErrorElement && element.getPrevSibling().getPrevSibling() instanceof MacroEmptyTag)
-        );
+                || OxyTemplateParserDefinition.WHITE_SPACES.contains(element.getNode().getElementType())
+                && (element.getPrevSibling() instanceof MacroAttribute || element.getPrevSibling() instanceof MacroName);
     }
 
     private static PsiElement generateJavaMacroParamDocumentation(PsiClass psiClass, String paramName)

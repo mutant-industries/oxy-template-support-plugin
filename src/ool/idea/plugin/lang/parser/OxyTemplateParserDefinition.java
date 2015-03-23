@@ -25,30 +25,41 @@ import org.jetbrains.annotations.NotNull;
  */
 public class OxyTemplateParserDefinition implements ParserDefinition
 {
-    public static final TokenSet WHITE_SPACES = TokenSet.create(TokenType.WHITE_SPACE);
+    public static final TokenSet WHITE_SPACES = TokenSet.create(
+            TokenType.WHITE_SPACE
+    );
+
     public static final TokenSet HTML = TokenSet.create(
             OxyTemplateTypes.T_TEMPLATE_HTML_CODE
     );
+
     public static final TokenSet INNER_JS = TokenSet.create(
             OxyTemplateTypes.T_TEMPLATE_JAVASCRIPT_CODE
     );
+
     public static final TokenSet COMMENTS = TokenSet.create(
             OxyTemplateTypes.T_BLOCK_COMMENT
     );
+
     public static final TokenSet OPEN_BLOCK_MARKERS = TokenSet.create(
             OxyTemplateTypes.BLOCK_OPEN_STATEMENT,
             OxyTemplateTypes.DIRECTIVE_OPEN_STATEMENT,
             OxyTemplateTypes.T_OPEN_BLOCK_MARKER,
             OxyTemplateTypes.T_OPEN_BLOCK_MARKER_DIRECTIVE,
-            OxyTemplateTypes.T_OPEN_BLOCK_MARKER_PRINT);
+            OxyTemplateTypes.T_OPEN_BLOCK_MARKER_PRINT
+    );
+
     public static final TokenSet CLOSE_BLOCK_MARKERS = TokenSet.create(
             OxyTemplateTypes.BLOCK_CLOSE_STATEMENT,
-            OxyTemplateTypes.T_CLOSE_BLOCK_MARKER);
+            OxyTemplateTypes.T_CLOSE_BLOCK_MARKER
+    );
+
     public static final TokenSet PARAMETER_QUOTES = TokenSet.create(
             OxyTemplateTypes.T_DIRECTIVE_PARAM_BOUNDARY,
             OxyTemplateTypes.T_MACRO_PARAM_BOUNDARY,
             XmlTokenType.XML_ATTRIBUTE_VALUE_START_DELIMITER,
-            XmlTokenType.XML_ATTRIBUTE_VALUE_END_DELIMITER);
+            XmlTokenType.XML_ATTRIBUTE_VALUE_END_DELIMITER
+    );
 
     public static final IFileElementType FILE = new IFileElementType(OxyTemplate.INSTANCE);
 

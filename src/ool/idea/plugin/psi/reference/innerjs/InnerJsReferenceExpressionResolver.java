@@ -1,8 +1,8 @@
 package ool.idea.plugin.psi.reference.innerjs;
 
+import com.intellij.lang.javascript.nashorn.resolve.NashornJSReferenceExpressionResolver;
 import com.intellij.lang.javascript.psi.JSCallExpression;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
-import com.intellij.lang.javascript.psi.resolve.JSReferenceExpressionResolver;
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -11,7 +11,6 @@ import com.intellij.psi.ResolveResult;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
 import com.intellij.psi.util.PsiTreeUtil;
 import ool.idea.plugin.file.index.OxyTemplateIndexUtil;
-import ool.idea.plugin.file.index.nacros.MacroIndex;
 import ool.idea.plugin.psi.OxyTemplateHelper;
 import ool.idea.plugin.psi.reference.MacroReferenceResolver;
 import ool.idea.plugin.psi.reference.innerjs.globals.GlobalVariableDefinition;
@@ -22,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Petr Mayr <p.mayr@oxyonline.cz>
  */
-public class InnerJsReferenceExpressionResolver extends JSReferenceExpressionResolver
+public class InnerJsReferenceExpressionResolver extends NashornJSReferenceExpressionResolver
 {
     public InnerJsReferenceExpressionResolver(JSReferenceExpressionImpl expression, PsiFile file)
     {
@@ -32,7 +31,7 @@ public class InnerJsReferenceExpressionResolver extends JSReferenceExpressionRes
     @Override
     public ResolveResult[] doResolve()
     {
-        if (myReferencedName == null || MacroIndex.isInMacroDefinition(myRef))
+        if (myReferencedName == null)
         {
             return ResolveResult.EMPTY_ARRAY;
         }

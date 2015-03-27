@@ -17,11 +17,8 @@ public class XmlTreePatcher extends XmlTemplateTreePatcher
     @Override
     public void insert(CompositeElement parent, TreeElement anchorBefore, OuterLanguageElement toInsert)
     {
-        if(toInsert.getNode().getElementType() != OxyTemplateTypes.T_OUTER_TEMPLATE_ELEMENT)
-        {
-            super.insert(parent, anchorBefore, toInsert);
-        }
-        else if( ! OxyTemplateHelper.insertOuterElementToAST(parent, anchorBefore, toInsert))
+        if(toInsert.getNode().getElementType() != OxyTemplateTypes.T_OUTER_TEMPLATE_ELEMENT
+                || ! OxyTemplateHelper.insertOuterElementToAST(parent, anchorBefore, toInsert))
         {
             super.insert(parent, anchorBefore, toInsert);
         }

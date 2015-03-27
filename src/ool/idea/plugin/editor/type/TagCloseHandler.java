@@ -13,7 +13,7 @@ import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import ool.idea.plugin.file.OxyTemplateFileViewProvider;
 import ool.idea.plugin.lang.OxyTemplate;
-import ool.idea.plugin.lang.parser.OxyTemplateParserDefinition;
+import ool.idea.plugin.lang.parser.definition.OxyTemplateParserDefinition;
 import ool.idea.plugin.psi.MacroAttribute;
 import ool.idea.plugin.psi.MacroEmptyTag;
 import ool.idea.plugin.psi.OxyTemplateHelper;

@@ -14,7 +14,7 @@ import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.tree.IElementType;
 import ool.idea.plugin.file.OxyTemplateFileViewProvider;
 import ool.idea.plugin.lang.OxyTemplate;
-import ool.idea.plugin.lang.parser.OxyTemplateParserDefinition;
+import ool.idea.plugin.lang.parser.definition.OxyTemplateParserDefinition;
 import ool.idea.plugin.psi.BlockCloseStatement;
 import ool.idea.plugin.psi.BlockOpenStatement;
 import ool.idea.plugin.psi.OxyTemplateTypes;

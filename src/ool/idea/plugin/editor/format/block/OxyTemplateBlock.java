@@ -20,7 +20,7 @@ import java.util.List;
 import ool.idea.plugin.editor.format.block.innerJs.InnerJsBlock;
 import ool.idea.plugin.editor.format.block.innerJs.InnerJsBlockWrapper;
 import ool.idea.plugin.lang.OxyTemplateInnerJs;
-import ool.idea.plugin.lang.parser.OxyTemplateParserDefinition;
+import ool.idea.plugin.lang.parser.definition.OxyTemplateParserDefinition;
 import ool.idea.plugin.psi.DirectiveParamWrapper;
 import ool.idea.plugin.psi.MacroXmlPrefix;
 import ool.idea.plugin.psi.OxyTemplateTypes;

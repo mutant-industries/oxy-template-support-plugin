@@ -11,7 +11,7 @@ import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiFile;
 import ool.idea.plugin.file.OxyTemplateFileViewProvider;
 import ool.idea.plugin.lang.OxyTemplate;
-import ool.idea.plugin.lang.parser.OxyTemplateParserDefinition;
+import ool.idea.plugin.lang.parser.definition.OxyTemplateParserDefinition;
 import ool.idea.plugin.psi.DirectiveStatement;
 import ool.idea.plugin.psi.MacroAttribute;
 import ool.idea.plugin.psi.MacroEmptyTag;

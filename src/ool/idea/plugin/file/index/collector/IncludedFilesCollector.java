@@ -21,12 +21,12 @@ import org.jetbrains.annotations.NotNull;
  */
 public class IncludedFilesCollector extends DirectiveStatementVisitor
 {
-    private final Map<DirectiveParamFileReference, VirtualFile> includediles;
+    private final Map<DirectiveParamFileReference, VirtualFile> includedFiles;
     private final List<VirtualFile> recursionGuard;
 
     public IncludedFilesCollector()
     {
-        this.includediles = new HashMap<DirectiveParamFileReference, VirtualFile>();
+        this.includedFiles = new HashMap<DirectiveParamFileReference, VirtualFile>();
         this.recursionGuard = new LinkedList<VirtualFile>();
     }
 
@@ -42,14 +42,14 @@ public class IncludedFilesCollector extends DirectiveStatementVisitor
             {
                 VirtualFile file = item.getContainingFile().getVirtualFile();
 
-                if( ! includediles.containsValue(file) &&  ! recursionGuard.contains(file))
+                if( ! includedFiles.containsValue(file) &&  ! recursionGuard.contains(file))
                 {
                     recursionGuard.add(file);
 
                     item.getContainingFile().acceptChildren(this);
                 }
 
-                includediles.put(fileReference, file);
+                includedFiles.put(fileReference, file);
             }
         }
 
@@ -67,7 +67,7 @@ public class IncludedFilesCollector extends DirectiveStatementVisitor
     @NotNull
     public Map<DirectiveParamFileReference, VirtualFile> getResult()
     {
-        return includediles;
+        return includedFiles;
     }
 
 }

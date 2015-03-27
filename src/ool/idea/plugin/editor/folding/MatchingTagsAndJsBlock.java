@@ -21,7 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 import ool.idea.plugin.editor.highlighter.OxyTemplateSyntaxHighlighter;
 import ool.idea.plugin.file.type.OxyTemplateFileType;
-import ool.idea.plugin.lang.parser.OxyTemplateParserDefinition;
+import ool.idea.plugin.lang.parser.definition.OxyTemplateParserDefinition;
 import ool.idea.plugin.psi.OxyTemplateTypes;
 import org.jetbrains.annotations.NotNull;
 

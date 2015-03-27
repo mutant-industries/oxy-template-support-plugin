@@ -1,4 +1,4 @@
-package ool.idea.plugin.lang.parser;
+package ool.idea.plugin.lang.parser.definition;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.ParserDefinition;
@@ -15,6 +15,7 @@ import com.intellij.psi.xml.XmlTokenType;
 import ool.idea.plugin.file.OxyTemplateFile;
 import ool.idea.plugin.lang.OxyTemplate;
 import ool.idea.plugin.lang.lexer.OxyTemplateLexerAdapter;
+import ool.idea.plugin.lang.parser.OxyTemplateParser;
 import ool.idea.plugin.psi.OxyTemplateTypes;
 import org.jetbrains.annotations.NotNull;
 

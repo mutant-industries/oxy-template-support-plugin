@@ -22,7 +22,7 @@ import java.util.List;
 import ool.idea.plugin.editor.format.block.builder.OxyTemplateInjectedBlockBuilder;
 import ool.idea.plugin.editor.format.block.innerJs.InnerJsBlockWrapper;
 import ool.idea.plugin.lang.OxyTemplate;
-import ool.idea.plugin.lang.parser.OxyTemplateParserDefinition;
+import ool.idea.plugin.lang.parser.definition.OxyTemplateParserDefinition;
 import ool.idea.plugin.psi.DirectiveStatement;
 import ool.idea.plugin.psi.MacroCall;
 import ool.idea.plugin.psi.OxyTemplateHelper;

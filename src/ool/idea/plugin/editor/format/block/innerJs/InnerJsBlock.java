@@ -18,7 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 import ool.idea.plugin.editor.format.block.OxyTemplateBlock;
 import ool.idea.plugin.editor.format.block.OxyTemplateForeignElementWrapper;
-import ool.idea.plugin.lang.parser.OxyTemplateParserDefinition;
+import ool.idea.plugin.lang.parser.definition.OxyTemplateParserDefinition;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

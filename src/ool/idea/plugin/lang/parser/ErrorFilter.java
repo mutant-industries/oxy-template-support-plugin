@@ -3,6 +3,7 @@ package ool.idea.plugin.lang.parser;
 import com.intellij.codeInsight.highlighting.TemplateLanguageErrorFilter;
 import com.intellij.lang.html.HTMLLanguage;
 import ool.idea.plugin.file.OxyTemplateFileViewProvider;
+import ool.idea.plugin.lang.parser.definition.OxyTemplateParserDefinition;
 
 /**
  * 2/12/15

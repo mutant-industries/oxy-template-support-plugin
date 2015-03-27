@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>ool.idea.plugin</id>
     <name>Oxy template support</name>
-    <version>0.9.2</version>
+    <version>0.9.3</version>
     <vendor email="p.mayr@oxyonline.cz" url="http://stash.oxyonline.local/projects/CZC/repos/macro-support-plugin">
         oXy Online s.r.o.
     </vendor>
@@ -235,13 +235,13 @@
     <extensions defaultExtensionNs="com.intellij">
         <fileTypeFactory implementation="ool.idea.plugin.file.OxyTemplateFileTypeFactory"/>
         <lang.parserDefinition language="OxyTemplate"
-                               implementationClass="ool.idea.plugin.lang.parser.OxyTemplateParserDefinition"/>
+                               implementationClass="ool.idea.plugin.lang.parser.definition.OxyTemplateParserDefinition"/>
         <lang.parserDefinition language="OxyTemplateInnerJs"
-                               implementationClass="ool.idea.plugin.lang.parser.OxyTemplateInnerJsParserDefinition"/>
+                               implementationClass="ool.idea.plugin.lang.parser.definition.OxyTemplateInnerJsParserDefinition"/>
+        <lang.parserDefinition language="CompiledPreview"
+                               implementationClass="ool.idea.plugin.lang.parser.definition.CompiledPreviewParserDefinition"/>
         <lang.treePatcher language="OxyTemplateInnerJs" implementationClass="ool.idea.plugin.lang.InnerJsTreePatcher"/>
         <lang.treePatcher language="HTML" implementationClass="ool.idea.plugin.lang.XmlTreePatcher" order="first"/>
-        <lang.parserDefinition language="CompiledPreview"
-                               implementationClass="ool.idea.plugin.lang.parser.CompiledPreviewParserDefinition"/>
         <editorHighlighterProvider filetype="OxyTemplate"
                                    implementationClass="ool.idea.plugin.editor.highlighter.OxyTemplateHighlighterProvider"/>
         <lang.syntaxHighlighterFactory key="CompiledPreview"

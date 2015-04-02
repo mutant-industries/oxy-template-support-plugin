@@ -1,7 +1,5 @@
 package ool.idea.plugin.file.index.nacros.js;
 
-import com.google.gson.Gson;
-import com.intellij.util.io.IOUtil;
 import com.intellij.util.io.KeyDescriptor;
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -18,13 +16,17 @@ public class JsMacroNameIndexedElementExternalizer implements KeyDescriptor<JsMa
     @Override
     public void save(@NotNull DataOutput out, JsMacroNameIndexedElement value) throws IOException
     {
-        IOUtil.writeUTF(out, new Gson().toJson(value));
+        out.writeInt(value.getOffserInFile());
+        out.writeBoolean(value.isMacro());
     }
 
     @Override
     public JsMacroNameIndexedElement read(@NotNull DataInput in) throws IOException
     {
-        return new Gson().fromJson(IOUtil.readUTF(in), JsMacroNameIndexedElement.class);
+        int ioffsetInFile = in.readInt();
+        boolean isMacro = in.readBoolean();
+
+        return new JsMacroNameIndexedElement(isMacro, ioffsetInFile);
     }
 
     @Override

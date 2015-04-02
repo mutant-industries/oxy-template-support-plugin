@@ -17,6 +17,7 @@ import com.intellij.psi.templateLanguages.TemplateDataElementType;
 import com.intellij.psi.templateLanguages.TemplateLanguageFileViewProvider;
 import com.intellij.psi.tree.IElementType;
 import java.util.LinkedList;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NonNls;
 
 /**
@@ -66,7 +67,8 @@ public class OxyTemplateInnerJsElementType extends TemplateDataElementType
             variables.get().add(TextRange.create(result.length() - lexer.getTokenEnd() + lexer.getTokenStart(), result.length()));
         }
 
-        result.append(charBeforeTokenStart == ':' && lastNonWhiteSpaceChar != ';' ? ';' : '\n');
+        result.append(charBeforeTokenStart == ':'
+                && StringUtils.containsNone(String.valueOf(lastNonWhiteSpaceChar), ";}") ? ';' : '\n');
     }
 
     @Override

@@ -11,6 +11,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import ool.web.template.Macro;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,14 +23,11 @@ import org.jetbrains.annotations.Nullable;
  */
 abstract public class MacroIndex
 {
+    public static final String JAVA_MACRO_INTERFACE_FQN = Macro.class.getName();
     @NonNls
     public static final String JAVA_MACRO_SUFFIX = "Macro";
     @NonNls
-    public static final String JAVA_MACRO_INTERFACE_FQN = "ool.web.template.Macro";
-    @NonNls
-    public static final List<String> macrosInDebugNamespace = new LinkedList<String>();
-    @NonNls
-    public static final List<String> javaMacroNamespaces = Arrays.asList("oxy", "debug");
+    public static final List<String> macrosInDebugNamespace = new LinkedList<>();
     @NonNls
     public static final String MACRO_REGISTRY_NAMESPACE = "macros";
     @NonNls
@@ -39,11 +37,15 @@ abstract public class MacroIndex
     @NonNls
     public static final String UTILS_NAMESPACE = "utils";
 
+    public static final List<String> javaMacroNamespaces = Arrays.asList(DEFAULT_NAMESPACE, DEBUG_NAMESPACE);
+
     public static boolean isInMacroNamespace(@NotNull String fqn)
     {
-        return fqn.startsWith(MacroIndex.DEFAULT_NAMESPACE + ".")
-                || fqn.startsWith(MacroIndex.DEBUG_NAMESPACE + ".")
-                || fqn.startsWith(MacroIndex.UTILS_NAMESPACE + ".");
+        String normalizedFqn = normalizeMacroName(fqn);
+
+        return normalizedFqn.startsWith(MacroIndex.DEFAULT_NAMESPACE + ".")
+                || normalizedFqn.startsWith(MacroIndex.DEBUG_NAMESPACE + ".")
+                || normalizedFqn.startsWith(MacroIndex.UTILS_NAMESPACE + ".");
     }
 
     public static boolean isMacroRootNamespace(@NotNull String fqn)
@@ -84,7 +86,7 @@ abstract public class MacroIndex
     {
         final GlobalSearchScope allScope = ProjectScope.getProjectScope(project);
 
-        return JavaPsiFacade.getInstance(project).findClass(MacroIndex.JAVA_MACRO_INTERFACE_FQN, allScope);
+        return JavaPsiFacade.getInstance(project).findClass(JAVA_MACRO_INTERFACE_FQN, allScope);
     }
 
 }

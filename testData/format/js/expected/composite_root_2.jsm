@@ -1,6 +1,6 @@
 <m:foo.bar
-        value="expr: params.var1 || params.var2 || params.var3 || params.var4 || params.var5 || params.var6 || params.var7">
-    <div class="class <%= (params.var2 == null) ? 'nn' : '' %>">
+        value="expr: params.var1 || params.var2 || params.var3 || params.var4 || params.var5 || params.var6||params.var7">
+    <div class="class <%= (params.var2 == null)?'nn':'' %>">
         <div class="class">
             Luba dexter spatii est;
         </div>

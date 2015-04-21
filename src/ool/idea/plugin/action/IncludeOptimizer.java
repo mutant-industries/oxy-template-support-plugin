@@ -1,14 +1,12 @@
 package ool.idea.plugin.action;
 
-import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.lang.ImportOptimizer;
 import com.intellij.lang.javascript.psi.JSElement;
-import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -16,9 +14,9 @@ import java.util.List;
 import java.util.Map;
 import ool.idea.plugin.editor.inspection.fix.MissingIncludeDirectiveQuickFix;
 import ool.idea.plugin.file.OxyTemplateFile;
+import ool.idea.plugin.lang.parser.definition.OxyTemplateParserDefinition;
 import ool.idea.plugin.psi.DirectiveStatement;
 import ool.idea.plugin.psi.OxyTemplateHelper;
-import ool.web.template.impl.chunk.directive.IncludeDirective;
 import ool.web.template.impl.chunk.directive.IncludeOnceDirective;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -31,19 +29,12 @@ import org.jetbrains.annotations.NotNull;
 public class IncludeOptimizer implements ImportOptimizer
 {
     @NonNls
-    private static final List<String> INCLUDE_DIRECTIVES = Arrays.asList(
-            IncludeDirective.NAME, IncludeOnceDirective.NAME
-    );
+    private static final String SUPPRESS_OPTIMIZER_DIRECTIVE = "<// suppress-optimizer //>";
 
     @Override
     public boolean supports(PsiFile file)
     {
-        String currentCommandName = CommandProcessor.getInstance().getCurrentCommandName();
-
-        // don't run with before commit command
-        return ! (currentCommandName != null && currentCommandName
-                .equals(CodeInsightBundle
-                        .message("process.optimize.imports.before.commit"))) && file instanceof OxyTemplateFile;
+        return file instanceof OxyTemplateFile;
     }
 
     @NotNull
@@ -59,7 +50,7 @@ public class IncludeOptimizer implements ImportOptimizer
 
                 for (final DirectiveStatement statement : PsiTreeUtil.getChildrenOfTypeAsList(file, DirectiveStatement.class))
                 {
-                    if ( ! INCLUDE_DIRECTIVES.contains(statement.getName()))
+                    if ( ! IncludeOnceDirective.NAME.equals(statement.getName()) || ignore(statement))
                     {
                         continue;
                     }
@@ -124,6 +115,30 @@ public class IncludeOptimizer implements ImportOptimizer
             return reference;
         }
 
+    }
+
+    /**
+     * <%@ include_once "file.jsm" %><// ignore-optimizer //>
+     *
+     * @param statement
+     * @return true if statement is not to be touched by optimizer
+     */
+    public static boolean ignore(@NotNull DirectiveStatement statement)
+    {
+        PsiElement nextSibling = statement.getNextSibling();
+
+        if(nextSibling instanceof PsiWhiteSpace)
+        {
+            nextSibling = nextSibling.getNextSibling();
+        }
+
+        if(nextSibling != null && OxyTemplateParserDefinition.COMMENTS.contains(nextSibling.getNode().getElementType())
+                && nextSibling.getText().equals(SUPPRESS_OPTIMIZER_DIRECTIVE))
+        {
+            return true;
+        }
+
+        return false;
     }
 
 }

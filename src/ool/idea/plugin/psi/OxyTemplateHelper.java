@@ -26,6 +26,7 @@ import ool.idea.plugin.file.index.OxyTemplateIndexUtil;
 import ool.idea.plugin.file.index.collector.IncludedFilesCollector;
 import ool.idea.plugin.file.index.nacros.MacroIndex;
 import ool.idea.plugin.lang.OxyTemplateInnerJs;
+import ool.idea.plugin.lang.parser.definition.OxyTemplateParserDefinition;
 import ool.idea.plugin.psi.visitor.MacroNameVisitor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -151,7 +152,21 @@ public class OxyTemplateHelper
 
         if(statements.size() > 0)
         {
-            file.addAfter(directiveStatement, statements.get(statements.size() - 1));
+            PsiElement nextSibling = statements.get(statements.size() - 1).getNextSibling();
+
+            if(nextSibling instanceof PsiWhiteSpace)
+            {
+                nextSibling = nextSibling.getNextSibling();
+            }
+
+            if(nextSibling != null && OxyTemplateParserDefinition.COMMENTS.contains(nextSibling.getNode().getElementType()))
+            {
+                file.addAfter(directiveStatement, nextSibling);
+            }
+            else
+            {
+                file.addAfter(directiveStatement, statements.get(statements.size() - 1));
+            }
         }
         else
         {

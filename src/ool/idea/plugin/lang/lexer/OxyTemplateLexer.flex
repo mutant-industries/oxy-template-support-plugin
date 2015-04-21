@@ -467,7 +467,7 @@ NON_SPECIAL_CHARS = !([^]*({SPECIAL_CHARS}|{WHITE_SPACE})[^]*)
         return T_MACRO_PARAM_BOUNDARY;
     }
 }
-// ,,,"
+// ..."
 <S_MACRO_PARAM_EXPRESSION_DQD>
 {
     !([^]*(\")[^]*)
@@ -480,7 +480,7 @@ NON_SPECIAL_CHARS = !([^]*({SPECIAL_CHARS}|{WHITE_SPACE})[^]*)
         return T_MACRO_PARAM_BOUNDARY;
     }
 }
-// ,,,'
+// ...'
 <S_MACRO_PARAM_EXPRESSION_SQD>
 {
     !([^]*(\')[^]*)

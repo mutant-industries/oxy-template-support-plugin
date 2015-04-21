@@ -34,12 +34,11 @@ public class JsMacroName extends AbstractMacroName
     @Override
     protected boolean accept(@NotNull PsiElement position)
     {
-        PsiElement prevSibling, topReference;
+        PsiElement topReference;
 
         if(position.getNode().getElementType() == JSTokenTypes.IDENTIFIER
-                && (prevSibling = position.getPrevSibling()) != null
-                && prevSibling.getNode().getElementType() == JSTokenTypes.DOT
-                && (topReference = PsiTreeUtil.getTopmostParentOfType(position, JSReferenceExpression.class)) != null)
+                && (topReference = PsiTreeUtil.getTopmostParentOfType(position, JSReferenceExpression.class)) != null
+                && MacroIndex.isInMacroNamespace(topReference.getText()))
         {
             namespaceFqn = MacroIndex.normalizeMacroName(topReference.getText().substring(0, position.getStartOffsetInParent()));
 

@@ -14,6 +14,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReference;
 import com.intellij.psi.util.PsiTreeUtil;
 import java.util.Map;
+import ool.idea.plugin.action.IncludeOptimizer;
 import ool.idea.plugin.lang.I18nSupport;
 import ool.idea.plugin.psi.DirectiveParamFileReference;
 import ool.idea.plugin.psi.DirectiveStatement;
@@ -52,34 +53,39 @@ public class RedundantIncludeInspection extends LocalInspectionTool
 
                 assert directiveStatement != null;
 
-                if( ! IncludeOnceDirective.NAME.equals(directiveStatement.getName()))
+                if( ! IncludeOnceDirective.NAME.equals(directiveStatement.getName()) ||
+                        IncludeOptimizer.ignore(directiveStatement))
                 {
                     return;
                 }
 
                 PsiReference[] references = fileReference.getReferences();
-                PsiFile referencingFile = null;
+                PsiFile referencedFile = null;
 
                 for (PsiReference reference : references)
                 {
                     if(reference instanceof FileReference && reference.resolve() instanceof PsiFile)
                     {
-                        referencingFile = (PsiFile) reference.resolve();
+                        referencedFile = (PsiFile) reference.resolve();
 
                         break;
                     }
                 }
 
-                if (referencingFile == null)
+                if (referencedFile == null)
                 {
                     return;
                 }
 
-                for (Map.Entry<PsiElement, JSElement> entry : OxyTemplateHelper.getUsedJsMacros(fileReference.getContainingFile()).entrySet())
+                if( ! directiveStatement.getContainingFile().getVirtualFile().getPath()
+                        .equals(referencedFile.getVirtualFile().getPath()))
                 {
-                    if (entry.getValue().getContainingFile().getVirtualFile().getPath().equals(referencingFile.getVirtualFile().getPath()))
+                    for (Map.Entry<PsiElement, JSElement> entry : OxyTemplateHelper.getUsedJsMacros(fileReference.getContainingFile()).entrySet())
                     {
-                        return;
+                        if (entry.getValue().getContainingFile().getVirtualFile().getPath().equals(referencedFile.getVirtualFile().getPath()))
+                        {
+                            return;
+                        }
                     }
                 }
 

@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>ool.idea.plugin</id>
     <name>Oxy template support</name>
-    <version>0.9.4</version>
+    <version>0.9.5</version>
     <vendor email="p.mayr@oxyonline.cz" url="http://stash.oxyonline.local/projects/CZC/repos/macro-support-plugin">
         oXy Online s.r.o.
     </vendor>
@@ -15,6 +15,15 @@
     ]]></description>
 
     <change-notes><![CDATA[
+        <b>0.9.5</b>
+        <ul>
+            <li>
+                prokliky a našeptávání dwr metod v javascriptu
+            </li>
+            <li>
+                direktiva suppress-optimizer
+            </li>
+        </ul>
         <b>0.9.4</b>
         <ul>
             <li>
@@ -31,23 +40,6 @@
         <ul>
             <li>
                 kontrola přebytečných direktiv
-            </li>
-            <li>
-                opravy:
-                <ul>
-                    <li>
-                        kompilace šablon na windows
-                    </li>
-                    <li>
-                        reference lokálních proměnných v js
-                    </li>
-                    <li>
-                        zavírání tagů (v některých krajních případech)
-                    </li>
-                    <li>
-                        include optimizeru
-                    </li>
-                </ul>
             </li>
         </ul>
         <b>0.9</b>
@@ -107,7 +99,7 @@
         <b>0.6.2</b>
         <ul>
             <li>
-                dokumentace v našeptávači maker a parametrů
+                dokumentace maker v našeptávači
             </li>
         </ul>
         <b>0.6.1</b>
@@ -267,6 +259,7 @@
         <completion.contributor language="HTML" implementationClass="ool.idea.plugin.editor.completion.macro.XmlMacroNamespace" order="first"/>
         <completion.contributor language="OxyTemplateInnerJs" implementationClass="ool.idea.plugin.editor.completion.macro.name.JsMacroName" order="first"/>
         <completion.contributor language="OxyTemplateInnerJs" implementationClass="ool.idea.plugin.editor.completion.JsGlobalVariable"/>
+        <completion.contributor language="JavaScript" implementationClass="ool.idea.plugin.editor.completion.DwrMethod" order="first"/>
         <typedHandler implementation="ool.idea.plugin.editor.type.BlockMarkerHandler"/>
         <typedHandler implementation="ool.idea.plugin.editor.type.ParamQuoteHandler"/>
         <typedHandler implementation="ool.idea.plugin.editor.type.TagCloseHandler"/>
@@ -308,6 +301,7 @@
     <extensions defaultExtensionNs="JavaScript">
         <predefinedLibraryProvider implementation="ool.idea.plugin.editor.InnerJsPredefinedLibrary"/>
         <intentionAndInspectionFilter language="OxyTemplate" implementationClass="ool.idea.plugin.editor.inspection.filter.JsIntentionAndInspectionFilter"/>
+        <dialectSpecificHandlersFactory language="JavaScript" implementationClass="ool.idea.plugin.file.JsSpecificHandlersFactory" order="first"/>
         <dialectSpecificHandlersFactory language="OxyTemplateInnerJs" implementationClass="ool.idea.plugin.file.OxyTemplateJsSpecificHandlersFactory"/>
         <dialectSpecificHandlersFactory language="CompiledPreview" implementationClass="ool.idea.plugin.file.OxyTemplateJsSpecificHandlersFactory"/>
         <elementScopeProvider language="OxyTemplateInnerJs" implementationClass="ool.idea.plugin.psi.reference.innerjs.InnerJsResolveScopeProvider"/>

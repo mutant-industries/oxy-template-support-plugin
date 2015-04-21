@@ -56,8 +56,9 @@ public class InnerJsResolveScopeProvider extends JSElementResolveScopeProvider
     @NotNull
     protected GlobalSearchScope getBaseScope(@NotNull PsiElement element)
     {
-        return super.getElementResolveScope(element).intersectWith(GlobalSearchScope
-                .getScopeRestrictedByFileTypes(ProjectScope.getProjectScope(element.getProject()), OxyTemplateFileType.INSTANCE));
+        // Not working actually - https://devnet.jetbrains.com/thread/460196
+        return GlobalSearchScope.getScopeRestrictedByFileTypes(ProjectScope.getProjectScope(element.getProject()),
+                OxyTemplateFileType.INSTANCE);
     }
 
 }

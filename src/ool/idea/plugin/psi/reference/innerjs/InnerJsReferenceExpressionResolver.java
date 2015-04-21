@@ -2,6 +2,8 @@ package ool.idea.plugin.psi.reference.innerjs;
 
 import com.intellij.lang.javascript.nashorn.resolve.NashornJSReferenceExpressionResolver;
 import com.intellij.lang.javascript.psi.JSCallExpression;
+import com.intellij.lang.javascript.psi.JSProperty;
+import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
 import com.intellij.psi.PsiElement;
@@ -60,11 +62,11 @@ public class InnerJsReferenceExpressionResolver extends NashornJSReferenceExpres
 
         ResolveResult[] parentResult = super.doResolve();
 
-        if(parentResult == null || parentResult.length == 0)
+        if(parentResult == null || parentResult.length == 0 && isGlobalVariableSuspect(myRef))
         {
             PsiElement reference;
             // global
-            if((reference = OxyTemplateIndexUtil.getGlobalVariableRefrence(myReferencedName, myContainingFile.getProject())) != null
+            if((reference = OxyTemplateIndexUtil.getGlobalVariableRefrence(myReferencedName, myRef.getProject())) != null
                     && reference instanceof PsiLiteralExpression)
             {
                 return new JSResolveResult[]{new JSResolveResult(new GlobalVariableDefinition((PsiLiteralExpression)reference))};
@@ -78,6 +80,17 @@ public class InnerJsReferenceExpressionResolver extends NashornJSReferenceExpres
     protected MacroReferenceResolver getMacroReferenceResolver()
     {
         return MacroReferenceResolver.DEFAULT;
+    }
+
+    // -------------------------------------------------------------------------------------------------
+
+    public static boolean isGlobalVariableSuspect(@NotNull PsiElement element)
+    {
+        JSReferenceExpression expression = element instanceof JSReferenceExpression ? (JSReferenceExpression) element
+                : PsiTreeUtil.getParentOfType(element, JSReferenceExpression.class);
+
+        return ! (expression == null || expression.getParent() instanceof JSProperty ||
+                expression.getFirstChild() instanceof JSReferenceExpression);
     }
 
 }

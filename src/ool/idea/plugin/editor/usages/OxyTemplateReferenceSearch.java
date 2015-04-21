@@ -5,7 +5,6 @@ import com.intellij.openapi.application.QueryExecutorBase;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiIdentifier;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.RequestResultProcessor;
@@ -34,14 +33,13 @@ public class OxyTemplateReferenceSearch extends QueryExecutorBase<PsiReference, 
     public void processQuery(@NotNull ReferencesSearch.SearchParameters queryParameters, @NotNull Processor<PsiReference> consumer)
     {
         final PsiElement target = queryParameters.getElementToSearch();
-        PsiIdentifier identifier;
+        PsiClass psiClass;
 
-        if(target instanceof PsiClass && (identifier = ((PsiClass) target).getNameIdentifier()) != null
-                && identifier.getText().endsWith("Macro"))
+        if(target instanceof PsiClass && (psiClass = (PsiClass) target).getName().endsWith("Macro"))
         {
             SearchScope scope = restrictScopeToOxyTemplates(queryParameters.getEffectiveSearchScope());
 
-            final String query = StringUtil.decapitalize(identifier.getText().replaceFirst("Macro$", ""));
+            final String query = StringUtil.decapitalize(psiClass.getName().replaceFirst("Macro$", ""));
 
             queryParameters.getOptimizer().searchWord(query, scope, UsageSearchContext.IN_CODE, true, target,
                 new RequestResultProcessor()

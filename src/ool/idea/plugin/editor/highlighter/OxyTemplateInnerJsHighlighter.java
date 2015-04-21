@@ -35,8 +35,8 @@ public class OxyTemplateInnerJsHighlighter extends JSHighlighter
         // js library hack ------------------
         try
         {
-            Field f = lexer.getClass().getSuperclass().getSuperclass().getDeclaredField("myDelegate");
-            f.setAccessible(true);
+            Field myDelegateField = lexer.getClass().getSuperclass().getSuperclass().getDeclaredField("myDelegate");
+            myDelegateField.setAccessible(true);
 
             final Class clazz = Class.forName("com.intellij.lang.javascript._JavaScriptLexer");
 
@@ -46,29 +46,13 @@ public class OxyTemplateInnerJsHighlighter extends JSHighlighter
 
             FlexLexer flex = (FlexLexer)constructor.newInstance(true, getDialectOptionsHolder());
 
-            f.set(lexer, new OxyTemplateInnerJsLexerAdapter(new JSFlexAdapter(flex)));
+            myDelegateField.set(lexer, new OxyTemplateInnerJsLexerAdapter(new JSFlexAdapter(flex)));
         }
-        catch (NoSuchFieldException e)
+        catch (NoSuchFieldException | ClassNotFoundException | NoSuchMethodException e)
         {
             logger.error("Javascript api change !", e);
         }
-        catch (ClassNotFoundException e)
-        {
-            logger.error("Javascript api change !", e);
-        }
-        catch (NoSuchMethodException e)
-        {
-            logger.error("Javascript api change !", e);
-        }
-        catch (IllegalAccessException e)
-        {
-            logger.error(e);
-        }
-        catch (InstantiationException e)
-        {
-            logger.error(e);
-        }
-        catch (InvocationTargetException e)
+        catch (IllegalAccessException | InstantiationException | InvocationTargetException e)
         {
             logger.error(e);
         }

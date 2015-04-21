@@ -16,7 +16,6 @@
 
     extends("macro_empty_tag|macro_tag")="ool.idea.plugin.psi.impl.MacroCallImpl"
     implements("macro_empty_tag|macro_tag")="ool.idea.plugin.psi.MacroCall"
-    implements("macro_name")="ool.idea.plugin.psi.OxyTemplateNamedPsiElement"
 }
 
 oxyTemplate ::= item_*

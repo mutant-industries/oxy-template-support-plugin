@@ -205,8 +205,7 @@ public class OxyTemplateForeignElementWrapper extends JSBlock implements IndentI
              *     <%
              * } %>
              */
-            if(OxyTemplateParserDefinition.COMMENTS.contains(child.getElementType())
-                    || OxyTemplateParserDefinition.OPEN_BLOCK_MARKERS.contains(child.getElementType())
+            if(OxyTemplateParserDefinition.OPEN_BLOCK_MARKERS.contains(child.getElementType())
                     && (child.getTextRange().getEndOffset() == textRange.getEndOffset()
                         || (nextSibling = child.getTreeNext()) != null
                         && nextSibling.getTextRange().getEndOffset() == textRange.getEndOffset()
@@ -252,7 +251,7 @@ public class OxyTemplateForeignElementWrapper extends JSBlock implements IndentI
     @Override
     public Spacing getSpacing(@Nullable Block child1, @NotNull Block child2)
     {
-        if(child1 instanceof DirectiveBlock && child2 instanceof DirectiveBlock)
+        if(child2 instanceof DirectiveBlock)
         {
             return Spacing.createSpacing(0, 0, 1, false, 0);
         }

@@ -8,31 +8,21 @@ import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.lang.javascript.psi.JSFunction;
-import com.intellij.lang.javascript.psi.JSFunctionExpression;
-import com.intellij.lang.javascript.psi.JSParameter;
-import com.intellij.lang.javascript.psi.JSReferenceExpression;
-import com.intellij.lang.javascript.psi.JSSourceElement;
 import com.intellij.openapi.editor.CaretModel;
 import com.intellij.patterns.PlatformPatterns;
-import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiRecursiveElementVisitor;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
-import com.intellij.util.containers.OrderedSet;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import ool.idea.plugin.editor.completion.ExpressionStatement;
 import ool.idea.plugin.editor.completion.handler.TrailingPatternConsumer;
 import ool.idea.plugin.lang.OxyTemplate;
 import ool.idea.plugin.psi.MacroAttribute;
 import ool.idea.plugin.psi.MacroCall;
-import ool.idea.plugin.psi.MacroName;
 import ool.idea.plugin.psi.OxyTemplateTypes;
+import ool.idea.plugin.psi.macro.param.descriptor.MacroParamDescriptor;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -50,44 +40,46 @@ public class XmlMacroParamName extends CompletionContributor
             new CompletionProvider<CompletionParameters>()
             {
                 @Override
-                public void addCompletions(@NotNull CompletionParameters parameters,
-                                           ProcessingContext context,
+                public void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context,
                                            @NotNull CompletionResultSet resultSet)
                 {
                     MacroCall macroCall = PsiTreeUtil.getParentOfType(parameters.getPosition(), MacroCall.class);
-                    MacroName macroName;
 
-                    if(macroCall == null || (macroName = macroCall.getMacroName()) == null
-                            || macroName.getReference() == null)
-                    {
-                        return;
-                    }
-
-                    PsiElement reference = macroName.getReference().resolve();
-
-                    if(reference == null || ( ! (reference.getLastChild() instanceof JSFunctionExpression) &&
-                        ! (reference instanceof PsiClass)))
-                    {
-                        return;
-                    }
-
-                    List<String> suggestions = reference.getLastChild() instanceof JSFunctionExpression ?
-                            getMacroParamNameSuggestions((JSFunctionExpression) reference.getLastChild()) : getMacroParamNameSuggestions((PsiClass)reference);
+                    assert macroCall != null;
 
                     List<MacroAttribute> attributes = macroCall.getMacroAttributeList();
 
                     main:
-                    for(String param : suggestions)
+                    for (MacroParamDescriptor paramDescriptor : macroCall.getParamSuggestionSet())
                     {
-                        for(MacroAttribute attribute : attributes)
+                        if ( ! paramDescriptor.isUsedInCode())
                         {
-                            if(param.equals(attribute.getMacroParamName().getText()))
+                            continue;
+                        }
+
+                        for (MacroAttribute attribute : attributes)
+                        {
+                            if (paramDescriptor.getName().equals(attribute.getMacroParamName().getText()))
                             {
-                                continue main;  // don't report already used params
+                                continue main;  // don't suggest already used params
                             }
                         }
 
-                        resultSet.consume(LookupElementBuilder.create(param + "=\"\"").withPresentableText(param)
+                        String typeText = paramDescriptor.getType() != null ? paramDescriptor.getType().replaceFirst("^.+\\.", "") : null;
+                        StringBuilder lookupStringBuilder = new StringBuilder(paramDescriptor.getName() + "=\"");
+
+                        if(paramDescriptor.getType() != null && ! paramDescriptor.getType().equals(String.class.getName())
+                                && ! paramDescriptor.getType().equalsIgnoreCase(String.class.getSimpleName()))
+                        {
+                            lookupStringBuilder.append(ExpressionStatement.EXPRESSION_PREFIX).append(" ");
+                        }
+
+                        lookupStringBuilder.append("\"");
+
+                        resultSet.consume(LookupElementBuilder.create(paramDescriptor, lookupStringBuilder.toString())
+                            .withPresentableText(paramDescriptor.getName())
+                            .withTypeText(typeText, true)
+                            .withBoldness(paramDescriptor.isRequired())
                             .withInsertHandler(new TrailingPatternConsumer(INSERT_CONSUME)
                             {
                                 @Override
@@ -109,11 +101,11 @@ public class XmlMacroParamName extends CompletionContributor
     @Override
     public boolean invokeAutoPopup(@NotNull PsiElement position, char typeChar)
     {
-        if(typeChar == ' ')
+        if (typeChar == ' ')
         {
             IElementType elementType = position.getNode().getElementType();
 
-            if(elementType == OxyTemplateTypes.T_MACRO_NAME || elementType == OxyTemplateTypes.T_MACRO_PARAM_BOUNDARY
+            if (elementType == OxyTemplateTypes.T_MACRO_NAME || elementType == OxyTemplateTypes.T_MACRO_PARAM_BOUNDARY
                     && position.getParent().getLastChild().isEquivalentTo(position))
             {
                 return true;
@@ -122,89 +114,5 @@ public class XmlMacroParamName extends CompletionContributor
 
         return false;
     }
-
-    // TODO temp code ---------------------------------------------------------------------------------------------
-    private static final Pattern MACRO_PARAM_NAME_PULL = Pattern.compile(".parameter\\(\\\"([a-zA-Z_1-9]+)\\\"[^;]+pullValue\\s*\\(\\s*\\)\\s*;");
-    private static final Pattern MACRO_PARAM_NAME_PULL_MAP = Pattern.compile("event\\s*.getParams\\s*\\(\\s*\\)\\s*\\.get\\s*\\(\\\"([a-zA-Z_1-9]+)\\\"\\);");
-
-    @NotNull
-    private static List<String> getMacroParamNameSuggestions(@NotNull PsiClass psiClass)
-    {
-        ArrayList<String> params = new ArrayList<String>();
-
-        PsiMethod[] methods = psiClass.findMethodsByName("execute", false);
-
-        if(methods.length == 0)
-        {
-            return params;
-        }
-
-        PsiMethod executeMethod = methods[0];
-
-        if(executeMethod.getBody() == null)
-        {
-            return params;
-        }
-
-        String methodContent = executeMethod.getBody().getText();
-
-        Matcher matcher;
-
-        matcher = MACRO_PARAM_NAME_PULL.matcher(methodContent);
-
-        while(matcher.find())
-        {
-            params.add(matcher.group(1));
-        }
-
-        matcher = MACRO_PARAM_NAME_PULL_MAP.matcher(methodContent);
-
-        while(matcher.find())
-        {
-            params.add(matcher.group(1));
-        }
-
-        return params;
-    }
-
-    @NotNull
-    private static List<String> getMacroParamNameSuggestions(@NotNull JSFunctionExpression reference)
-    {
-        final OrderedSet<String> params = new OrderedSet<String>();
-
-        JSParameter[] referenceParams = reference.getParameters();
-        JSSourceElement[] sourceElements = reference.getBody();
-
-        if(reference.getKind() != JSFunction.FunctionKind.SIMPLE || referenceParams.length < 1 || sourceElements.length == 0)
-        {
-            return params;
-        }
-
-        String firstParamName = referenceParams[0].getName();
-        final Pattern paramNamePattern = Pattern.compile("^" + firstParamName + ".(\\w+)");
-
-        sourceElements[0].acceptChildren(new PsiRecursiveElementVisitor()
-        {
-            @Override
-            public void visitElement(PsiElement element)
-            {
-                if ((element instanceof JSReferenceExpression))
-                {
-                    String referenceName = element.getText();
-                    Matcher matcher = paramNamePattern.matcher(referenceName);
-
-                    if(matcher.find())
-                    {
-                        params.add(matcher.group(1));
-                    }
-                }
-
-                super.visitElement(element);
-            }
-        });
-
-        return params;
-    }
-    // ------------------------------------------------------------------------------------------------------------
 
 }

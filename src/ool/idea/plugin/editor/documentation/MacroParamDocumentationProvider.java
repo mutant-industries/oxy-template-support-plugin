@@ -1,66 +1,43 @@
 package ool.idea.plugin.editor.documentation;
 
 import com.intellij.lang.documentation.AbstractDocumentationProvider;
-import com.intellij.lang.javascript.JSDocTokenTypes;
-import com.intellij.lang.javascript.psi.JSProperty;
-import com.intellij.lang.javascript.psi.jsdoc.JSDocComment;
-import com.intellij.lang.javascript.psi.jsdoc.JSDocTag;
-import com.intellij.psi.PsiClass;
+import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
-import com.intellij.psi.javadoc.PsiDocComment;
-import com.intellij.psi.javadoc.PsiDocTag;
-import com.intellij.psi.javadoc.PsiDocToken;
 import com.intellij.psi.util.PsiTreeUtil;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import ool.idea.plugin.lang.parser.definition.OxyTemplateParserDefinition;
-import ool.idea.plugin.psi.MacroAttribute;
 import ool.idea.plugin.psi.MacroCall;
-import ool.idea.plugin.psi.MacroName;
 import ool.idea.plugin.psi.OxyTemplateTypes;
+import ool.idea.plugin.psi.macro.param.descriptor.MacroParamDescriptor;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
 * 1/9/15
- * TODO cely spatne
 *
 * @author Petr Mayr <p.mayr@oxyonline.cz>
 */
 public class MacroParamDocumentationProvider extends AbstractDocumentationProvider
 {
-    @Nullable
-    @Override
-    public String getQuickNavigateInfo(PsiElement element, PsiElement originalElement)
-    {
-        return null;
-    }
+    private static final Key<MacroParamDescriptor> MACRO_PARAM_DESCRIPTOR_KEY = Key.create("MACRO_PARAM_DESCRIPTOR_KEY");
 
     @Nullable
     @Override
     public String generateDoc(PsiElement element, PsiElement originalElement)
     {
-        if(isMacroParamNamePosition(originalElement) && element instanceof PsiDocToken)
+        MacroParamDescriptor macroParamDescriptor;
+        MacroCall macroCall;
+
+        if((macroParamDescriptor = element.getUserData(MACRO_PARAM_DESCRIPTOR_KEY)) == null && element.getNode() != null &&
+                element.getNode().getElementType() == OxyTemplateTypes.T_MACRO_PARAM_NAME && (macroCall = PsiTreeUtil.getParentOfType(element, MacroCall.class)) != null)
         {
-            return element.getText();
+            macroParamDescriptor = macroCall.getParamSuggestionSet().getByName(element.getText());
         }
-        else if(element != null && element.getNode().getElementType() == JSDocTokenTypes.DOC_COMMENT_DATA)
+
+        if(macroParamDescriptor != null)
         {
-            String commentText = element.getParent().getParent().getText().replaceAll("^\\s+\\*", "");
-
-            Pattern pattern = Pattern.compile("\\s+@param(.*?)\\s+" + element.getText() + "\\s+(.*)");
-            Matcher matcher = pattern.matcher(commentText);
-            String resilt = "";
-
-            if(matcher.find())
-            {
-                if(matcher.group(1).length() > 0)
-                {
-                    resilt += matcher.group(1) + ": ";
-                }
-
-                return resilt + matcher.group(2);
-            }
+            return macroParamDescriptor.generateDoc();
         }
 
         return null;
@@ -70,90 +47,28 @@ public class MacroParamDocumentationProvider extends AbstractDocumentationProvid
     @Override
     public PsiElement getDocumentationElementForLookupItem(PsiManager psiManager, Object object, PsiElement element)
     {
-        if(isMacroParamNamePosition(element))
+        if(object instanceof MacroParamDescriptor)
         {
-            MacroCall macroCall = PsiTreeUtil.getParentOfType(element, MacroCall.class);
-            MacroName macroName;
+            MacroParamDescriptor descriptor = (MacroParamDescriptor) object;
 
-            if(macroCall == null || (macroName = macroCall.getMacroName()) == null
-                    || macroName.getReference() == null)
-            {
-                return null;
-            }
+            /**
+             * We just need to pass the descriptor attached to some element, that will be ignored by other providers
+             */
+            element.putUserData(MACRO_PARAM_DESCRIPTOR_KEY, descriptor);
 
-            String param = ((String) object).replace("=\"\"", "");
-            PsiElement reference = macroName.getReference().resolve();
-
-            if(reference instanceof PsiClass)
-            {
-                return generateJavaMacroParamDocumentation((PsiClass) reference, param);
-            }
-            else if(reference instanceof JSProperty)
-            {
-                return generateJsMacroParamDocumentation((JSProperty)reference, param);
-            }
-
+            return element;
         }
 
         return null;
     }
 
-    private boolean isMacroParamNamePosition(PsiElement element)
+    @Nullable
+    @Override
+    public PsiElement getCustomDocumentationElement(@NotNull Editor editor, @NotNull PsiFile file, @Nullable PsiElement contextElement)
     {
-        return element.getNode().getElementType() == OxyTemplateTypes.T_MACRO_PARAM_NAME
-                || element.getNode().getElementType() == OxyTemplateTypes.T_XML_OPEN_TAG_END
-                || element.getNode().getElementType() == OxyTemplateTypes.T_XML_EMPTY_TAG_END
-                || OxyTemplateParserDefinition.WHITE_SPACES.contains(element.getNode().getElementType())
-                && (element.getPrevSibling() instanceof MacroAttribute || element.getPrevSibling() instanceof MacroName);
-    }
-
-    private static PsiElement generateJavaMacroParamDocumentation(PsiClass psiClass, String paramName)
-    {
-        PsiDocComment docComment = psiClass.getDocComment();
-
-        if(docComment == null)
+        if(contextElement != null && contextElement.getNode().getElementType() == OxyTemplateTypes.T_MACRO_PARAM_NAME)
         {
-            return null;
-        }
-
-        for(PsiDocTag tag : docComment.findTagsByName("param"))
-        {
-            PsiElement[] dataElements = tag.getDataElements();
-
-            if(dataElements.length < 2)
-            {
-                continue;
-            }
-
-            String parameter = dataElements[0].getText();
-
-            if(parameter.equals(paramName))
-            {
-                return dataElements[1];
-            }
-        }
-
-        return null;
-    }
-
-    private static PsiElement generateJsMacroParamDocumentation(JSProperty property, String paramName)
-    {
-        JSDocComment comment;
-
-        if((comment = PsiTreeUtil.getChildOfType(property, JSDocComment.class)) == null)
-        {
-            return null;
-        }
-
-        for(JSDocTag tag : comment.getTags())
-        {
-            PsiElement commentData;
-
-            if(tag.getName() != null && tag.getName().equals("param") && (commentData = tag.getDocCommentData()) != null
-                    && commentData.getText().equals(paramName))
-            {
-                return commentData;
-            }
+            return contextElement;
         }
 
         return null;

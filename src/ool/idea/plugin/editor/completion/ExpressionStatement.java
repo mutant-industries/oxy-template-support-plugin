@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 public class ExpressionStatement extends CompletionContributor
 {
     @NonNls
-    public static final String EXPRESSION_STATEMENT = "expr:";
+    public static final String EXPRESSION_PREFIX = "expr:";
 
     public ExpressionStatement()
     {
@@ -35,7 +35,7 @@ public class ExpressionStatement extends CompletionContributor
                 {
                     if(parameters.getPosition().getPrevSibling() == null)
                     {
-                        resultSet.consume(LookupElementBuilder.create(EXPRESSION_STATEMENT + " "));
+                        resultSet.consume(LookupElementBuilder.create(EXPRESSION_PREFIX + " "));
                     }
                 }
             }

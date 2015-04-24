@@ -1,6 +1,7 @@
 package ool.idea.plugin.psi;
 
 import java.util.List;
+import ool.idea.plugin.psi.macro.param.MacroParamSuggestionSet;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -15,5 +16,8 @@ public interface MacroCall extends OxyTemplateNamedPsiElement
 
     @NotNull
     public List<MacroAttribute> getMacroAttributeList();
+
+    @NotNull
+    public MacroParamSuggestionSet getParamSuggestionSet();
 
 }

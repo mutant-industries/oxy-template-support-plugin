@@ -1,8 +1,8 @@
 package ool.idea.plugin.file.index;
 
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 import com.intellij.lang.javascript.psi.JSElement;
+import com.intellij.lang.javascript.psi.JSProperty;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Key;
@@ -17,6 +17,9 @@ import com.intellij.psi.PsiModifier;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.ProjectScope;
 import com.intellij.psi.search.searches.ClassInheritorsSearch;
+import com.intellij.psi.util.CachedValue;
+import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.util.indexing.FileBasedIndex;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,7 +44,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public class OxyTemplateIndexUtil
 {
-    private static final Key<Multimap<String, JsMacroNameIndexedElement>> COMPILED_PREVIEW_MACRO_INDEX = Key.create("COMPILED_PREVIEW_MACRO_INDEX");
+    private static final Key<CachedValue<String>> MACRO_QUALIFIED_NAME_KEY = Key.create("MACRO_QUALIFIED_NAME_KEY");
 
     @NotNull
     public static List<PsiElement> getMacroNameReferences(@NotNull String macroName, @NotNull Project project)
@@ -259,6 +262,73 @@ public class OxyTemplateIndexUtil
                 {
                     return expr.getParent();
                 }
+            }
+        }
+
+        return null;
+    }
+
+    @Nullable
+    public static String getMacroFullyQualifienName(@NotNull final PsiElement macro)
+    {
+        CachedValue<String> cached = macro.getUserData(MACRO_QUALIFIED_NAME_KEY);
+
+        if (cached == null)
+        {
+            cached = CachedValuesManager.getManager(macro.getProject()).createCachedValue(new CachedValueProvider<String>()
+                {
+                    @Nullable
+                    @Override
+                    public Result<String> compute()
+                    {
+                        String fullyQualifiedName = null;
+
+                        if (macro instanceof PsiClass)
+                        {
+                            fullyQualifiedName = getJavaMacroFullyQualifienName((PsiClass) macro);
+                        }
+                        else if (macro instanceof JSProperty)
+                        {
+                            fullyQualifiedName = getJsMacroFullyQualifienName((JSProperty) macro);
+                        }
+
+                        return Result.create(fullyQualifiedName, macro);
+                    }
+                }, false);
+
+            macro.putUserData(MACRO_QUALIFIED_NAME_KEY, cached);
+        }
+
+        return cached.getValue();
+    }
+
+    public static boolean isMacro(@NotNull PsiElement macro)
+    {
+        return getMacroFullyQualifienName(macro) != null;
+    }
+
+    @Nullable
+    private static String getJavaMacroFullyQualifienName(@NotNull PsiClass macro)
+    {
+        for (Map.Entry<String, PsiClass> javaMacroEntry : getJavaMacros(macro.getProject()).entrySet())
+        {
+            if (javaMacroEntry.getValue().isEquivalentTo(macro))
+            {
+                return javaMacroEntry.getKey();
+            }
+        }
+
+        return null;
+    }
+
+    @Nullable
+    private static String getJsMacroFullyQualifienName(@NotNull JSProperty macro)
+    {
+        for (Map.Entry<String, JSElement> jsMacroEntry : getJsMacros(macro.getProject(), null).entries())
+        {
+            if (jsMacroEntry.getValue().isEquivalentTo(macro))
+            {
+                return jsMacroEntry.getKey();
             }
         }
 

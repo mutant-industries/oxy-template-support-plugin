@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>ool.idea.plugin</id>
     <name>Oxy template support</name>
-    <version>0.9.5</version>
+    <version>0.9.6</version>
     <vendor email="p.mayr@oxyonline.cz" url="http://stash.oxyonline.local/projects/CZC/repos/macro-support-plugin">
         oXy Online s.r.o.
     </vendor>
@@ -15,6 +15,15 @@
     ]]></description>
 
     <change-notes><![CDATA[
+        <b>0.9.6</b>
+        <ul>
+            <li>
+                našeptávání parametrů zanořených volání maker, bugfixy našeptávání parametrů java maker
+            </li>
+            <li>
+                dokumentace parametrů maker
+            </li>
+        </ul>
         <b>0.9.5</b>
         <ul>
             <li>
@@ -292,7 +301,7 @@
         <psi.referenceContributor implementation="ool.idea.plugin.psi.reference.java.LiteralJsMacroReferenceContributor" order="first"/>
         <psi.referenceContributor implementation="ool.idea.plugin.psi.reference.java.GlobalVariableDefinitionReferenceContributor" order="first"/>
         <referencesSearch implementation="ool.idea.plugin.editor.usages.OxyTemplateReferenceSearch"/>
-        <!--<documentationProvider implementation="ool.idea.plugin.editor.documentation.MacroParamDocumentationProvider"/>-->
+        <documentationProvider implementation="ool.idea.plugin.editor.documentation.MacroParamDocumentationProvider"/>
         <gotoSymbolContributor implementation="ool.idea.plugin.editor.gotosymbol.MacroGotoSymbolContributor"/>
         <lang.psiStructureViewFactory language="OxyTemplate" implementationClass="ool.idea.plugin.editor.structure.OxyTemplateStructureViewFactory"/>
         <lang.importOptimizer language="OxyTemplate" implementationClass="ool.idea.plugin.action.IncludeOptimizer"/>

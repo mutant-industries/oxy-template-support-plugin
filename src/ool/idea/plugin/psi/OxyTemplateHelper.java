@@ -73,7 +73,7 @@ public class OxyTemplateHelper
             {
                 if( ! (node.getFirstChild() instanceof JSReferenceExpression))
                 {
-                            return;
+                    return;
                 }
 
                 JSReferenceExpression referenceExpression = (JSReferenceExpression) node.getFirstChild();

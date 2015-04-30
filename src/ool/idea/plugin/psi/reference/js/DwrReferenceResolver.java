@@ -5,17 +5,16 @@ import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.resolve.JSReferenceExpressionResolver;
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
 import com.intellij.psi.JavaPsiFacade;
-import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiMember;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.ResolveResult;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiTreeUtil;
+import ool.idea.plugin.psi.OxyTemplateHelper;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -93,30 +92,12 @@ public class DwrReferenceResolver extends JSReferenceExpressionResolver
 
     public static boolean isDwrMethod(@NotNull PsiMethod method)
     {
-        return hasAnnotation(method, DWR_REMOTE_METHOD_FQN);
+        return OxyTemplateHelper.hasAnnotation(method, DWR_REMOTE_METHOD_FQN);
     }
 
     public static boolean isDwrClass(@NotNull PsiClass aClass)
     {
-        return hasAnnotation(aClass, DWR_REMOTE_PROXY_FQN);
-    }
-
-    private static boolean hasAnnotation(@NotNull PsiMember psiMember, @NotNull String annotationFqn)
-    {
-        if (psiMember.getModifierList() == null)
-        {
-            return false;
-        }
-
-        for (PsiAnnotation annotation : psiMember.getModifierList().getAnnotations())
-        {
-            if (annotationFqn.equals(annotation.getQualifiedName()))
-            {
-                return true;
-            }
-        }
-
-        return false;
+        return OxyTemplateHelper.hasAnnotation(aClass, DWR_REMOTE_PROXY_FQN);
     }
 
 }

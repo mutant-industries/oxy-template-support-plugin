@@ -6,8 +6,10 @@ import com.intellij.lang.javascript.psi.JSRecursiveElementVisitor;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiMember;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.ResolveResult;
 import com.intellij.psi.impl.source.tree.CompositeElement;
@@ -300,6 +302,24 @@ public class OxyTemplateHelper
         }
 
         return true;
+    }
+
+    public static boolean hasAnnotation(@NotNull PsiMember psiMember, @NotNull String annotationFqn)
+    {
+        if (psiMember.getModifierList() == null)
+        {
+            return false;
+        }
+
+        for (PsiAnnotation annotation : psiMember.getModifierList().getAnnotations())
+        {
+            if (annotationFqn.equals(annotation.getQualifiedName()))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 }

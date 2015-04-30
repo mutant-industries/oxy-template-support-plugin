@@ -4,19 +4,16 @@ import com.intellij.lang.javascript.JSDocTokenTypes;
 import com.intellij.lang.javascript.psi.JSFunctionExpression;
 import com.intellij.lang.javascript.psi.JSProperty;
 import com.intellij.lang.javascript.psi.jsdoc.JSDocTag;
-import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.impl.search.AllClassesSearchExecutor;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.ProjectScope;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.Processor;
+import com.intellij.util.SmartList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import ool.idea.plugin.file.index.OxyTemplateIndexUtil;
+import ool.idea.plugin.psi.reference.innerjs.InnerJsTypeEvaluator;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,7 +31,7 @@ public class JsMacroParamDescriptor extends MacroParamDescriptor<JSProperty>
 
     private final boolean usedInCode;
 
-    private String type;
+    private List<String> types;
 
     private String defaultValue;
 
@@ -54,10 +51,14 @@ public class JsMacroParamDescriptor extends MacroParamDescriptor<JSProperty>
 
         if (docTag != null)
         {
-            type = parseType(docTag);
+            types = parseTypes(docTag);
             defaultValue = parseDefaultValue(docTag);
             docText = parseDocText(docTag);
             required = parseRequired(docTag);
+        }
+        else
+        {
+            types = Collections.EMPTY_LIST;
         }
     }
 
@@ -88,7 +89,31 @@ public class JsMacroParamDescriptor extends MacroParamDescriptor<JSProperty>
     @Override
     public String getType()
     {
-        return type;
+        return types.size() == 0 ? null : StringUtils.join(types, "|");
+    }
+
+    @Nullable
+    @Override
+    public String getPrintableType()
+    {
+        if (types.size() == 0)
+        {
+            return null;
+        }
+
+        List<String> modifiedTypes = new LinkedList<>();
+
+        for (String type : types)
+        {
+            // TODO duplicated code --------------------------------------------
+            boolean isCollection = type.endsWith("[]");
+            type = type.replaceFirst("\\s*(\\[\\])?$", "");
+            // -----------------------------------------------------------------
+
+            modifiedTypes.add((isJavaType(type) ? getDocumentationLink(type) : type) + (isCollection ? "[]" : ""));
+        }
+
+        return StringUtils.join(modifiedTypes, "|");
     }
 
     @Nullable
@@ -123,43 +148,33 @@ public class JsMacroParamDescriptor extends MacroParamDescriptor<JSProperty>
         return usedInCode;
     }
 
+    @Override
+    public boolean isDocumented()
+    {
+        return docTag != null;
+    }
+
     // -------------------------------------------------------------------------------------------------
 
-    @Nullable
-    private static String parseType(@NotNull JSDocTag docTag)
+    @NotNull
+    public static List<String> parseTypes(@NotNull JSDocTag docTag)
     {
+        List<String> parsedTypes;
         String simpleTypeName;
 
-        if(docTag.getValue() != null && StringUtils.isNotEmpty(simpleTypeName = docTag.getValue()
+        if (docTag.getValue() != null && StringUtils.isNotEmpty(simpleTypeName = docTag.getValue()
                 .getText().replaceFirst("^\\{", "").replaceFirst("\\}$", "")))
         {
-            if(Character.isUpperCase(simpleTypeName.charAt(0)) && ! simpleTypeName.contains("."))
+            // TODO tohle
+            if ((parsedTypes = InnerJsTypeEvaluator.parseJavaSimplifiedRawType(simpleTypeName, docTag.getProject())).size() > 0)
             {
-                GlobalSearchScope scope = ProjectScope.getProjectScope(docTag.getProject());
-                final List<PsiClass> classes = new LinkedList<>();
-
-                AllClassesSearchExecutor.processClassesByNames(docTag.getProject(), scope, Collections.singletonList(simpleTypeName),
-                    new Processor<PsiClass>()
-                    {
-                        @Override
-                        public boolean process(PsiClass psiClass)
-                        {
-                            classes.add(psiClass);
-
-                            return true;
-                        }
-                    });
-
-                if(classes.size() == 1)
-                {
-                    return classes.get(0).getQualifiedName();
-                }
+                return parsedTypes;
             }
 
-            return simpleTypeName;
+            return new SmartList<>(simpleTypeName);
         }
 
-        return null;
+        return Collections.EMPTY_LIST;
     }
 
     @Nullable

@@ -48,9 +48,19 @@ abstract public class ParamSuggestionProvider<T extends PsiElement> implements C
 
         for (MacroParamDescriptor descriptor : macroParamSuggestions)
         {
-            if (descriptor.isJavaType() && (type = psiFacade.findClass(descriptor.getType(), scope)) != null)
+            if (descriptor.getType() == null)
             {
-                cacheDependencies.add(type);
+                continue;
+            }
+
+            for (String oneType : descriptor.getType().split("\\|"))
+            {
+                oneType = oneType.replaceFirst("\\s*(\\[\\])?$", "");
+
+                if (MacroParamDescriptor.isJavaType(oneType) && (type = psiFacade.findClass(descriptor.getType(), scope)) != null)
+                {
+                    cacheDependencies.add(type);
+                }
             }
         }
 

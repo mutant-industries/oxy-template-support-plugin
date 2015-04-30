@@ -12,6 +12,9 @@ import static com.intellij.lang.javascript.JSTokenTypes.FOR_KEYWORD;
 %type IElementType
 %unicode
 
+/**
+ * https://devnet.jetbrains.com/message/5541025#5541025 - for each should be supported out of the box
+ */
 FOREACH_KEYWORD = for\ each
 
 %%

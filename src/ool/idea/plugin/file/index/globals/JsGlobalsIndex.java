@@ -15,6 +15,8 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 /**
+ * TODO to be replaced by cached value provider
+ *
  * 1/13/15
  *
  * @author Petr Mayr <p.mayr@oxyonline.cz>

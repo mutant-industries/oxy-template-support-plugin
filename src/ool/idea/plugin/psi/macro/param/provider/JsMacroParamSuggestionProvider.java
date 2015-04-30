@@ -10,12 +10,14 @@ import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.jsdoc.JSDocComment;
 import com.intellij.lang.javascript.psi.jsdoc.JSDocTag;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReference;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.TokenType;
-import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiTreeUtil;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import ool.idea.plugin.file.index.nacros.MacroIndex;
 import ool.idea.plugin.psi.macro.param.MacroParamSuggestionSet;
 import ool.idea.plugin.psi.macro.param.descriptor.JsMacroParamDescriptor;
@@ -64,10 +66,12 @@ public class JsMacroParamSuggestionProvider extends ParamSuggestionProvider<JSPr
         submergedCalls = new LinkedList<>();
         String paramsObjectName = params[0].getText();
 
-        for (PsiReference reference : ReferencesSearch.search(params[0]).findAll())
+        /**
+         * !! cannot be done via {@link com.intellij.psi.search.searches.ReferencesSearch.search}, which would in some
+         * special cases (foreach in foreach) end up in infinite loop - reference search calls type resolver, which makes use of this method
+         */
+        for (PsiElement element : getParamReferencesLocal(params[0]))
         {
-            PsiElement element = reference.getElement();
-
             if ( ! (element instanceof JSReferenceExpression))
             {
                 continue;
@@ -90,7 +94,7 @@ public class JsMacroParamSuggestionProvider extends ParamSuggestionProvider<JSPr
 
                         if (element != null && element.getNode().getElementType() == JSTokenTypes.IDENTIFIER)
                         {
-                            result.add(new JsMacroParamDescriptor(element.getText(), macro, 
+                            result.add(new JsMacroParamDescriptor(element.getText(), macro,
                                     getJsParamDoc(element.getText(), macro), true));
                         }
                     }
@@ -99,7 +103,7 @@ public class JsMacroParamSuggestionProvider extends ParamSuggestionProvider<JSPr
                 }
             }
 
-            JSCallExpression macroCall = getMacroCall(reference.getElement());
+            JSCallExpression macroCall = getMacroCall(element);
             JSReferenceExpression callReference;
 
             if (macroCall == null || (callReference = PsiTreeUtil.getChildOfType(macroCall, JSReferenceExpression.class)) == null
@@ -130,6 +134,31 @@ public class JsMacroParamSuggestionProvider extends ParamSuggestionProvider<JSPr
                 }
 
                 result.add(new JsMacroParamDescriptor(paramName, macro, docTag, false));
+            }
+        }
+
+        return result;
+    }
+
+    @NotNull
+    private Collection<PsiElement> getParamReferencesLocal(@NotNull JSParameter param)
+    {
+        List<PsiElement> result = new LinkedList<>();
+        JSFunctionExpression function = (JSFunctionExpression) macro.getLastChild();
+        PsiFile file = macro.getContainingFile();
+        Matcher matcher = Pattern.compile(param.getText()).matcher(function.getText());
+
+        JSReferenceExpression referenceExpression;
+        PsiElement resolve;
+
+        while(matcher.find())
+        {
+            PsiElement elementAt = file.findElementAt(function.getNode().getStartOffset() + matcher.start());
+
+            if(elementAt != null && (referenceExpression = PsiTreeUtil.getParentOfType(elementAt, JSReferenceExpression.class)) != null
+                    && (resolve = referenceExpression.resolve()) != null && resolve.isEquivalentTo(param))
+            {
+                result.add(referenceExpression);
             }
         }
 

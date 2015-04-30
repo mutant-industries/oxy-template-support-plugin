@@ -87,6 +87,13 @@ public class JavaMacroParamDescriptor extends MacroParamDescriptor<PsiClass>
 
     @Nullable
     @Override
+    public String getPrintableType()
+    {
+        return getType() == null ? null : getDocumentationLink(getType());
+    }
+
+    @Nullable
+    @Override
     public String getDefaultValue()
     {
         return defaultValue;
@@ -115,6 +122,12 @@ public class JavaMacroParamDescriptor extends MacroParamDescriptor<PsiClass>
     public boolean isUsedInCode()
     {
         return true;
+    }
+
+    @Override
+    public boolean isDocumented()
+    {
+        return docText != null;
     }
 
 }

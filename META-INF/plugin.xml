@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>ool.idea.plugin</id>
     <name>Oxy template support</name>
-    <version>0.9.6</version>
+    <version>1.0</version>
     <vendor email="p.mayr@oxyonline.cz" url="http://stash.oxyonline.local/projects/CZC/repos/macro-support-plugin">
         oXy Online s.r.o.
     </vendor>
@@ -15,6 +15,21 @@
     ]]></description>
 
     <change-notes><![CDATA[
+        <b>1.0</b>
+        <ul>
+            <li>
+                refrence a našeptávání metod tříd / extenderů v java kontextu
+            </li>
+            <li>
+                resolve typu proměnné ve for each, oxy.repeat, resolve typu globálních proměnných
+            </li>
+            <li>
+                refrence, našeptávání a refactoring kontrolérů a jejich metod na globální proměnné controllers
+            </li>
+            <li>
+                parametry maker lze zapisovat bez prefixu params, našeptávání na objektu params
+            </li>
+        </ul>
         <b>0.9.6</b>
         <ul>
             <li>
@@ -22,6 +37,9 @@
             </li>
             <li>
                 dokumentace parametrů maker
+            </li>
+            <li>
+                zkrácený zápis java třídy v jsDocu
             </li>
         </ul>
         <b>0.9.5</b>
@@ -266,7 +284,10 @@
         <completion.contributor language="OxyTemplate" implementationClass="ool.idea.plugin.editor.completion.macro.name.XmlMacroName"/>
         <completion.contributor language="HTML" implementationClass="ool.idea.plugin.editor.completion.UnclosedTag" order="first"/>
         <completion.contributor language="HTML" implementationClass="ool.idea.plugin.editor.completion.macro.XmlMacroNamespace" order="first"/>
-        <completion.contributor language="OxyTemplateInnerJs" implementationClass="ool.idea.plugin.editor.completion.macro.name.JsMacroName" order="first"/>
+        <completion.contributor id="oxyTemplateInnerJsMacroNameContributor" language="OxyTemplateInnerJs"
+                                implementationClass="ool.idea.plugin.editor.completion.macro.name.JsMacroName" order="first"/>
+        <completion.contributor language="OxyTemplateInnerJs" implementationClass="ool.idea.plugin.editor.completion.JavaContext"
+                                order="first, after oxyTemplateInnerJsMacroNameContributor"/>
         <completion.contributor language="OxyTemplateInnerJs" implementationClass="ool.idea.plugin.editor.completion.JsGlobalVariable"/>
         <completion.contributor language="JavaScript" implementationClass="ool.idea.plugin.editor.completion.DwrMethod" order="first"/>
         <typedHandler implementation="ool.idea.plugin.editor.type.BlockMarkerHandler"/>

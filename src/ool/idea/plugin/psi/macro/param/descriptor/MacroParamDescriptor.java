@@ -9,6 +9,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
+ * TODO refactor - getType, getPrintableType, isJavaType
+ *
  * 4/15/15
  *
  * @author Petr Mayr <p.mayr@oxyonline.cz>
@@ -33,6 +35,9 @@ abstract public class MacroParamDescriptor<T extends PsiElement>
     abstract public String getType();
 
     @Nullable
+    abstract public String getPrintableType();
+
+    @Nullable
     abstract public String getDefaultValue();
 
     @Nullable
@@ -47,6 +52,8 @@ abstract public class MacroParamDescriptor<T extends PsiElement>
 
     abstract public boolean isUsedInCode();
 
+    abstract public boolean isDocumented();
+
     @NotNull
     public String getName()
     {
@@ -59,9 +66,9 @@ abstract public class MacroParamDescriptor<T extends PsiElement>
         return macro;
     }
 
-    public boolean isJavaType()
+    public static boolean isJavaType(String type)
     {
-        return getType() != null && JAVA_CLASS_FQN_PATTERN.matcher(getType()).matches();
+        return JAVA_CLASS_FQN_PATTERN.matcher(type).matches();
     }
 
     @Nullable
@@ -77,7 +84,7 @@ abstract public class MacroParamDescriptor<T extends PsiElement>
 
             if (getType() != null)
             {
-                builder.append(isJavaType() ? getDocumentationLink(getType()) : getType());
+                builder.append(getPrintableType());
             }
             if ( ! isRequired())
             {

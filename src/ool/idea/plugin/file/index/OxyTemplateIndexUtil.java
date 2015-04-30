@@ -22,7 +22,6 @@ import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.util.indexing.FileBasedIndex;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -99,8 +98,8 @@ public class OxyTemplateIndexUtil
             }
         })).findFirst();
 
-        return macroClass == null || macroClass.isInterface() || Arrays.asList(macroClass.getModifierList())
-                .contains(PsiModifier.ABSTRACT) ? null : macroClass;
+        return macroClass == null || macroClass.isInterface() || macroClass.getModifierList() == null
+                || macroClass.getModifierList().hasModifierProperty(PsiModifier.ABSTRACT) ? null : macroClass;
     }
 
     @NotNull
@@ -182,7 +181,8 @@ public class OxyTemplateIndexUtil
             }
         })).findAll())
         {
-            if(javaMacro.isInterface() || Arrays.asList(javaMacro.getModifierList()).contains(PsiModifier.ABSTRACT))
+            if(javaMacro.isInterface() || javaMacro.getModifierList() == null
+                    ||javaMacro.getModifierList().hasModifierProperty(PsiModifier.ABSTRACT))
             {
                 continue;
             }

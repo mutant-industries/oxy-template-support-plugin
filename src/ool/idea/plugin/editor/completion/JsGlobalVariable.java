@@ -7,12 +7,13 @@ import com.intellij.codeInsight.lookup.AutoCompletionPolicy;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.psi.PsiElement;
-import com.intellij.util.indexing.FileBasedIndex;
 import java.util.regex.Pattern;
 import ool.idea.plugin.editor.completion.handler.TrailingPatternConsumer;
-import ool.idea.plugin.file.index.globals.JsGlobalsIndex;
 import ool.idea.plugin.file.type.OxyTemplateFileType;
 import ool.idea.plugin.psi.reference.innerjs.InnerJsReferenceExpressionResolver;
+import ool.idea.plugin.psi.reference.innerjs.globals.GlobalVariableDefinition;
+import ool.idea.plugin.psi.reference.innerjs.globals.GlobalVariableIndex;
+import ool.idea.plugin.psi.reference.innerjs.globals.GlobalVariableTypeProvider;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -35,10 +36,17 @@ public class JsGlobalVariable extends CompletionContributor
             return;
         }
 
-        for (String key : FileBasedIndex.getInstance().getAllKeys(JsGlobalsIndex.INDEX_ID, psiElement.getProject()))
+        for (GlobalVariableDefinition variable : GlobalVariableIndex.getGlobals(parameters.getOriginalFile().getProject()).values())
         {
-            result.consume(LookupElementBuilder.create(key)
+            assert variable.getName() != null;
+
+            String typeText = (variable.getType() == null || variable.getName().equals(GlobalVariableTypeProvider.CONTROLLERS_GLOBAL_VARIABLE_NAME)) ? ""
+                    : variable.getType().getTypeText().replaceFirst("^.+\\.", "");
+
+            result.consume(LookupElementBuilder.create(variable.getName())
                     .withInsertHandler(new TrailingPatternConsumer(INSERT_CONSUME))
+                    .withTailText(" (" + variable.getContainingFile().getName() + ")", true)
+                    .withTypeText(typeText, true)
                     .withIcon(OxyTemplateFileType.INSTANCE.getIcon())
                     .withAutoCompletionPolicy(AutoCompletionPolicy.GIVE_CHANCE_TO_OVERWRITE));
         }

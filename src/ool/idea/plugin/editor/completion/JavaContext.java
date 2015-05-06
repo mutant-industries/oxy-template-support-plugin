@@ -8,9 +8,12 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.JSType;
+import com.intellij.lang.javascript.psi.resolve.BaseJSSymbolProcessor;
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator;
 import com.intellij.lang.javascript.psi.types.JSCompositeTypeImpl;
 import com.intellij.lang.javascript.psi.types.JSTypeImpl;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
@@ -19,7 +22,6 @@ import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiModifier;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.ProjectScope;
 import com.intellij.psi.util.InheritanceUtil;
 import com.sun.xml.internal.ws.util.StringUtils;
 import java.util.Arrays;
@@ -27,6 +29,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 import ool.idea.plugin.editor.completion.handler.TrailingPatternConsumer;
+import ool.idea.plugin.lang.OxyTemplateInnerJs;
 import ool.idea.plugin.psi.reference.innerjs.ExtenderProvider;
 import ool.web.model.BaseExtender;
 import ool.web.model.Extender;
@@ -52,9 +55,12 @@ public class JavaContext extends CompletionContributor
     @Override
     public void fillCompletionVariants(@NotNull CompletionParameters parameters, @NotNull CompletionResultSet result)
     {
-        PsiElement element = parameters.getOriginalPosition();
+        Module module;
+        PsiElement element = parameters.getOriginalFile().getViewProvider().findElementAt(parameters.getOffset() - 1,
+                OxyTemplateInnerJs.INSTANCE);
 
-        if (element == null || (element = element.getPrevSibling()) == null)
+        if (element == null || element.getNode().getElementType() != JSTokenTypes.DOT &&
+                (element = element.getPrevSibling()) == null)
         {
             return;
         }
@@ -80,12 +86,16 @@ public class JavaContext extends CompletionContributor
         {
             element = element.getPrevSibling();
         }
-        if ( ! (element instanceof JSExpression))
+        if ( ! (element instanceof JSExpression)
+                || (module = ModuleUtilCore.findModuleForPsiElement(parameters.getOriginalFile())) == null)
         {
             return;
         }
 
-        JSType type = JSTypeEvaluator.evaluateType((JSExpression) element, parameters.getOriginalFile());
+        BaseJSSymbolProcessor.SimpleTypeProcessor typeProcessor = new BaseJSSymbolProcessor.SimpleTypeProcessor();
+        JSTypeEvaluator.evaluateTypes((JSExpression) element, parameters.getOriginalFile()
+                .getViewProvider().getPsi(OxyTemplateInnerJs.INSTANCE), typeProcessor);
+        JSType type = typeProcessor.getType();
         List<String> possibleJavaTypes = new LinkedList<>();
 
         if (type != null)
@@ -107,7 +117,7 @@ public class JavaContext extends CompletionContributor
         }
 
         JavaPsiFacade facade = JavaPsiFacade.getInstance(parameters.getOriginalFile().getProject());
-        GlobalSearchScope scope = ProjectScope.getProjectScope(parameters.getOriginalFile().getProject());
+        GlobalSearchScope scope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module);
         List<PsiClass> possibleInstancesOf = new LinkedList<>();
         boolean suggestionsFound = false;
         PsiClass aClass;
@@ -135,7 +145,7 @@ public class JavaContext extends CompletionContributor
                         || method.getReturnType() == null || shippedBaseExtenderMethods.contains(method.getName())
                         || ! method.getModifierList().hasModifierProperty(PsiModifier.PUBLIC)
                         || InheritanceUtil.isInheritor(method.getContainingClass(), EXTENDER_INTERFACE_FQN)
-                        && ! InheritanceUtil.isInheritor(method.getContainingClass(), EXTENDER_BASE_CLASS_FQN))
+                            && ! InheritanceUtil.isInheritor(method.getContainingClass(), EXTENDER_BASE_CLASS_FQN))
                 {
                     continue;
                 }
@@ -145,8 +155,7 @@ public class JavaContext extends CompletionContributor
 
                 if (insertText.matches("((^is)|(^get)|(^set))[A-Z].*"))
                 {
-                    insertText = StringUtils.decapitalize(insertText.replaceFirst("(^is)|(^get)|(^set)", ""));
-                    presentableText = insertText;
+                    insertText = presentableText = StringUtils.decapitalize(insertText.replaceFirst("(^is)|(^get)|(^set)", ""));
                 }
                 else
                 {
@@ -162,7 +171,8 @@ public class JavaContext extends CompletionContributor
 
                 result.consume(LookupElementBuilder.create(method, insertText)
                         .withIcon(method.getIcon(0))
-                        .withTypeText(method.getReturnType().getPresentableText())
+                        .withTypeText(method.getReturnType().getPresentableText(), true)
+                        .withTailText(" (" + psiClass.getContainingFile().getName() + ")", true)
                         .withPresentableText(presentableText)
                         .withInsertHandler(new TrailingPatternConsumer(INSERT_CONSUME))
                         .withAutoCompletionPolicy(AutoCompletionPolicy.GIVE_CHANCE_TO_OVERWRITE));

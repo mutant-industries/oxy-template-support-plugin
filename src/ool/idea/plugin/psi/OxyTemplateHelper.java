@@ -2,6 +2,7 @@ package ool.idea.plugin.psi;
 
 import com.intellij.lang.javascript.psi.JSCallExpression;
 import com.intellij.lang.javascript.psi.JSElement;
+import com.intellij.lang.javascript.psi.JSProperty;
 import com.intellij.lang.javascript.psi.JSRecursiveElementVisitor;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.openapi.util.TextRange;
@@ -73,20 +74,19 @@ public class OxyTemplateHelper
             @Override
             public void visitJSCallExpression(@NotNull JSCallExpression node)
             {
-                if( ! (node.getFirstChild() instanceof JSReferenceExpression))
+                if(node.getFirstChild() instanceof JSReferenceExpression)
                 {
-                    return;
+                    JSReferenceExpression referenceExpression = (JSReferenceExpression) node.getFirstChild();
+                    PsiElement reference;
+
+                    if (referenceExpression.getReference() != null && (reference = referenceExpression.getReference().resolve())  != null
+                            && reference instanceof JSProperty && OxyTemplateIndexUtil.isMacro(reference))
+                    {
+                        usedMacros.put(referenceExpression, (JSElement) reference);
+                    }
                 }
 
-                JSReferenceExpression referenceExpression = (JSReferenceExpression) node.getFirstChild();
-                PsiElement reference;
-
-                if (referenceExpression.getReference() != null && (reference = referenceExpression.getReference().resolve())  != null
-                        && OxyTemplateIndexUtil.getJsMacroNameReferences(MacroIndex.normalizeMacroName(referenceExpression.getText()),
-                            referenceExpression.getProject()).size() > 0)
-                {
-                    usedMacros.put(referenceExpression, (JSElement) reference);
-                }
+                super.visitJSCallExpression(node);
             }
         }.visitFile(psiFile.getViewProvider().getPsi(OxyTemplateInnerJs.INSTANCE));
 
@@ -181,16 +181,24 @@ public class OxyTemplateHelper
     {
         Collection<VirtualFile> includedFiles = OxyTemplateHelper.getIncludedFiles(referencing
                 .getContainingFile()).values();
+        ResolveResult resolveResult = null;
 
-        for(ResolveResult result : references)
+        for (ResolveResult result : references)
         {
-            if(includedFiles.contains(result.getElement().getContainingFile().getVirtualFile()))
+            if (result.getElement() != null && (result.getElement().getContainingFile().getVirtualFile().equals(referencing
+                    .getContainingFile().getVirtualFile()) || includedFiles.contains(result.getElement().getContainingFile().getVirtualFile())))
             {
-                return result;
+                if (resolveResult != null)
+                {
+                    resolveResult = null;
+                    break;
+                }
+
+                resolveResult = result;
             }
         }
 
-        return null;
+        return resolveResult;
     }
 
     /**

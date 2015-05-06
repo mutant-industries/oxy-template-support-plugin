@@ -18,7 +18,6 @@ import com.intellij.psi.TokenType;
 import java.util.regex.Pattern;
 import ool.idea.plugin.editor.completion.handler.TrailingPatternConsumer;
 import ool.idea.plugin.psi.reference.js.DwrReferenceResolver;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -29,9 +28,6 @@ import org.jetbrains.annotations.NotNull;
 public class DwrMethod extends CompletionContributor
 {
     private static final Pattern INSERT_CONSUME = Pattern.compile("\\);[A-Za-z0-9_]*(\\.[A-Za-z][A-Za-z0-9_]*)*\\(");
-
-    @NonNls
-    private static final String DWR_METHOD_RETURN_TYPE = "void";
 
     @Override
     public void fillCompletionVariants(@NotNull CompletionParameters parameters, @NotNull CompletionResultSet result)
@@ -72,7 +68,7 @@ public class DwrMethod extends CompletionContributor
 
         for (PsiMethod method : dwrClass.getMethods())
         {
-            if ( ! DwrReferenceResolver.isDwrMethod(method))
+            if (method.getReturnType() == null || ! DwrReferenceResolver.isDwrMethod(method))
             {
                 continue;
             }
@@ -87,7 +83,7 @@ public class DwrMethod extends CompletionContributor
 
             result.consume(LookupElementBuilder.create(method, method.getName() + "();")
                 .withIcon(method.getIcon(0))
-                .withTypeText(DWR_METHOD_RETURN_TYPE)
+                .withTypeText(method.getReturnType().getPresentableText(), true)
                 .withPresentableText(presentableText)
                 .withInsertHandler(new TrailingPatternConsumer(INSERT_CONSUME)
                 {

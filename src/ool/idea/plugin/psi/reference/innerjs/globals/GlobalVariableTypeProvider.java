@@ -1,5 +1,12 @@
 package ool.idea.plugin.psi.reference.innerjs.globals;
 
+import com.google.common.collect.ImmutableList;
+import com.intellij.lang.javascript.psi.JSType;
+import com.intellij.lang.javascript.psi.JSTypeUtils;
+import com.intellij.lang.javascript.psi.types.JSRecordTypeImpl;
+import com.intellij.lang.javascript.psi.types.JSTypeSource;
+import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiAnonymousClass;
 import com.intellij.psi.PsiClass;
@@ -10,15 +17,21 @@ import com.intellij.psi.PsiKeyword;
 import com.intellij.psi.PsiLiteralExpression;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiNewExpression;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReturnStatement;
 import com.intellij.psi.PsiType;
 import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.search.FilenameIndex;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.ProjectScope;
+import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.InheritanceUtil;
 import com.intellij.psi.util.PsiTreeUtil;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import ool.idea.plugin.psi.reference.innerjs.InnerJsJavaTypeConvertor;
 import ool.web.model.ondemand.GlobalModelProvider;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -29,11 +42,18 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author Petr Mayr <p.mayr@oxyonline.cz>
  */
-public class GlobalVariableTypeProvider implements CachedValueProvider<PsiType>
+public class GlobalVariableTypeProvider implements CachedValueProvider<JSType>
 {
+    @NonNls
+    public static final String CONTROLLERS_GLOBAL_VARIABLE_NAME = "controllers";
+
     private static final String GLOBAL_MODEL_PROVIDER_FQN = GlobalModelProvider.class.getName();
     @NonNls
-    public static final String PROVIDE_METHOD_NAME = "provide";
+    private static final String PROVIDE_METHOD_NAME = "provide";
+    @NonNls
+    private static final String CONTROLLER_FQN = "org.springframework.stereotype.Controller";
+    @NonNls
+    private static final String CONTROLLERS_BEANS_FILE_NAME = "web.xml";
 
     private final PsiLiteralExpression literalExpression;
 
@@ -44,19 +64,58 @@ public class GlobalVariableTypeProvider implements CachedValueProvider<PsiType>
 
     @Nullable
     @Override
-    public Result<PsiType> compute()
+    public Result<JSType> compute()
     {
-        if ( ! (literalExpression.getValue() instanceof String) || literalExpression.getValue()
-                .equals(GlobalVariableDefinition.CONTROLLERS_GLOBAL_VARIABLE_NAME))
+        List<PsiElement> cacheDependencies = new LinkedList<>();
+        cacheDependencies.add(literalExpression);
+
+        if ( ! (literalExpression.getValue() instanceof String))
         {
-            return Result.create(null, literalExpression);
+            return Result.create(null, cacheDependencies);
+        }
+
+        // controllers
+        if (literalExpression.getValue().equals(CONTROLLERS_GLOBAL_VARIABLE_NAME))
+        {
+            Project project = literalExpression.getProject();
+            GlobalSearchScope allScope = ProjectScope.getAllScope(project);
+            GlobalSearchScope projectScope = ProjectScope.getProjectScope(project);
+
+            List<JSRecordTypeImpl.TypeMember> members = new LinkedList<>();
+            JSTypeSource typeSource = JSTypeSourceFactory.createTypeSource(literalExpression, true);
+            PsiClass controller;
+
+            PsiClass controllerAnnotation = JavaPsiFacade.getInstance(project).findClass(CONTROLLER_FQN, allScope);
+
+            if (controllerAnnotation != null && controllerAnnotation.isAnnotationType())
+            {
+                for (PsiReference controllerAnnotationRefernce : ReferencesSearch.search(controllerAnnotation, projectScope).findAll())
+                {
+                    PsiElement reference = controllerAnnotationRefernce.getElement();
+
+                    if ((controller = PsiTreeUtil.getParentOfType(reference, PsiClass.class)) != null
+                            && controller.getQualifiedName() != null)
+                    {
+                        JSTypeSource source = JSTypeSourceFactory.createTypeSource(controller, true);
+                        JSType jsType = JSTypeUtils.createType(controller.getQualifiedName(), source);
+                        JSRecordTypeImpl.PropertySignature signature = new JSRecordTypeImpl.PropertySignature(controller.getName(),
+                                jsType, false);
+
+                        members.add(signature);
+                        cacheDependencies.add(controller);
+                    }
+                }
+            }
+
+            Collections.addAll(cacheDependencies, FilenameIndex.getFilesByName(project, CONTROLLERS_BEANS_FILE_NAME,
+                    ProjectScope.getProjectScope(project)));
+
+            return Result.create((JSType) new JSRecordTypeImpl(typeSource, ImmutableList.copyOf(members)), cacheDependencies);
         }
 
         PsiReturnStatement returnStatement;
         PsiClass aClass;
         PsiElement elementAt;
-        List<PsiElement> cacheDependencies = new LinkedList<>();
-        cacheDependencies.add(literalExpression);
 
         // global model provider
         if ((returnStatement = PsiTreeUtil.getParentOfType(literalExpression, PsiReturnStatement.class)) != null
@@ -65,16 +124,15 @@ public class GlobalVariableTypeProvider implements CachedValueProvider<PsiType>
         {
             return Result.create(getTypeFromProvider(aClass), cacheDependencies);
         }
-        // register via model provider registry
+        // model provider registry
         else
         {
             elementAt = literalExpression;
 
-            while (elementAt != null && ! ((elementAt = elementAt.getNextSibling()) instanceof PsiExpression));
+            while (elementAt != null && ! ((elementAt = elementAt.getNextSibling()) instanceof PsiExpression)) ;
 
             if (elementAt instanceof PsiNewExpression)
             {
-                /** TODO duplicated code to {@link ool.idea.plugin.psi.reference.innerjs.ExtenderProvider#getExtenderFromProvider} */
                 PsiJavaCodeReferenceElement providerClassReference = PsiTreeUtil.getNextSiblingOfType(elementAt.getFirstChild(),
                         PsiJavaCodeReferenceElement.class);
                 PsiElement providerClass;
@@ -88,7 +146,6 @@ public class GlobalVariableTypeProvider implements CachedValueProvider<PsiType>
                 {
                     return Result.create(null, literalExpression);
                 }
-                // ------------------------------------------------------------------------------------------------------
 
                 cacheDependencies.add(aClass);
 
@@ -110,9 +167,9 @@ public class GlobalVariableTypeProvider implements CachedValueProvider<PsiType>
     }
 
     @Nullable
-    private static PsiType getTypeFromProvider(@NotNull PsiClass aClass)
+    private JSType getTypeFromProvider(@NotNull PsiClass provider)
     {
-        PsiMethod[] provideMethods = aClass.findMethodsByName(PROVIDE_METHOD_NAME, true);
+        PsiMethod[] provideMethods = provider.findMethodsByName(PROVIDE_METHOD_NAME, true);
         PsiElement elementAt;
         PsiReturnStatement returnStatement;
 
@@ -124,16 +181,10 @@ public class GlobalVariableTypeProvider implements CachedValueProvider<PsiType>
         }
 
         elementAt = elementAt.getNextSibling();
-        PsiExpression referenceExpression;
 
         if (elementAt instanceof PsiExpression)
         {
-            referenceExpression = (PsiExpression) elementAt;
-
-            if (referenceExpression.getType() != null)
-            {
-                return referenceExpression.getType();
-            }
+            return InnerJsJavaTypeConvertor.getPsiElementJsType(elementAt);
         }
 
         return null;

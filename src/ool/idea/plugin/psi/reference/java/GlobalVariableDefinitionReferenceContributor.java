@@ -8,8 +8,9 @@ import com.intellij.psi.PsiReferenceContributor;
 import com.intellij.psi.PsiReferenceProvider;
 import com.intellij.psi.PsiReferenceRegistrar;
 import com.intellij.util.ProcessingContext;
-import ool.idea.plugin.file.index.OxyTemplateIndexUtil;
+import ool.idea.plugin.psi.reference.innerjs.globals.GlobalVariableDefinition;
 import ool.idea.plugin.psi.reference.innerjs.globals.GlobalVariableDefinitionReference;
+import ool.idea.plugin.psi.reference.innerjs.globals.GlobalVariableIndex;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -30,7 +31,7 @@ public class GlobalVariableDefinitionReferenceContributor extends PsiReferenceCo
                 public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context)
                 {
                     PsiLiteralExpression literalExpression = (PsiLiteralExpression) element;
-                    PsiElement ref;
+                    GlobalVariableDefinition ref;
 
                     if( ! (literalExpression.getValue() instanceof String))
                     {
@@ -39,8 +40,8 @@ public class GlobalVariableDefinitionReferenceContributor extends PsiReferenceCo
 
                     String text = (String) literalExpression.getValue();
 
-                    if((ref = OxyTemplateIndexUtil.getGlobalVariableRefrence(text, element.getProject())) != null
-                            && ref.isEquivalentTo(literalExpression))
+                    if(GlobalVariableIndex.isReady() && (ref = GlobalVariableIndex.getGlobals(element.getProject()).get(text)) != null
+                            && ref.getLiteralExpression().isEquivalentTo(literalExpression))
                     {
                         return new PsiReference[]{new GlobalVariableDefinitionReference(literalExpression)};
                     }

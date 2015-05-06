@@ -36,6 +36,12 @@ abstract public class MacroIndex
     public static final String DEBUG_NAMESPACE = "debug";
     @NonNls
     public static final String UTILS_NAMESPACE = "utils";
+    @NonNls
+    public static final String REPEAT_MACRO_VARIABLE_DEFINITION = "varName";
+    @NonNls
+    public static final String REPEAT_MACRO_INDEX_DEFINITION = "indexName";
+    @NonNls
+    public static final String REPEAT_MACRO_LIST_DEFINITION = "list";
 
     public static final List<String> javaMacroNamespaces = Arrays.asList(DEFAULT_NAMESPACE, DEBUG_NAMESPACE);
 

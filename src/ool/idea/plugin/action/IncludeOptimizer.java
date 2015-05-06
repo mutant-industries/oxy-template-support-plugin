@@ -12,13 +12,13 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 import ool.idea.plugin.editor.inspection.fix.MissingIncludeDirectiveQuickFix;
 import ool.idea.plugin.file.OxyTemplateFile;
 import ool.idea.plugin.lang.parser.definition.OxyTemplateParserDefinition;
 import ool.idea.plugin.psi.DirectiveStatement;
 import ool.idea.plugin.psi.OxyTemplateHelper;
 import ool.web.template.impl.chunk.directive.IncludeOnceDirective;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -28,8 +28,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class IncludeOptimizer implements ImportOptimizer
 {
-    @NonNls
-    private static final String SUPPRESS_OPTIMIZER_DIRECTIVE = "<// suppress-optimizer //>";
+    private static final Pattern SUPPRESS_OPTIMIZER_DIRECTIVE = Pattern.compile("<//\\s*suppress-optimizer\\s*//>");
 
     @Override
     public boolean supports(PsiFile file)
@@ -127,18 +126,13 @@ public class IncludeOptimizer implements ImportOptimizer
     {
         PsiElement nextSibling = statement.getNextSibling();
 
-        if(nextSibling instanceof PsiWhiteSpace)
+        if (nextSibling instanceof PsiWhiteSpace)
         {
             nextSibling = nextSibling.getNextSibling();
         }
 
-        if(nextSibling != null && OxyTemplateParserDefinition.COMMENTS.contains(nextSibling.getNode().getElementType())
-                && nextSibling.getText().equals(SUPPRESS_OPTIMIZER_DIRECTIVE))
-        {
-            return true;
-        }
-
-        return false;
+        return nextSibling != null && OxyTemplateParserDefinition.COMMENTS.contains(nextSibling.getNode().getElementType())
+                && SUPPRESS_OPTIMIZER_DIRECTIVE.matcher(nextSibling.getText()).matches();
     }
 
 }

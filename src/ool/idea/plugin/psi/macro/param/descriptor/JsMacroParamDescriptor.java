@@ -1,19 +1,15 @@
 package ool.idea.plugin.psi.macro.param.descriptor;
 
 import com.intellij.lang.javascript.JSDocTokenTypes;
-import com.intellij.lang.javascript.psi.JSFunctionExpression;
 import com.intellij.lang.javascript.psi.JSProperty;
+import com.intellij.lang.javascript.psi.JSType;
+import com.intellij.lang.javascript.psi.JSTypeUtils;
 import com.intellij.lang.javascript.psi.jsdoc.JSDocTag;
+import com.intellij.lang.javascript.psi.types.JSTypeSource;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.SmartList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import ool.idea.plugin.file.index.OxyTemplateIndexUtil;
-import ool.idea.plugin.psi.reference.innerjs.InnerJsTypeEvaluator;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,89 +27,35 @@ public class JsMacroParamDescriptor extends MacroParamDescriptor<JSProperty>
 
     private final boolean usedInCode;
 
-    private List<String> types;
+    private JSType type;
 
     private String defaultValue;
 
     private String docText;
 
-    private boolean required;
+    private boolean required = true;
 
     public JsMacroParamDescriptor(@NotNull String name, @NotNull JSProperty macro, @Nullable JSDocTag docTag, boolean usedInCode)
     {
         super(name, macro);
-        JSFunctionExpression expression = PsiTreeUtil.getChildOfType(macro, JSFunctionExpression.class);
-
-        assert expression != null;
 
         this.usedInCode = usedInCode;
         this.docTag = docTag;
 
         if (docTag != null)
         {
-            types = parseTypes(docTag);
+            type = parseType(docTag);
             defaultValue = parseDefaultValue(docTag);
             docText = parseDocText(docTag);
             required = parseRequired(docTag);
         }
-        else
-        {
-            types = Collections.EMPTY_LIST;
-        }
     }
 
     @Nullable
     @Override
-    public String generateDoc()
+    public JSType getType()
     {
-        if (docTag == null)
-        {
-            return null;
-        }
-
-        return super.generateDoc();
-    }
-
-    @NotNull
-    @Override
-    public String getMacroInfo()
-    {
-        String macroFqn = OxyTemplateIndexUtil.getMacroFullyQualifienName(macro);
-
-        assert macroFqn != null;
-
-        return macroFqn;
-    }
-
-    @Nullable
-    @Override
-    public String getType()
-    {
-        return types.size() == 0 ? null : StringUtils.join(types, "|");
-    }
-
-    @Nullable
-    @Override
-    public String getPrintableType()
-    {
-        if (types.size() == 0)
-        {
-            return null;
-        }
-
-        List<String> modifiedTypes = new LinkedList<>();
-
-        for (String type : types)
-        {
-            // TODO duplicated code --------------------------------------------
-            boolean isCollection = type.endsWith("[]");
-            type = type.replaceFirst("\\s*(\\[\\])?$", "");
-            // -----------------------------------------------------------------
-
-            modifiedTypes.add((isJavaType(type) ? getDocumentationLink(type) : type) + (isCollection ? "[]" : ""));
-        }
-
-        return StringUtils.join(modifiedTypes, "|");
+        return type;
     }
 
     @Nullable
@@ -154,27 +96,27 @@ public class JsMacroParamDescriptor extends MacroParamDescriptor<JSProperty>
         return docTag != null;
     }
 
+    @NotNull
+    @Override
+    protected String getMacroInfo()
+    {
+        return OxyTemplateIndexUtil.getMacroFullyQualifienName(macro);
+    }
+
     // -------------------------------------------------------------------------------------------------
 
-    @NotNull
-    public static List<String> parseTypes(@NotNull JSDocTag docTag)
+    @Nullable
+    private static JSType parseType(@NotNull JSDocTag docTag)
     {
-        List<String> parsedTypes;
         String simpleTypeName;
 
         if (docTag.getValue() != null && StringUtils.isNotEmpty(simpleTypeName = docTag.getValue()
                 .getText().replaceFirst("^\\{", "").replaceFirst("\\}$", "")))
         {
-            // TODO tohle
-            if ((parsedTypes = InnerJsTypeEvaluator.parseJavaSimplifiedRawType(simpleTypeName, docTag.getProject())).size() > 0)
-            {
-                return parsedTypes;
-            }
-
-            return new SmartList<>(simpleTypeName);
+            return JSTypeUtils.createType(simpleTypeName, JSTypeSource.EXPLICITLY_DECLARED);
         }
 
-        return Collections.EMPTY_LIST;
+        return null;
     }
 
     @Nullable

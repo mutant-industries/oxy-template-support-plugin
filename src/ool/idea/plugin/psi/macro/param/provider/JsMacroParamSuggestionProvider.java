@@ -11,6 +11,7 @@ import com.intellij.lang.javascript.psi.jsdoc.JSDocComment;
 import com.intellij.lang.javascript.psi.jsdoc.JSDocTag;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.util.PsiTreeUtil;
 import java.util.Collection;
@@ -70,32 +71,34 @@ public class JsMacroParamSuggestionProvider extends ParamSuggestionProvider<JSPr
          * !! cannot be done via {@link com.intellij.psi.search.searches.ReferencesSearch.search}, which would in some
          * special cases (foreach in foreach) end up in infinite loop - reference search calls type resolver, which makes use of this method
          */
-        for (PsiElement element : getParamReferencesLocal(params[0]))
+        for (PsiElement elementLocal : getParamReferencesLocal(params[0]))
         {
-            if ( ! (element instanceof JSReferenceExpression))
+            PsiElement element = elementLocal;
+
+            if ( ! (elementLocal instanceof JSReferenceExpression))
             {
                 continue;
             }
 
-            if ((element = element.getNextSibling()) != null)
+            if ((elementLocal = elementLocal.getNextSibling()) != null)
             {
-                if (element.getNode().getElementType() == TokenType.WHITE_SPACE)
+                if (elementLocal.getNode().getElementType() == TokenType.WHITE_SPACE)
                 {
-                    element = element.getNextSibling();
+                    elementLocal = elementLocal.getNextSibling();
                 }
-                if (element != null && element.getNode().getElementType() == JSTokenTypes.DOT)
+                if (elementLocal != null && elementLocal.getNode().getElementType() == JSTokenTypes.DOT)
                 {
-                    if ((element = element.getNextSibling()) != null)
+                    if ((elementLocal = elementLocal.getNextSibling()) != null)
                     {
-                        if (element.getNode().getElementType() == TokenType.WHITE_SPACE)
+                        if (elementLocal.getNode().getElementType() == TokenType.WHITE_SPACE)
                         {
-                            element = element.getNextSibling();
+                            elementLocal = elementLocal.getNextSibling();
                         }
 
-                        if (element != null && element.getNode().getElementType() == JSTokenTypes.IDENTIFIER)
+                        if (elementLocal != null && elementLocal.getNode().getElementType() == JSTokenTypes.IDENTIFIER)
                         {
-                            result.add(new JsMacroParamDescriptor(element.getText(), macro,
-                                    getJsParamDoc(element.getText(), macro), true));
+                            result.add(new JsMacroParamDescriptor(elementLocal.getText(), macro,
+                                    getJsParamDoc(elementLocal.getText(), macro), true));
                         }
                     }
 
@@ -118,10 +121,13 @@ public class JsMacroParamSuggestionProvider extends ParamSuggestionProvider<JSPr
         if (macro.getFirstChild() instanceof JSDocComment)
         {
             String paramName;
+            PsiReference reference;
+            PsiElement resolve;
 
             for (JSDocTag docTag : ((JSDocComment) macro.getFirstChild()).getTags())
             {
-                if ((paramName = getCommentParameterName(docTag)) == null)
+                if ((reference = docTag.getReference()) != null && (resolve = reference.resolve()) != null && ! params[0]
+                        .isEquivalentTo(resolve) || (paramName = getCommentParameterName(docTag)) == null)
                 {
                     continue;
                 }

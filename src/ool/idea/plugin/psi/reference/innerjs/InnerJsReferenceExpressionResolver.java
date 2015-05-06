@@ -4,6 +4,7 @@ import com.intellij.lang.javascript.index.JSSymbolUtil;
 import com.intellij.lang.javascript.nashorn.resolve.NashornJSReferenceExpressionResolver;
 import com.intellij.lang.javascript.psi.JSCallExpression;
 import com.intellij.lang.javascript.psi.JSDefinitionExpression;
+import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.JSProperty;
 import com.intellij.lang.javascript.psi.JSQualifiedName;
 import com.intellij.lang.javascript.psi.JSQualifiedNameImpl;
@@ -20,7 +21,6 @@ import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiLiteralExpression;
 import com.intellij.psi.PsiMember;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiModifierListOwner;
@@ -32,10 +32,10 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.SmartList;
 import java.util.Iterator;
 import java.util.List;
-import ool.idea.plugin.file.index.OxyTemplateIndexUtil;
 import ool.idea.plugin.psi.OxyTemplateHelper;
 import ool.idea.plugin.psi.reference.MacroReferenceResolver;
 import ool.idea.plugin.psi.reference.innerjs.globals.GlobalVariableDefinition;
+import ool.idea.plugin.psi.reference.innerjs.globals.GlobalVariableIndex;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -84,12 +84,11 @@ public class InnerJsReferenceExpressionResolver extends NashornJSReferenceExpres
 
         if(parentResult == null || parentResult.length == 0 && isGlobalVariableSuspect(myRef))
         {
-            PsiElement reference;
+            GlobalVariableDefinition reference;
             // global
-            if((reference = OxyTemplateIndexUtil.getGlobalVariableRefrence(myReferencedName, myRef.getProject())) != null
-                    && reference instanceof PsiLiteralExpression)
+            if((reference = GlobalVariableIndex.getGlobals(myRef.getProject()).get(myReferencedName)) != null)
             {
-                return new JSResolveResult[]{new JSResolveResult(new GlobalVariableDefinition((PsiLiteralExpression)reference))};
+                return new JSResolveResult[]{new JSResolveResult(reference)};
             }
         }
 
@@ -103,6 +102,11 @@ public class InnerJsReferenceExpressionResolver extends NashornJSReferenceExpres
 
         for (PsiClass extender : ExtenderProvider.getExtenders(aClass))
         {
+            if (result.size() > 0)
+            {
+                break;
+            }
+
             result.addAll(superResolveInPsiClassModified(extender, isStatic));
         }
 
@@ -123,7 +127,7 @@ public class InnerJsReferenceExpressionResolver extends NashornJSReferenceExpres
                 : PsiTreeUtil.getParentOfType(element, JSReferenceExpression.class);
 
         return ! (expression == null || expression.getParent() instanceof JSProperty ||
-                expression.getFirstChild() instanceof JSReferenceExpression);
+                expression.getFirstChild() instanceof JSExpression);
     }
 
     /**

@@ -1,5 +1,6 @@
 package ool.idea.plugin.psi.macro.param.provider;
 
+import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiExpression;
 import com.intellij.psi.PsiLocalVariable;
@@ -14,6 +15,7 @@ import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiTreeUtil;
 import ool.idea.plugin.psi.macro.param.MacroParamSuggestionSet;
 import ool.idea.plugin.psi.macro.param.descriptor.JavaMacroParamDescriptor;
+import ool.idea.plugin.psi.reference.innerjs.InnerJsJavaTypeConvertor;
 import ool.web.template.MacroEvent;
 import ool.web.template.MacroParameterHelper;
 import org.jetbrains.annotations.NotNull;
@@ -82,7 +84,7 @@ public class JavaMacroParamSuggestionProvider extends ParamSuggestionProvider<Ps
                 String parameterName = null;
                 boolean required = false;
                 boolean notNull = true;
-                String type = Object.class.getName();
+                String type = JSCommonTypeNames.ANY_TYPE_NAME;
                 String defaultValue = null;
 
                 while (methodReference != null)
@@ -109,7 +111,8 @@ public class JavaMacroParamSuggestionProvider extends ParamSuggestionProvider<Ps
 
                             if (expressions.length == 2 && expressions[1].getFirstChild() instanceof PsiTypeElement)
                             {
-                                type = ((PsiTypeElement) expressions[1].getFirstChild()).getType().getCanonicalText(false);
+                                type = InnerJsJavaTypeConvertor.modifyCollectionType(((PsiTypeElement) expressions[1]
+                                        .getFirstChild()).getType(), paramHelper.getProject());
                             }
 
                             break;
@@ -120,7 +123,7 @@ public class JavaMacroParamSuggestionProvider extends ParamSuggestionProvider<Ps
 
                             notNull = expressions.length < 2;
                             required = expressions.length < 2;
-                            type = Integer.class.getName();
+                            type = JSCommonTypeNames.NUMBER_TYPE_NAME;
 
                             if (expressions.length == 2)
                             {
@@ -135,7 +138,7 @@ public class JavaMacroParamSuggestionProvider extends ParamSuggestionProvider<Ps
 
                             notNull = false;
                             required = false;
-                            type = Boolean.class.getName();
+                            type = JSCommonTypeNames.BOOL_TYPE_NAME;
 
                             if (expressions.length == 2)
                             {

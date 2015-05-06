@@ -4,7 +4,6 @@ import com.intellij.codeInspection.InspectionProfileEntry;
 import com.intellij.lang.javascript.highlighting.IntentionAndInspectionFilter;
 import com.intellij.lang.javascript.inspections.JSCommentMatchesSignatureInspection;
 import com.intellij.lang.javascript.inspections.JSDuplicatedDeclarationInspection;
-import com.intellij.lang.javascript.inspections.JSUnfilteredForInLoopInspection;
 import com.intellij.lang.javascript.inspections.JSUnusedAssignmentInspection;
 import com.intellij.lang.javascript.inspections.JSValidateJSDocInspection;
 import com.sixrr.inspectjs.style.UnterminatedStatementJSInspection;
@@ -26,8 +25,7 @@ public class JsIntentionAndInspectionFilter extends IntentionAndInspectionFilter
             InspectionProfileEntry.getShortName(JSDuplicatedDeclarationInspection.class.getSimpleName()),
             // JSDoc has custom handlers
             InspectionProfileEntry.getShortName(JSValidateJSDocInspection.class.getSimpleName()),
-            InspectionProfileEntry.getShortName(JSCommentMatchesSignatureInspection.class.getSimpleName()),
-            InspectionProfileEntry.getShortName(JSUnfilteredForInLoopInspection.class.getSimpleName())
+            InspectionProfileEntry.getShortName(JSCommentMatchesSignatureInspection.class.getSimpleName())
     );
 
     @Override

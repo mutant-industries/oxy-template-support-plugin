@@ -1,6 +1,8 @@
 package ool.idea.plugin.psi.macro.param.descriptor;
 
+import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.psi.PsiElement;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import ool.idea.plugin.file.index.OxyTemplateIndexUtil;
 import ool.idea.plugin.lang.I18nSupport;
@@ -9,8 +11,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * TODO refactor - getType, getPrintableType, isJavaType
- *
  * 4/15/15
  *
  * @author Petr Mayr <p.mayr@oxyonline.cz>
@@ -32,19 +32,13 @@ abstract public class MacroParamDescriptor<T extends PsiElement>
     }
 
     @Nullable
-    abstract public String getType();
-
-    @Nullable
-    abstract public String getPrintableType();
+    abstract public JSType getType();
 
     @Nullable
     abstract public String getDefaultValue();
 
     @Nullable
     abstract public String getDocText();
-
-    @NotNull
-    abstract public String getMacroInfo();
 
     abstract public boolean isRequired();
 
@@ -53,6 +47,9 @@ abstract public class MacroParamDescriptor<T extends PsiElement>
     abstract public boolean isUsedInCode();
 
     abstract public boolean isDocumented();
+
+    @NotNull
+    abstract protected String getMacroInfo();
 
     @NotNull
     public String getName()
@@ -66,9 +63,39 @@ abstract public class MacroParamDescriptor<T extends PsiElement>
         return macro;
     }
 
-    public static boolean isJavaType(String type)
+    @Nullable
+    public String getPrintableType()
     {
-        return JAVA_CLASS_FQN_PATTERN.matcher(type).matches();
+        return getPrintableType(false);
+    }
+
+    @Nullable
+    protected String getPrintableType(boolean generateLinks)
+    {
+        if (getType() == null)
+        {
+            return null;
+        }
+
+        String typeText = getType().getTypeText();
+        Matcher matcher = JAVA_CLASS_FQN_PATTERN.matcher(typeText);
+        StringBuilder result = new StringBuilder();
+        int position = 0;
+
+        while (matcher.find())
+        {
+            result.append(typeText.substring(position, matcher.start()));
+            String javaClassFqn = typeText.substring(matcher.start(), matcher.end());
+
+            result.append(generateLinks ? getDocumentationLink(javaClassFqn)
+                    : javaClassFqn.replaceFirst("^.+\\.", ""));
+
+            position = matcher.end();
+        }
+
+        result.append(typeText.substring(position));
+
+        return result.toString();
     }
 
     @Nullable
@@ -84,7 +111,7 @@ abstract public class MacroParamDescriptor<T extends PsiElement>
 
             if (getType() != null)
             {
-                builder.append(getPrintableType());
+                builder.append(getPrintableType(true));
             }
             if ( ! isRequired())
             {

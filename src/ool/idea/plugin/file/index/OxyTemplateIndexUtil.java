@@ -10,9 +10,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiLiteralExpression;
-import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiModifier;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.ProjectScope;
@@ -28,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import ool.idea.plugin.file.index.collector.JsMacroCollector;
 import ool.idea.plugin.file.index.collector.MacroCollector;
-import ool.idea.plugin.file.index.globals.JsGlobalsIndex;
 import ool.idea.plugin.file.index.nacros.MacroIndex;
 import ool.idea.plugin.file.index.nacros.js.JsMacroNameIndex;
 import ool.idea.plugin.file.index.nacros.js.JsMacroNameIndexedElement;
@@ -233,39 +229,6 @@ public class OxyTemplateIndexUtil
         }
 
         return result;
-    }
-
-    @Nullable
-    public static PsiElement getGlobalVariableRefrence(String variableName, @NotNull Project project)
-    {
-        final GlobalSearchScope allScope = ProjectScope.getProjectScope(project);
-
-        List<Integer> key = FileBasedIndex.getInstance().getValues(JsGlobalsIndex.INDEX_ID, variableName, allScope);
-
-        if ( ! key.isEmpty())
-        {
-            Collection<VirtualFile> files = FileBasedIndex.getInstance().getContainingFiles(JsGlobalsIndex.INDEX_ID, variableName, allScope);
-
-            if (files.isEmpty())
-            {
-                return null;    // no way
-            }
-
-            VirtualFile file = (VirtualFile) files.toArray()[0];
-            PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
-
-            if (psiFile != null)
-            {
-                PsiElement expr = psiFile.getViewProvider().findElementAt(key.get(0));
-
-                if (expr != null && expr.getParent() instanceof PsiLiteralExpression)
-                {
-                    return expr.getParent();
-                }
-            }
-        }
-
-        return null;
     }
 
     @Nullable

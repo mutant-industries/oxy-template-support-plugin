@@ -1,5 +1,9 @@
 package ool.idea.plugin.psi.macro.param.descriptor;
 
+import com.intellij.lang.javascript.psi.JSType;
+import com.intellij.lang.javascript.psi.JSTypeUtils;
+import com.intellij.lang.javascript.psi.types.JSTypeSource;
+import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.javadoc.PsiDocComment;
 import java.util.regex.Matcher;
@@ -19,21 +23,23 @@ public class JavaMacroParamDescriptor extends MacroParamDescriptor<PsiClass>
 
     private final boolean notNull;
 
-    private final String type;
+    private final JSType type;
 
     private final String defaultValue;
 
     private String docText;
 
     public JavaMacroParamDescriptor(@NotNull String name, @NotNull PsiClass macro, boolean notNull, boolean required,
-                                    @Nullable String type, @Nullable String defaultValue)
+                                    @Nullable String rawType, @Nullable String defaultValue)
     {
         super(name, macro);
 
         this.notNull = notNull;
         this.required = required;
-        this.type = type;
         this.defaultValue = defaultValue;
+
+        JSTypeSource typeSource = JSTypeSourceFactory.createTypeSource(macro, rawType != null);
+        type = JSTypeUtils.createType(rawType, typeSource);
 
         PsiDocComment comment = macro.getDocComment();
 
@@ -56,40 +62,11 @@ public class JavaMacroParamDescriptor extends MacroParamDescriptor<PsiClass>
         }
     }
 
-    @NotNull
-    @Override
-    public String getMacroInfo()
-    {
-        String macroQualifiedName = OxyTemplateIndexUtil.getMacroFullyQualifienName(macro);
-        String macroClassQualifiedName = macro.getQualifiedName();
-
-        assert macroQualifiedName != null;
-
-        if (macroClassQualifiedName == null)
-        {
-            return macroQualifiedName;
-        }
-
-        return getDocumentationLink(macroClassQualifiedName, macroQualifiedName);
-    }
-
     @Nullable
     @Override
-    public String getType()
+    public JSType getType()
     {
-        if (type == null || type.equals(Object.class.getName()))
-        {
-            return null;
-        }
-
         return type;
-    }
-
-    @Nullable
-    @Override
-    public String getPrintableType()
-    {
-        return getType() == null ? null : getDocumentationLink(getType());
     }
 
     @Nullable
@@ -128,6 +105,23 @@ public class JavaMacroParamDescriptor extends MacroParamDescriptor<PsiClass>
     public boolean isDocumented()
     {
         return docText != null;
+    }
+
+    @NotNull
+    @Override
+    protected String getMacroInfo()
+    {
+        String macroQualifiedName = OxyTemplateIndexUtil.getMacroFullyQualifienName(macro);
+        String macroClassQualifiedName = macro.getQualifiedName();
+
+        assert macroQualifiedName != null;
+
+        if (macroClassQualifiedName == null)
+        {
+            return macroQualifiedName;
+        }
+
+        return getDocumentationLink(macroClassQualifiedName, macroQualifiedName);
     }
 
 }

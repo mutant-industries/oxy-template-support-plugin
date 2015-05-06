@@ -5,6 +5,7 @@ import com.intellij.psi.tree.IElementType;
 import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
+import ool.idea.plugin.file.index.nacros.MacroIndex;
 import ool.idea.plugin.psi.OxyTemplateTypes;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +25,7 @@ public class OxyTemplateLexer extends AbstractOxyTemplateLexer implements FlexLe
     {
         macroAttributesContainingJavascript.put("oxy.repeat", new String[]
         {
-                "varName", "indexName"
+                MacroIndex.REPEAT_MACRO_VARIABLE_DEFINITION, MacroIndex.REPEAT_MACRO_INDEX_DEFINITION
         });
     }
 

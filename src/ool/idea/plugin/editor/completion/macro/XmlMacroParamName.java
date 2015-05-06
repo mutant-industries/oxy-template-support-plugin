@@ -8,9 +8,11 @@ import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.lang.javascript.psi.types.primitives.JSStringType;
 import com.intellij.openapi.editor.CaretModel;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
@@ -43,7 +45,10 @@ public class XmlMacroParamName extends CompletionContributor
                 public void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context,
                                            @NotNull CompletionResultSet resultSet)
                 {
-                    MacroCall macroCall = PsiTreeUtil.getParentOfType(parameters.getPosition(), MacroCall.class);
+                    PsiElement elementAt = parameters.getOriginalFile().getViewProvider().findElementAt(parameters.getOffset() - 1, OxyTemplate.INSTANCE);
+
+                    MacroCall macroCall = elementAt instanceof PsiWhiteSpace && elementAt.getPrevSibling() instanceof MacroCall ?
+                            (MacroCall) elementAt.getPrevSibling() : PsiTreeUtil.getParentOfType(parameters.getOriginalPosition(), MacroCall.class);
 
                     assert macroCall != null;
 
@@ -65,11 +70,9 @@ public class XmlMacroParamName extends CompletionContributor
                             }
                         }
 
-                        String typeText = paramDescriptor.getType() != null ? paramDescriptor.getType().replaceFirst("^.+\\.", "") : null;
                         StringBuilder lookupStringBuilder = new StringBuilder(paramDescriptor.getName() + "=\"");
 
-                        if(paramDescriptor.getType() != null && ! paramDescriptor.getType().equals(String.class.getName())
-                                && ! paramDescriptor.getType().equalsIgnoreCase(String.class.getSimpleName()))
+                        if(paramDescriptor.getType() != null && ! (paramDescriptor.getType() instanceof JSStringType))
                         {
                             lookupStringBuilder.append(ExpressionStatement.EXPRESSION_PREFIX).append(" ");
                         }
@@ -78,8 +81,8 @@ public class XmlMacroParamName extends CompletionContributor
 
                         resultSet.consume(LookupElementBuilder.create(paramDescriptor, lookupStringBuilder.toString())
                             .withPresentableText(paramDescriptor.getName())
-                            .withTypeText(typeText, true)
-                            .withBoldness(paramDescriptor.isRequired())
+                            .withTypeText(paramDescriptor.getPrintableType(), true)
+                            .withBoldness(paramDescriptor.isDocumented() && paramDescriptor.isRequired())
                             .withInsertHandler(new TrailingPatternConsumer(INSERT_CONSUME)
                             {
                                 @Override

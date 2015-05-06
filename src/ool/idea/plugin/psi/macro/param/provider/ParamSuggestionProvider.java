@@ -1,16 +1,14 @@
 package ool.idea.plugin.psi.macro.param.provider;
 
-import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.ProjectScope;
 import com.intellij.psi.util.CachedValueProvider;
 import java.util.HashSet;
 import java.util.Set;
 import ool.idea.plugin.file.index.OxyTemplateIndexUtil;
 import ool.idea.plugin.psi.macro.param.MacroParamSuggestionSet;
 import ool.idea.plugin.psi.macro.param.descriptor.MacroParamDescriptor;
+import ool.idea.plugin.psi.reference.innerjs.SimplifiedClassNameResolver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,9 +40,6 @@ abstract public class ParamSuggestionProvider<T extends PsiElement> implements C
         MacroParamSuggestionSet macroParamSuggestions = getMacroParamSuggestions();
 
         Set<PsiElement> cacheDependencies = new HashSet<>();
-        JavaPsiFacade psiFacade = JavaPsiFacade.getInstance(macro.getProject());
-        GlobalSearchScope scope = ProjectScope.getProjectScope(macro.getProject());
-        PsiClass type;
 
         for (MacroParamDescriptor descriptor : macroParamSuggestions)
         {
@@ -53,14 +48,12 @@ abstract public class ParamSuggestionProvider<T extends PsiElement> implements C
                 continue;
             }
 
-            for (String oneType : descriptor.getType().split("\\|"))
-            {
-                oneType = oneType.replaceFirst("\\s*(\\[\\])?$", "");
+            SimplifiedClassNameResolver simplifiedClassNameResolver = new SimplifiedClassNameResolver(macro.getContainingFile());
+            descriptor.getType().accept(simplifiedClassNameResolver);
 
-                if (MacroParamDescriptor.isJavaType(oneType) && (type = psiFacade.findClass(descriptor.getType(), scope)) != null)
-                {
-                    cacheDependencies.add(type);
-                }
+            for (PsiClass aClass : simplifiedClassNameResolver.getResolvedClassList())
+            {
+                cacheDependencies.add(aClass);
             }
         }
 

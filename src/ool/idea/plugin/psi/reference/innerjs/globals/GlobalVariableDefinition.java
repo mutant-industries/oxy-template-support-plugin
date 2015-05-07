@@ -2,16 +2,20 @@ package ool.idea.plugin.psi.reference.innerjs.globals;
 
 import com.intellij.ide.util.PsiNavigationSupport;
 import com.intellij.lang.Language;
-import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiExpression;
+import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiLiteralExpression;
+import com.intellij.psi.PsiReferenceExpression;
 import com.intellij.psi.impl.FakePsiElement;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValuesManager;
+import com.intellij.psi.util.PsiTreeUtil;
+import ool.idea.plugin.lang.OxyTemplateInnerJs;
 import ool.idea.plugin.psi.OxyTemplateNamedPsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,40 +31,66 @@ public class GlobalVariableDefinition extends FakePsiElement implements OxyTempl
 {
     private static final Key<CachedValue<JSType>> GLOBAL_VARIABLE_TYPE_KEY = Key.create("GLOBAL_VARIABLE_TYPE_KEY");
 
-    private PsiLiteralExpression literalExpression;
+    private PsiExpression expression;
 
-    public GlobalVariableDefinition(@NotNull PsiLiteralExpression literalExpression)
+    private String name;
+
+    public GlobalVariableDefinition(@NotNull PsiExpression expression, @NotNull String name)
     {
-        this.literalExpression = literalExpression;
+        this.expression = expression;
+        this.name = name;
     }
 
-    public PsiLiteralExpression getLiteralExpression()
+    public PsiExpression getExpression()
     {
-        return literalExpression;
+        return expression;
     }
 
     @Override
     @NotNull
     public Language getLanguage()
     {
-        return JavascriptLanguage.INSTANCE;
+        return OxyTemplateInnerJs.INSTANCE;
     }
 
     @Override
     public PsiElement getParent()
     {
-        return literalExpression;
+        return expression;
     }
 
     @Override
     public PsiElement setName(@NotNull String name)
     {
-        PsiLiteralExpression newExpr = (PsiLiteralExpression) JavaPsiFacade.getInstance(literalExpression.getProject())
+        PsiLiteralExpression newExpr = (PsiLiteralExpression) JavaPsiFacade.getInstance(expression.getProject())
                 .getElementFactory().createExpressionFromText("\"" + name + "\"", null);
 
-        literalExpression.replace(newExpr);
+        if (expression instanceof PsiLiteralExpression)
+        {
+            expression.replace(newExpr);
+            expression = newExpr;
+        }
+        else if (expression instanceof PsiReferenceExpression)
+        {
+            PsiElement resolve;
+            PsiLiteralExpression literalExpression;
 
-        literalExpression = newExpr;
+            if ((resolve = ((PsiReferenceExpression) expression).resolve()) instanceof PsiField
+                    && (literalExpression = PsiTreeUtil.getChildOfType(resolve, PsiLiteralExpression.class)) != null)
+            {
+                literalExpression.replace(newExpr);
+            }
+            else
+            {
+                throw new UnsupportedOperationException(expression.getClass().getName() + " rename not suported !");
+            }
+        }
+        else
+        {
+            throw new UnsupportedOperationException(expression.getClass().getName() + " rename not suported !");
+        }
+
+        this.name = name;
 
         return this;
     }
@@ -68,14 +98,14 @@ public class GlobalVariableDefinition extends FakePsiElement implements OxyTempl
     @Nullable
     public JSType getType()
     {
-        CachedValue<JSType> cached = literalExpression.getUserData(GLOBAL_VARIABLE_TYPE_KEY);
+        CachedValue<JSType> cached = expression.getUserData(GLOBAL_VARIABLE_TYPE_KEY);
 
         if (cached == null)
         {
-            cached = CachedValuesManager.getManager(literalExpression.getProject())
-                    .createCachedValue(new GlobalVariableTypeProvider(literalExpression), false);
+            cached = CachedValuesManager.getManager(expression.getProject())
+                    .createCachedValue(new GlobalVariableTypeProvider(expression, name), false);
 
-            literalExpression.putUserData(GLOBAL_VARIABLE_TYPE_KEY, cached);
+            expression.putUserData(GLOBAL_VARIABLE_TYPE_KEY, cached);
         }
 
         return cached.getValue();
@@ -84,27 +114,27 @@ public class GlobalVariableDefinition extends FakePsiElement implements OxyTempl
     @Override
     public String getName()
     {
-        return (String) literalExpression.getValue();
+        return name;
     }
 
     @Override
     public boolean canNavigate()
     {
-        return PsiNavigationSupport.getInstance().canNavigate(literalExpression);
+        return PsiNavigationSupport.getInstance().canNavigate(expression);
     }
 
     @NotNull
     @Override
     public Project getProject()
     {
-        return literalExpression.getProject();
+        return expression.getProject();
     }
 
     @NotNull
     @Override
     public PsiElement getNavigationElement()
     {
-        return literalExpression;
+        return expression;
     }
 
 }

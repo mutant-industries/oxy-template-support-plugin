@@ -73,7 +73,7 @@ public class OxyTemplateReferenceSearch extends QueryExecutorBase<PsiReference, 
 
             final String query = fakeTarget.getName();
 
-            queryParameters.getOptimizer().searchWord(query, scope, UsageSearchContext.IN_CODE, true, fakeTarget.getLiteralExpression(),
+            queryParameters.getOptimizer().searchWord(query, scope, UsageSearchContext.IN_CODE, true, fakeTarget.getExpression(),
                 new RequestResultProcessor()
                 {
                     @Override
@@ -85,8 +85,8 @@ public class OxyTemplateReferenceSearch extends QueryExecutorBase<PsiReference, 
                         {
                             PsiElement resolveResult = reference.resolve();
 
-                            if(resolveResult instanceof GlobalVariableDefinition && fakeTarget.getLiteralExpression()
-                                    .isEquivalentTo(((GlobalVariableDefinition) resolveResult).getLiteralExpression()) && consumer.process(reference))
+                            if(resolveResult instanceof GlobalVariableDefinition && fakeTarget.getExpression()
+                                    .isEquivalentTo(((GlobalVariableDefinition) resolveResult).getExpression()) && consumer.process(reference))
                             {
 
                             }

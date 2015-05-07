@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>ool.idea.plugin</id>
     <name>Oxy template support</name>
-    <version>1.1</version>
+    <version>1.1.1</version>
     <vendor email="p.mayr@oxyonline.cz" url="http://stash.oxyonline.local/projects/CZC/repos/macro-support-plugin">
         oXy Online s.r.o.
     </vendor>
@@ -323,7 +323,6 @@
         <fileBasedIndex implementation="ool.idea.plugin.file.index.nacros.js.JsMacroNameIndex"/>
         <lang.findUsagesProvider language="OxyTemplate" implementationClass="ool.idea.plugin.editor.usages.OxyTemplateFindUsagesProvider"/>
         <psi.referenceContributor implementation="ool.idea.plugin.psi.reference.java.LiteralJsMacroReferenceContributor" order="first"/>
-        <psi.referenceContributor implementation="ool.idea.plugin.psi.reference.java.GlobalVariableDefinitionReferenceContributor" order="first"/>
         <referencesSearch implementation="ool.idea.plugin.editor.usages.OxyTemplateReferenceSearch"/>
         <documentationProvider implementation="ool.idea.plugin.editor.documentation.MacroParamDocumentationProvider"/>
         <gotoSymbolContributor implementation="ool.idea.plugin.editor.gotosymbol.MacroGotoSymbolContributor"/>

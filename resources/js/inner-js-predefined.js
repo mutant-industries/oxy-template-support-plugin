@@ -1,22 +1,22 @@
 /**
  * Oxy namespace
  */
-var oxy = {};
+oxy = {};
 
 /**
  * Debug namespace
  */
-var debug = {};
+debug = {};
 
 /**
  * Utils namespace
  */
-var utils = {};
+utils = {};
 
 /**
- * Název registru maker, do kterého může skript přidávat makra.
+ * Macro register namespace
  */
-var macros = {
+macros = {
 
     /**
      * Oxy namespace
@@ -25,9 +25,9 @@ var macros = {
 };
 
 /**
- * Proměnná, která obsahuje PrintWriter pro výstup.
+ * Output printwriter
  */
-var out = {
+out = {
 
     /**
      * @param {String} content

@@ -9,7 +9,7 @@ macros.oxy.test = {
                     <a class="<%= _class %>"
                        href="<%= params.var3 %>"
                        title="title: <%= title %>"
-                            ></a>
+                    ></a>
                 <% } else { %>
                     <a class="<%= _class %>"
                        href="<m:oxy.bar

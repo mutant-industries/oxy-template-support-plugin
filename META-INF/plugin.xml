@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>ool.idea.plugin</id>
     <name>Oxy template support</name>
-    <version>1.1.1</version>
+    <version>1.2</version>
     <vendor email="p.mayr@oxyonline.cz" url="http://stash.oxyonline.local/projects/CZC/repos/macro-support-plugin">
         oXy Online s.r.o.
     </vendor>
@@ -15,6 +15,12 @@
     ]]></description>
 
     <change-notes><![CDATA[
+        <b>1.2</b>
+        <ul>
+            <li>
+                kompatibilita s 2016.1
+            </li>
+        </ul>
         <b>1.1</b>
         <ul>
             <li>
@@ -255,104 +261,94 @@
     </change-notes>
 
     <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Build+Number+Ranges for description -->
-    <idea-version since-build="141"/>
-
-    <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
-         on how to target different products -->
-    <!-- uncomment to enable plugin in all products
-    <depends>com.intellij.modules.lang</depends>
-    -->
+    <idea-version since-build="145"/>
 
     <extensions defaultExtensionNs="com.intellij">
-        <fileTypeFactory implementation="ool.idea.plugin.file.OxyTemplateFileTypeFactory"/>
+        <fileTypeFactory implementation="ool.intellij.plugin.file.OxyTemplateFileTypeFactory"/>
         <lang.parserDefinition language="OxyTemplate"
-                               implementationClass="ool.idea.plugin.lang.parser.definition.OxyTemplateParserDefinition"/>
+                               implementationClass="ool.intellij.plugin.lang.parser.definition.OxyTemplateParserDefinition"/>
         <lang.parserDefinition language="OxyTemplateInnerJs"
-                               implementationClass="ool.idea.plugin.lang.parser.definition.OxyTemplateInnerJsParserDefinition"/>
+                               implementationClass="ool.intellij.plugin.lang.parser.definition.OxyTemplateInnerJsParserDefinition"/>
         <lang.parserDefinition language="CompiledPreview"
-                               implementationClass="ool.idea.plugin.lang.parser.definition.CompiledPreviewParserDefinition"/>
-        <lang.treePatcher language="OxyTemplateInnerJs" implementationClass="ool.idea.plugin.lang.InnerJsTreePatcher"/>
-        <lang.treePatcher language="HTML" implementationClass="ool.idea.plugin.lang.XmlTreePatcher" order="first"/>
+                               implementationClass="ool.intellij.plugin.lang.parser.definition.CompiledPreviewParserDefinition"/>
+        <lang.treePatcher language="OxyTemplateInnerJs" implementationClass="ool.intellij.plugin.lang.InnerJsTreePatcher"/>
+        <lang.treePatcher language="HTML" implementationClass="ool.intellij.plugin.lang.XmlTreePatcher" order="first"/>
         <editorHighlighterProvider filetype="OxyTemplate"
-                                   implementationClass="ool.idea.plugin.editor.highlighter.OxyTemplateHighlighterProvider"/>
-        <lang.syntaxHighlighterFactory key="OxyTemplate"
-                                   implementationClass="ool.idea.plugin.editor.highlighter.OxyTemplateSyntaxHighlighterFactory"/>
+                                   implementationClass="ool.intellij.plugin.editor.highlighter.OxyTemplateHighlighterProvider"/>
+        <lang.syntaxHighlighterFactory language="OxyTemplate"
+                                   implementationClass="ool.intellij.plugin.editor.highlighter.OxyTemplateSyntaxHighlighterFactory"/>
         <lang.fileViewProviderFactory language="OxyTemplate"
-                                      implementationClass="ool.idea.plugin.file.OxyTemplateFileViewProviderFactory"/>
-        <braceMatcher filetype="OxyTemplate" implementationClass="ool.idea.plugin.editor.highlighter.MatchingElementHighlighter" />
-        <colorSettingsPage implementation="ool.idea.plugin.editor.highlighter.OxyTemplateColorSettingsPage"/>
-        <completion.contributor language="OxyTemplate" implementationClass="ool.idea.plugin.editor.completion.ExpressionStatement"/>
-        <completion.contributor language="OxyTemplate" implementationClass="ool.idea.plugin.editor.completion.Directive"/>
-        <completion.contributor language="OxyTemplate" implementationClass="ool.idea.plugin.editor.completion.macro.UnclosedMacroTag"/>
-        <completion.contributor language="OxyTemplate" implementationClass="ool.idea.plugin.editor.completion.macro.XmlMacroParamName"/>
-        <completion.contributor language="OxyTemplate" implementationClass="ool.idea.plugin.editor.completion.macro.name.XmlMacroName"/>
-        <completion.contributor language="HTML" implementationClass="ool.idea.plugin.editor.completion.UnclosedTag" order="first"/>
-        <completion.contributor language="HTML" implementationClass="ool.idea.plugin.editor.completion.macro.XmlMacroNamespace" order="first"/>
+                                      implementationClass="ool.intellij.plugin.file.OxyTemplateFileViewProviderFactory"/>
+        <braceMatcher filetype="OxyTemplate" implementationClass="ool.intellij.plugin.editor.highlighter.MatchingElementHighlighter" />
+        <colorSettingsPage implementation="ool.intellij.plugin.editor.highlighter.OxyTemplateColorSettingsPage"/>
+        <completion.contributor language="OxyTemplate" implementationClass="ool.intellij.plugin.editor.completion.ExpressionStatement"/>
+        <completion.contributor language="OxyTemplate" implementationClass="ool.intellij.plugin.editor.completion.Directive"/>
+        <completion.contributor language="OxyTemplate" implementationClass="ool.intellij.plugin.editor.completion.macro.UnclosedMacroTag"/>
+        <completion.contributor language="OxyTemplate" implementationClass="ool.intellij.plugin.editor.completion.macro.XmlMacroParamName"/>
+        <completion.contributor language="OxyTemplate" implementationClass="ool.intellij.plugin.editor.completion.macro.name.XmlMacroName"/>
+        <completion.contributor language="HTML" implementationClass="ool.intellij.plugin.editor.completion.UnclosedTag" order="first"/>
+        <completion.contributor language="HTML" implementationClass="ool.intellij.plugin.editor.completion.macro.XmlMacroNamespace" order="first"/>
         <completion.contributor id="oxyTemplateInnerJsMacroNameContributor" language="OxyTemplateInnerJs"
-                                implementationClass="ool.idea.plugin.editor.completion.macro.name.JsMacroName" order="first"/>
-        <completion.contributor language="OxyTemplateInnerJs" implementationClass="ool.idea.plugin.editor.completion.JavaContext"
+                                implementationClass="ool.intellij.plugin.editor.completion.macro.name.JsMacroName" order="first"/>
+        <completion.contributor language="OxyTemplateInnerJs" implementationClass="ool.intellij.plugin.editor.completion.JavaContext"
                                 order="first, after oxyTemplateInnerJsMacroNameContributor"/>
-        <completion.contributor language="OxyTemplateInnerJs" implementationClass="ool.idea.plugin.editor.completion.JsGlobalVariable"/>
-        <completion.contributor language="JavaScript" implementationClass="ool.idea.plugin.editor.completion.DwrMethod" order="first"/>
-        <typedHandler implementation="ool.idea.plugin.editor.type.BlockMarkerHandler"/>
-        <typedHandler implementation="ool.idea.plugin.editor.type.ParamQuoteHandler"/>
-        <typedHandler implementation="ool.idea.plugin.editor.type.TagCloseHandler"/>
-        <backspaceHandlerDelegate implementation="ool.idea.plugin.editor.type.BackspaceHandler"/>
-        <enterHandlerDelegate implementation="ool.idea.plugin.editor.type.EnterHandler"/>
-        <lang.commenter language="OxyTemplate" implementationClass="ool.idea.plugin.editor.comment.OxyTemplateCommenter"/>
-        <multiLangCommenter implementation="ool.idea.plugin.editor.comment.OxyTemplateCommentProvider"/>
-        <lang.formatter language="OxyTemplate" implementationClass="ool.idea.plugin.editor.format.OxyTemplateFormatter"/>
-        <lang.formatter language="OxyTemplateInnerJs" implementationClass="ool.idea.plugin.editor.format.OxyTemplateInnerJsFormatter"/>
-        <lang.foldingBuilder language="OxyTemplate" implementationClass="ool.idea.plugin.editor.folding.MatchingTagsAndJsBlock"/>
-        <lang.elementManipulator forClass="ool.idea.plugin.psi.DirectiveParamFileReference"
-                                 implementationClass="ool.idea.plugin.psi.manipulator.DirectiveParamFileReferenceManipulator"/>
-        <lang.elementManipulator forClass="ool.idea.plugin.psi.MacroName"
-                                 implementationClass="ool.idea.plugin.psi.manipulator.MacroNameManipulator"/>
-        <annotator language="OxyTemplate" implementationClass="ool.idea.plugin.editor.annotator.XmlMacroNameAnnotator"/>
-        <annotator language="OxyTemplate" implementationClass="ool.idea.plugin.editor.annotator.EncodedEntityAnnotator"/>
-        <annotator language="OxyTemplateInnerJs" implementationClass="ool.idea.plugin.editor.annotator.InnerJsAnnotator"/>
+        <completion.contributor language="OxyTemplateInnerJs" implementationClass="ool.intellij.plugin.editor.completion.JsGlobalVariable"/>
+        <completion.contributor language="JavaScript" implementationClass="ool.intellij.plugin.editor.completion.DwrMethod" order="first"/>
+        <typedHandler implementation="ool.intellij.plugin.editor.type.BlockMarkerHandler"/>
+        <typedHandler implementation="ool.intellij.plugin.editor.type.ParamQuoteHandler"/>
+        <typedHandler implementation="ool.intellij.plugin.editor.type.TagCloseHandler"/>
+        <backspaceHandlerDelegate implementation="ool.intellij.plugin.editor.type.BackspaceHandler"/>
+        <enterHandlerDelegate implementation="ool.intellij.plugin.editor.type.EnterHandler"/>
+        <lang.commenter language="OxyTemplate" implementationClass="ool.intellij.plugin.editor.comment.OxyTemplateCommenter"/>
+        <multiLangCommenter implementation="ool.intellij.plugin.editor.comment.OxyTemplateCommentProvider"/>
+        <lang.formatter language="OxyTemplate" implementationClass="ool.intellij.plugin.editor.format.OxyTemplateFormatter"/>
+        <lang.formatter language="OxyTemplateInnerJs" implementationClass="ool.intellij.plugin.editor.format.OxyTemplateInnerJsFormatter"/>
+        <lang.foldingBuilder language="OxyTemplate" implementationClass="ool.intellij.plugin.editor.folding.MatchingTagsAndJsBlock"/>
+        <lang.elementManipulator forClass="ool.intellij.plugin.psi.DirectiveParamFileReference"
+                                 implementationClass="ool.intellij.plugin.psi.manipulator.DirectiveParamFileReferenceManipulator"/>
+        <lang.elementManipulator forClass="ool.intellij.plugin.psi.MacroName"
+                                 implementationClass="ool.intellij.plugin.psi.manipulator.MacroNameManipulator"/>
+        <annotator language="OxyTemplate" implementationClass="ool.intellij.plugin.editor.annotator.XmlMacroNameAnnotator"/>
+        <annotator language="OxyTemplate" implementationClass="ool.intellij.plugin.editor.annotator.EncodedEntityAnnotator"/>
         <localInspection language="OxyTemplate" shortName="UnresolvedInclude" bundle="I18n.messages" key="inspection.unresolved.include.tooltip"
                          groupName="Oxy template" enabledByDefault="true" level="WARNING"
-                         implementationClass="ool.idea.plugin.editor.inspection.UnresolvedIncludeInspection"/>
+                         implementationClass="ool.intellij.plugin.editor.inspection.UnresolvedIncludeInspection"/>
         <localInspection language="OxyTemplate" shortName="MissingInclude" groupName="Oxy template"  bundle="I18n.messages" key="inspection.missing.include.tooltip"
                          enabledByDefault="true" level="WARNING"
-                         implementationClass="ool.idea.plugin.editor.inspection.MissingIncludeInspection"/>
+                         implementationClass="ool.intellij.plugin.editor.inspection.MissingIncludeInspection"/>
         <localInspection language="OxyTemplate" shortName="RedundantInclude" groupName="Oxy template"  bundle="I18n.messages" key="inspection.redundant.include.tooltip"
                          enabledByDefault="true" level="WARNING"
-                         implementationClass="ool.idea.plugin.editor.inspection.RedundantIncludeInspection"/>
-        <fileBasedIndex implementation="ool.idea.plugin.file.index.nacros.js.JsMacroNameIndex"/>
-        <lang.findUsagesProvider language="OxyTemplate" implementationClass="ool.idea.plugin.editor.usages.OxyTemplateFindUsagesProvider"/>
-        <psi.referenceContributor implementation="ool.idea.plugin.psi.reference.java.LiteralJsMacroReferenceContributor" order="first"/>
-        <referencesSearch implementation="ool.idea.plugin.editor.usages.OxyTemplateReferenceSearch"/>
-        <documentationProvider implementation="ool.idea.plugin.editor.documentation.MacroParamDocumentationProvider"/>
-        <gotoSymbolContributor implementation="ool.idea.plugin.editor.gotosymbol.MacroGotoSymbolContributor"/>
-        <lang.psiStructureViewFactory language="OxyTemplate" implementationClass="ool.idea.plugin.editor.structure.OxyTemplateStructureViewFactory"/>
-        <lang.importOptimizer language="OxyTemplate" implementationClass="ool.idea.plugin.action.IncludeOptimizer"/>
-        <highlightErrorFilter implementation="ool.idea.plugin.lang.parser.ErrorFilter"/>
+                         implementationClass="ool.intellij.plugin.editor.inspection.RedundantIncludeInspection"/>
+        <fileBasedIndex implementation="ool.intellij.plugin.file.index.nacro.js.JsMacroNameIndex"/>
+        <lang.findUsagesProvider language="OxyTemplate" implementationClass="ool.intellij.plugin.editor.usages.OxyTemplateFindUsagesProvider"/>
+        <psi.referenceContributor implementation="ool.intellij.plugin.psi.reference.java.LiteralJsMacroReferenceContributor" order="first"/>
+        <referencesSearch implementation="ool.intellij.plugin.editor.usages.OxyTemplateReferenceSearch"/>
+        <documentationProvider implementation="ool.intellij.plugin.editor.documentation.MacroParamDocumentationProvider"/>
+        <gotoSymbolContributor implementation="ool.intellij.plugin.editor.gotosymbol.MacroGotoSymbolContributor"/>
+        <lang.psiStructureViewFactory language="OxyTemplate" implementationClass="ool.intellij.plugin.editor.structure.OxyTemplateStructureViewFactory"/>
+        <lang.importOptimizer language="OxyTemplate" implementationClass="ool.intellij.plugin.action.IncludeOptimizer"/>
+        <highlightErrorFilter implementation="ool.intellij.plugin.lang.parser.ErrorFilter"/>
     </extensions>
     <extensions defaultExtensionNs="JavaScript">
-        <predefinedLibraryProvider implementation="ool.idea.plugin.editor.InnerJsPredefinedLibrary"/>
-        <intentionAndInspectionFilter language="OxyTemplate" implementationClass="ool.idea.plugin.editor.inspection.filter.JsIntentionAndInspectionFilter"/>
-        <dialectSpecificHandlersFactory language="JavaScript" implementationClass="ool.idea.plugin.file.JsSpecificHandlersFactory" order="first"/>
-        <dialectSpecificHandlersFactory language="OxyTemplateInnerJs" implementationClass="ool.idea.plugin.file.OxyTemplateJsSpecificHandlersFactory"/>
-        <dialectSpecificHandlersFactory language="CompiledPreview" implementationClass="ool.idea.plugin.file.OxyTemplateJsSpecificHandlersFactory"/>
-        <frameworkIndexingHandler implementation="ool.idea.plugin.psi.reference.innerjs.InnerJsJavaTypeConvertor"/>
-        <elementScopeProvider language="OxyTemplateInnerJs" implementationClass="ool.idea.plugin.psi.reference.innerjs.InnerJsResolveScopeProvider"/>
-        <elementScopeProvider language="CompiledPreview" implementationClass="ool.idea.plugin.psi.reference.innerjs.CompiledPreviewResolveScopeProvider"/>
+        <predefinedLibraryProvider implementation="ool.intellij.plugin.editor.InnerJsPredefinedLibrary"/>
+        <intentionAndInspectionFilter language="OxyTemplate" implementationClass="ool.intellij.plugin.editor.inspection.filter.JsIntentionAndInspectionFilter"/>
+        <dialectSpecificHandlersFactory language="JavaScript" implementationClass="ool.intellij.plugin.file.JsSpecificHandlersFactory" order="first"/>
+        <dialectSpecificHandlersFactory language="OxyTemplateInnerJs" implementationClass="ool.intellij.plugin.file.OxyTemplateJsSpecificHandlersFactory"/>
+        <dialectSpecificHandlersFactory language="CompiledPreview" implementationClass="ool.intellij.plugin.file.OxyTemplateJsSpecificHandlersFactory"/>
+        <frameworkIndexingHandler implementation="ool.intellij.plugin.psi.reference.innerjs.InnerJsJavaTypeConverter"/>
+        <elementScopeProvider language="OxyTemplateInnerJs" implementationClass="ool.intellij.plugin.psi.reference.innerjs.InnerJsResolveScopeProvider"/>
+        <elementScopeProvider language="CompiledPreview" implementationClass="ool.intellij.plugin.psi.reference.innerjs.CompiledPreviewResolveScopeProvider"/>
+        <analysisHandlersFactory language="OxyTemplateInnerJs" implementationClass="ool.intellij.plugin.lang.InnerJsAnalysisHandlersFactory"/>
     </extensions>
-
-    <application-components>
-        <!-- Add your application components here -->
-    </application-components>
 
     <project-components>
         <component>
-            <implementation-class>ool.idea.plugin.action.compile.CompiledPreviewController</implementation-class>
+            <implementation-class>ool.intellij.plugin.action.compile.CompiledPreviewController</implementation-class>
         </component>
     </project-components>
 
     <actions>
-        <action id="oxy.compiledCode" class="ool.idea.plugin.action.compile.CompiledPreviewAction" text="Compiled Code"
+        <action id="oxy.compiledCode" class="ool.intellij.plugin.action.compile.CompiledPreviewAction" text="Compiled Code"
                 icon="/icons/default.png">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
             <keyboard-shortcut keymap="$default" first-keystroke="alt C"/>

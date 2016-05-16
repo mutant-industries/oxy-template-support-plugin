@@ -8,8 +8,8 @@
 <m:bar>
         Gallus domesticus genetrix est.
 <div>
-    <br/>
-    Cum frondator cadunt, omnes fraticinidaes anhelare flavum, rusticus parses.
+<br/>
+Cum frondator cadunt, omnes fraticinidaes anhelare flavum, rusticus parses.
     <m:bar/>
     <m:bar>
 

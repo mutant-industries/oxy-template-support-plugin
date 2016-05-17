@@ -1,7 +1,7 @@
 <idea-plugin version="2">
-    <id>ool.idea.plugin</id>
+    <id>ool.intellij.plugin</id>
     <name>Oxy template support</name>
-    <version>1.2</version>
+    <version>1.3</version>
     <vendor email="p.mayr@oxyonline.cz" url="http://stash.oxyonline.local/projects/CZC/repos/macro-support-plugin">
         oXy Online s.r.o.
     </vendor>
@@ -15,6 +15,12 @@
     ]]></description>
 
     <change-notes><![CDATA[
+        <b>1.3</b>
+        <ul>
+            <li>
+                vyhledávání referencí getterů java objektů a jejich extenderů v šablonách
+            </li>
+        </ul>
         <b>1.2</b>
         <ul>
             <li>
@@ -322,7 +328,10 @@
         <fileBasedIndex implementation="ool.intellij.plugin.file.index.nacro.js.JsMacroNameIndex"/>
         <lang.findUsagesProvider language="OxyTemplate" implementationClass="ool.intellij.plugin.editor.usages.OxyTemplateFindUsagesProvider"/>
         <psi.referenceContributor implementation="ool.intellij.plugin.psi.reference.java.LiteralJsMacroReferenceContributor" order="first"/>
-        <referencesSearch implementation="ool.intellij.plugin.editor.usages.OxyTemplateReferenceSearch"/>
+        <referencesSearch implementation="ool.intellij.plugin.editor.usages.search.JavaMacroReferenceSearch"/>
+        <referencesSearch implementation="ool.intellij.plugin.editor.usages.search.GlobalVariableReferenceSearch"/>
+        <referencesSearch implementation="ool.intellij.plugin.editor.usages.search.JavaSpecialGetterReferenceSearch"/>
+        <methodReferencesSearch implementation="ool.intellij.plugin.editor.usages.search.JavaGetterReferenceSearch"/>
         <documentationProvider implementation="ool.intellij.plugin.editor.documentation.MacroParamDocumentationProvider"/>
         <gotoSymbolContributor implementation="ool.intellij.plugin.editor.gotosymbol.MacroGotoSymbolContributor"/>
         <lang.psiStructureViewFactory language="OxyTemplate" implementationClass="ool.intellij.plugin.editor.structure.OxyTemplateStructureViewFactory"/>

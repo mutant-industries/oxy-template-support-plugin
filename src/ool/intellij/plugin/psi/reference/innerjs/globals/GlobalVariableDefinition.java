@@ -83,12 +83,12 @@ public class GlobalVariableDefinition extends FakePsiElement implements OxyTempl
             }
             else
             {
-                throw new UnsupportedOperationException(expression.getClass().getName() + " rename not suported !");
+                throw new UnsupportedOperationException(expression.getClass().getName() + " rename not supported !");
             }
         }
         else
         {
-            throw new UnsupportedOperationException(expression.getClass().getName() + " rename not suported !");
+            throw new UnsupportedOperationException(expression.getClass().getName() + " rename not supported !");
         }
 
         this.name = name;
@@ -112,6 +112,7 @@ public class GlobalVariableDefinition extends FakePsiElement implements OxyTempl
         return cached.getValue();
     }
 
+    @NotNull
     @Override
     public String getName()
     {

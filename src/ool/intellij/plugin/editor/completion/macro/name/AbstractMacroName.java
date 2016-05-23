@@ -56,7 +56,7 @@ abstract public class AbstractMacroName extends CompletionContributor
 
         if (parameters.getInvocationCount() == 1)
         {
-            result.addLookupAdvertisement(I18nSupport.message("completion.macro.name.advertisment",
+            result.addLookupAdvertisement(I18nSupport.message("completion.macro.name.advertisement",
                     getActionShortcut(IdeActions.ACTION_CODE_COMPLETION)));
 
             restriction = new LinkedList<>(OxyTemplateHelper.getIncludedFiles(parameters.getOriginalFile()).values());

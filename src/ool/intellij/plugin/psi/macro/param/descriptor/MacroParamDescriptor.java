@@ -105,7 +105,31 @@ abstract public class MacroParamDescriptor<T extends PsiElement>
     {
         StringBuilder builder = new StringBuilder();
 
-        builder.append("<h5>");
+        builder.append("<h5>")
+                .append(generateTypeInfo())
+                .append("in ").append(getMacroInfo())
+                .append("</h5>");
+
+        if (getDocText() != null)
+        {
+            builder.append("<p>")
+                    .append(getDocText())
+                    .append("</p>");
+        }
+
+        String result = builder.toString().trim();
+
+        if (result.length() == 0)
+        {
+            return null;
+        }
+
+        return result;
+    }
+
+    public String generateTypeInfo()
+    {
+        StringBuilder builder = new StringBuilder();
 
         if (getType() != null || !isRequired() || isNotNull())
         {
@@ -117,7 +141,7 @@ abstract public class MacroParamDescriptor<T extends PsiElement>
             }
             if ( ! isRequired())
             {
-                builder.append(builder.length() > 6 ? ", " : "").append(I18nSupport.message("macro.param.optional"));
+                builder.append(builder.length() > 2 ? ", " : "").append(I18nSupport.message("macro.param.optional"));
 
                 if (getDefaultValue() != null)
                 {
@@ -126,29 +150,13 @@ abstract public class MacroParamDescriptor<T extends PsiElement>
             }
             if (isNotNull())
             {
-                builder.append(builder.length() > 6 ? ", " : "").append("notnull");
+                builder.append(builder.length() > 2 ? ", " : "").append("notnull");
             }
 
             builder.append(" ] ");
         }
 
-        builder.append("in ").append(getMacroInfo());
-
-        builder.append("</h5>");
-
-        if (getDocText() != null)
-        {
-            builder.append("<p>").append(getDocText()).append("</p>");
-        }
-
-        String result = builder.toString().trim();
-
-        if (result.length() == 0)
-        {
-            return null;
-        }
-
-        return result;
+        return builder.toString();
     }
 
     // -------------------------------------------------------------------------------------------------

@@ -17,7 +17,6 @@ import ool.intellij.plugin.psi.reference.innerjs.globals.GlobalVariableDefinitio
 import com.google.common.collect.ImmutableList;
 import com.intellij.lang.javascript.nashorn.resolve.NashornJSTypeEvaluator;
 import com.intellij.lang.javascript.psi.JSCallExpression;
-import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.JSFunctionExpression;
 import com.intellij.lang.javascript.psi.JSParameter;
 import com.intellij.lang.javascript.psi.JSProperty;
@@ -56,6 +55,7 @@ public class InnerJsTypeEvaluator extends NashornJSTypeEvaluator
     protected void addTypeFromVariableResolveResult(@NotNull JSVariable jsVariable)
     {
         JSProperty macro;
+        JSType type;
 
         // macro first parameter
         if (jsVariable instanceof JSParameter && (macro = checkMacroFirstParameter((JSParameter) jsVariable)) != null)
@@ -65,9 +65,9 @@ public class InnerJsTypeEvaluator extends NashornJSTypeEvaluator
             return;
         }
         // function parameter
-        else if (jsVariable instanceof JSParameter && jsVariable.getType() != null)
+        else if (jsVariable instanceof JSParameter && (type = ((JSParameter) jsVariable).getType()) != null)
         {
-            jsVariable.getType().accept(new SimplifiedClassNameResolver(myContext.targetFile));
+            type.accept(new SimplifiedClassNameResolver(myContext.targetFile));
         }
 
         super.addTypeFromVariableResolveResult(jsVariable);
@@ -99,7 +99,7 @@ public class InnerJsTypeEvaluator extends NashornJSTypeEvaluator
 
     // TODO temp code, see https://youtrack.jetbrains.com/issue/WEB-16383
     @Override
-    protected JSExpression evaluateCallExpressionTypes(JSCallExpression callExpression)
+    protected void evaluateCallExpressionTypes(JSCallExpression callExpression)
     {
         PsiElement resolve;
 
@@ -108,10 +108,10 @@ public class InnerJsTypeEvaluator extends NashornJSTypeEvaluator
         {
             addType(InnerJsJavaTypeConverter.getPsiElementJsType(resolve), callExpression);
 
-            return callExpression;
+            return;
         }
 
-        return super.evaluateCallExpressionTypes(callExpression);
+        super.evaluateCallExpressionTypes(callExpression);
     }
     // -------------------------------------------------------------------
 
@@ -222,8 +222,8 @@ public class InnerJsTypeEvaluator extends NashornJSTypeEvaluator
         {
             functionExpression = (JSFunctionExpression) macro.getLastChild();
 
-            if (functionExpression.getParameters().length > 0 && functionExpression.getParameters()[0].getSource()
-                    .isEquivalentTo(parameter.getSource()))
+            if (functionExpression.getParameters().length > 0 && functionExpression.getParameters()[0]
+                    .isEquivalentTo(parameter))
             {
                 return macro;
             }

@@ -51,4 +51,3 @@ class JSDocPlainCommentBuilder implements JSDocumentationProcessor
     }
 
 }
-

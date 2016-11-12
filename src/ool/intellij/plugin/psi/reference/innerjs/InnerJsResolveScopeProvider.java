@@ -66,4 +66,10 @@ public class InnerJsResolveScopeProvider extends JSElementResolveScopeProvider
                 OxyTemplateFileType.INSTANCE);
     }
 
+    @Override
+    protected boolean isApplicable(@NotNull VirtualFile virtualFile)
+    {
+        return virtualFile.getFileType() == OxyTemplateFileType.INSTANCE;
+    }
+
 }

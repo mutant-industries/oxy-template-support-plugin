@@ -19,7 +19,9 @@ import com.intellij.lang.javascript.psi.JSQualifiedNameImpl;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.resolve.BaseJSSymbolProcessor;
+import com.intellij.lang.javascript.psi.resolve.JSContextLevel;
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
+import com.intellij.lang.javascript.psi.resolve.JSTaggedResolveResult;
 import com.intellij.lang.javascript.psi.resolve.WalkUpResolveProcessor;
 import com.intellij.lang.javascript.psi.types.JSContext;
 import com.intellij.openapi.module.Module;
@@ -143,7 +145,7 @@ public class InnerJsReferenceExpressionResolver extends NashornJSReferenceExpres
     protected ResolveResult[] getResultsFromProcessor(WalkUpResolveProcessor processor)
     {
         List taggedResolveResults = processor.getTaggedResolveResults();
-        if (taggedResolveResults.isEmpty() || ((WalkUpResolveProcessor.TaggedResolveResult) taggedResolveResults.get(0)).hasTag(WalkUpResolveProcessor.ResolveResultTag.PARTIAL))
+        if (taggedResolveResults.isEmpty() || ((JSTaggedResolveResult) taggedResolveResults.get(0)).hasTag(JSTaggedResolveResult.ResolveResultTag.PARTIAL))
         {
             Module module;
             if (JSSymbolUtil.isAccurateReferenceExpression(this.myRef))
@@ -197,7 +199,7 @@ public class InnerJsReferenceExpressionResolver extends NashornJSReferenceExpres
 
                 while (i$.hasNext())
                 {
-                    BaseJSSymbolProcessor.TypeInfo.ContextLevel level = (BaseJSSymbolProcessor.TypeInfo.ContextLevel) i$.next();
+                    JSContextLevel level = (JSContextLevel) i$.next();
                     JSQualifiedName qualifiedName = level.myNamespace.getQualifiedName();
                     if (level.myRelativeLevel == 0 && qualifiedName != null)
                     {

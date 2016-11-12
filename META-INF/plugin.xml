@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>ool.intellij.plugin</id>
     <name>Oxy template support</name>
-    <version>1.3.2</version>
+    <version>1.3.3</version>
     <vendor email="p.mayr@oxyonline.cz" url="http://stash.oxyonline.local/projects/CZC/repos/macro-support-plugin">
         oXy Online s.r.o.
     </vendor>
@@ -15,6 +15,12 @@
     ]]></description>
 
     <change-notes><![CDATA[
+        <b>1.3.3</b>
+        <ul>
+            <li>
+                kompatibilita s 2016.3
+            </li>
+        </ul>
         <b>1.3.2</b>
         <ul>
             <li>
@@ -279,7 +285,7 @@
     </change-notes>
 
     <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Build+Number+Ranges for description -->
-    <idea-version since-build="162"/>
+    <idea-version since-build="163"/>
 
     <extensions defaultExtensionNs="com.intellij">
         <fileTypeFactory implementation="ool.intellij.plugin.file.OxyTemplateFileTypeFactory"/>

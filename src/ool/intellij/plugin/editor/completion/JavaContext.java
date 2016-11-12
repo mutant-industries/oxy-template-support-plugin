@@ -20,7 +20,7 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.JSType;
-import com.intellij.lang.javascript.psi.resolve.BaseJSSymbolProcessor;
+import com.intellij.lang.javascript.psi.resolve.JSSimpleTypeProcessor;
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator;
 import com.intellij.lang.javascript.psi.types.JSCompositeTypeImpl;
 import com.intellij.lang.javascript.psi.types.JSTypeImpl;
@@ -94,7 +94,7 @@ public class JavaContext extends CompletionContributor
             return;
         }
 
-        BaseJSSymbolProcessor.SimpleTypeProcessor typeProcessor = new BaseJSSymbolProcessor.SimpleTypeProcessor();
+        JSSimpleTypeProcessor typeProcessor = new JSSimpleTypeProcessor();
         JSTypeEvaluator.evaluateTypes((JSExpression) element, parameters.getOriginalFile()
                 .getViewProvider().getPsi(OxyTemplateInnerJs.INSTANCE), typeProcessor);
         JSType type = typeProcessor.getType();

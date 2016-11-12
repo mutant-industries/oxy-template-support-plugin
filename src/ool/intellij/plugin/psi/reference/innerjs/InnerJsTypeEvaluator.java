@@ -24,8 +24,8 @@ import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.lang.javascript.psi.JSVarStatement;
 import com.intellij.lang.javascript.psi.JSVariable;
-import com.intellij.lang.javascript.psi.resolve.BaseJSSymbolProcessor;
 import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext;
+import com.intellij.lang.javascript.psi.resolve.JSSimpleTypeProcessor;
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator;
 import com.intellij.lang.javascript.psi.resolve.JSTypeProcessor;
 import com.intellij.lang.javascript.psi.types.JSArrayTypeImpl;
@@ -193,7 +193,8 @@ public class InnerJsTypeEvaluator extends NashornJSTypeEvaluator
 
                 if (statement != null)
                 {
-                    BaseJSSymbolProcessor.SimpleTypeProcessor typeProcessor = new BaseJSSymbolProcessor.SimpleTypeProcessor();
+                    JSSimpleTypeProcessor typeProcessor = new JSSimpleTypeProcessor();
+
                     JSTypeEvaluator.evaluateTypes(statement, statement.getContainingFile(), typeProcessor);
 
                     if (typeProcessor.getType() instanceof JSArrayTypeImpl)

@@ -99,7 +99,7 @@ public class InnerJsTypeEvaluator extends NashornJSTypeEvaluator
 
     // TODO temp code, see https://youtrack.jetbrains.com/issue/WEB-16383
     @Override
-    protected void evaluateCallExpressionTypes(JSCallExpression callExpression)
+    protected void evaluateCallExpressionTypes(JSCallExpression callExpression, @NotNull JSEvaluateContext.JSEvaluationPlace place)
     {
         PsiElement resolve;
 
@@ -111,7 +111,7 @@ public class InnerJsTypeEvaluator extends NashornJSTypeEvaluator
             return;
         }
 
-        super.evaluateCallExpressionTypes(callExpression);
+        super.evaluateCallExpressionTypes(callExpression, place);
     }
     // -------------------------------------------------------------------
 

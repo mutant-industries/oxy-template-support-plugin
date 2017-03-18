@@ -121,7 +121,7 @@ public class CompiledPreviewController extends AbstractProjectComponent
                 // find editor window where the file is opened
                 for (EditorWindow window : fileEditorManager.getWindows())
                 {
-                    if (window.findFileIndex(virtualFile) != -1)
+                    if (findFileIndex(window, virtualFile) != -1)
                     {
                         editorWindow = window;
 
@@ -163,7 +163,7 @@ public class CompiledPreviewController extends AbstractProjectComponent
             {
                 editorWindow.split(SwingConstants.HORIZONTAL, false, virtualFile, false);
             }
-            if (editorWindow.findFileIndex(virtualFile) == -1)
+            if (findFileIndex(editorWindow, virtualFile) == -1)
             {
                 fileEditorManager.openFile(virtualFile, false);
             }
@@ -284,6 +284,27 @@ public class CompiledPreviewController extends AbstractProjectComponent
 
             printWriter.close();
         }
+    }
+
+    /**
+     * @param editorWindow
+     * @param virtualFile
+     * @return index of virtualFile opened in given editorWindow, -1 if not found
+     */
+    private int findFileIndex(EditorWindow editorWindow, VirtualFile virtualFile)
+    {
+        int index = 0;
+
+        for (VirtualFile file : editorWindow.getFiles())
+        {
+            if (file.equals(virtualFile)) {
+                return index;
+            }
+
+            index++;
+        }
+
+        return -1;
     }
 
 }

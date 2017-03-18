@@ -9,7 +9,6 @@ import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.ResolveResult;
@@ -31,13 +30,13 @@ public class DwrReferenceResolver extends JSReferenceExpressionResolver
     @NonNls
     private static final String DWR_REMOTE_METHOD_FQN = "org.directwebremoting.annotations.RemoteMethod";
 
-    public DwrReferenceResolver(JSReferenceExpressionImpl expression, PsiFile file)
+    public DwrReferenceResolver(@NotNull JSReferenceExpressionImpl expression, boolean ignorePerformanceLimits)
     {
-        super(expression, file);
+        super(expression, ignorePerformanceLimits);
     }
 
     @Override
-    public ResolveResult[] doResolve()
+    public ResolveResult[] resolve(@NotNull JSReferenceExpressionImpl expression, boolean incompleteCode)
     {
         PsiClass dwrClass;
 
@@ -59,9 +58,9 @@ public class DwrReferenceResolver extends JSReferenceExpressionResolver
             }
         }
 
-        ResolveResult[] parentResult = super.doResolve();
+        ResolveResult[] parentResult = super.resolve(expression, incompleteCode);
 
-        if (parentResult == null || parentResult.length == 0)
+        if (parentResult.length == 0)
         {
             // dwr class ----------------------------------------------------------------------
             if (myRef.getParent() instanceof JSReferenceExpression && ! (myRef.getParent().getParent() instanceof JSReferenceExpression)

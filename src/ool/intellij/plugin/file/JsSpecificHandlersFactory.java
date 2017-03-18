@@ -4,8 +4,7 @@ import ool.intellij.plugin.psi.reference.js.DwrReferenceResolver;
 
 import com.intellij.lang.javascript.JavaScriptSpecificHandlersFactory;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
-import com.intellij.psi.PsiFile;
+import com.intellij.psi.impl.source.resolve.ResolveCache.PolyVariantResolver;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -17,10 +16,10 @@ public class JsSpecificHandlersFactory extends JavaScriptSpecificHandlersFactory
 {
     @NotNull
     @Override
-    public JSResolveUtil.Resolver<JSReferenceExpressionImpl> createReferenceExpressionResolver(JSReferenceExpressionImpl referenceExpression,
-                                                                                               PsiFile containingFile)
+    public PolyVariantResolver<JSReferenceExpressionImpl> createReferenceExpressionResolver(JSReferenceExpressionImpl referenceExpression,
+                                                                                                         boolean ignorePerformanceLimits)
     {
-        return new DwrReferenceResolver(referenceExpression, containingFile);
+        return new DwrReferenceResolver(referenceExpression, ignorePerformanceLimits);
     }
 
 }

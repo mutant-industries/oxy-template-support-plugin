@@ -6,10 +6,9 @@ import ool.intellij.plugin.psi.reference.innerjs.InnerJsTypeEvaluator;
 import com.intellij.lang.javascript.nashorn.NashornJSSpecificHandlersFactory;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext;
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator;
 import com.intellij.lang.javascript.psi.resolve.JSTypeProcessor;
-import com.intellij.psi.PsiFile;
+import com.intellij.psi.impl.source.resolve.ResolveCache.PolyVariantResolver;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -21,10 +20,10 @@ public class OxyTemplateJsSpecificHandlersFactory extends NashornJSSpecificHandl
 {
     @NotNull
     @Override
-    public JSResolveUtil.Resolver<JSReferenceExpressionImpl> createReferenceExpressionResolver(JSReferenceExpressionImpl referenceExpression,
-                                                                                               PsiFile containingFile)
+    public PolyVariantResolver<JSReferenceExpressionImpl> createReferenceExpressionResolver(JSReferenceExpressionImpl referenceExpression,
+                                                                                                         boolean ignorePerformanceLimits)
     {
-        return new InnerJsReferenceExpressionResolver(referenceExpression, containingFile);
+        return new InnerJsReferenceExpressionResolver(referenceExpression, ignorePerformanceLimits);
     }
 
     @NotNull

@@ -9,7 +9,7 @@ import com.intellij.lang.javascript.inspections.JSCommentMatchesSignatureInspect
 import com.intellij.lang.javascript.inspections.JSDuplicatedDeclarationInspection;
 import com.intellij.lang.javascript.inspections.JSUnusedAssignmentInspection;
 import com.intellij.lang.javascript.inspections.JSValidateJSDocInspection;
-import com.sixrr.inspectjs.style.UnterminatedStatementJSInspection;
+import com.intellij.lang.javascript.inspections.UnterminatedStatementJSInspection;
 import com.sixrr.inspectjs.validity.BadExpressionStatementJSInspection;
 
 /**

@@ -30,7 +30,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiMember;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiModifierListOwner;
@@ -49,13 +48,13 @@ import org.jetbrains.annotations.NotNull;
  */
 public class InnerJsReferenceExpressionResolver extends NashornJSReferenceExpressionResolver
 {
-    public InnerJsReferenceExpressionResolver(JSReferenceExpressionImpl expression, PsiFile file)
+    public InnerJsReferenceExpressionResolver(JSReferenceExpressionImpl expression, boolean ignorePerformanceLimits)
     {
-        super(expression, file);
+        super(expression, ignorePerformanceLimits);
     }
 
     @Override
-    public ResolveResult[] doResolve()
+    public ResolveResult[] resolve(@NotNull JSReferenceExpressionImpl expression, boolean incompleteCode)
     {
         if (myReferencedName == null)
         {
@@ -84,9 +83,9 @@ public class InnerJsReferenceExpressionResolver extends NashornJSReferenceExpres
             }
         }
 
-        ResolveResult[] parentResult = super.doResolve();
+        ResolveResult[] parentResult = super.resolve(expression, incompleteCode);
 
-        if (parentResult == null || parentResult.length == 0 && isGlobalVariableSuspect(myRef))
+        if (parentResult.length == 0 && isGlobalVariableSuspect(myRef))
         {
             GlobalVariableDefinition reference;
             // global
@@ -144,83 +143,83 @@ public class InnerJsReferenceExpressionResolver extends NashornJSReferenceExpres
     // --------------------------------------------------------------------------------------------------------------
     protected ResolveResult[] getResultsFromProcessor(WalkUpResolveProcessor processor)
     {
-        List taggedResolveResults = processor.getTaggedResolveResults();
-        if (taggedResolveResults.isEmpty() || ((JSTaggedResolveResult) taggedResolveResults.get(0)).hasTag(JSTaggedResolveResult.ResolveResultTag.PARTIAL))
+        List<JSTaggedResolveResult> taggedResolveResults = processor.getTaggedResolveResults();
+        if (taggedResolveResults.isEmpty() || (taggedResolveResults.get(0)).hasTag(JSTaggedResolveResult.ResolveResultTag.PARTIAL))
         {
             Module module;
             if (JSSymbolUtil.isAccurateReferenceExpression(this.myRef))
             {
                 if (this.myQualifier instanceof JSReferenceExpression)
                 {
-                    PsiElement typeInfo = ((JSReferenceExpression) this.myQualifier).resolve();
-                    if (typeInfo instanceof PsiClass)
+                    PsiElement qualifierResolve = ((JSReferenceExpression) this.myQualifier).resolve();
+                    if (qualifierResolve instanceof PsiClass)
                     {
-                        List module1 = this.resolveInPsiClass((PsiClass) typeInfo, true);
-                        return module1.isEmpty() ? ResolveResult.EMPTY_ARRAY : (ResolveResult[]) module1.toArray(new ResolveResult[module1.size()]);
+                        List<ResolveResult> results = this.resolveInPsiClass((PsiClass) qualifierResolve, true);
+                        return results.isEmpty() ? ResolveResult.EMPTY_ARRAY : results.toArray(new ResolveResult[results.size()]);
                     }
                 }
 
-                JavaPsiFacade typeInfo1 = JavaPsiFacade.getInstance(this.myContainingFile.getProject());
+                JavaPsiFacade psiFacade = JavaPsiFacade.getInstance(this.myContainingFile.getProject());
                 module = ModuleUtilCore.findModuleForPsiElement(this.myContainingFile);
-                JSQualifiedName psiFacade = JSSymbolUtil.getAccurateReferenceName(this.myRef);
-                if (psiFacade != null)
+                JSQualifiedName qualifiedName = JSSymbolUtil.getAccurateReferenceName(this.myRef);
+                if (qualifiedName != null)
                 {
-                    psiFacade = ((JSQualifiedNameImpl) psiFacade).withoutInnermostComponent("Packages");
+                    qualifiedName = ((JSQualifiedNameImpl) qualifiedName).withoutInnermostComponent("Packages");
                 }
 
-                if (psiFacade != null)
+                if (qualifiedName != null)
                 {
-                    String scope = psiFacade.getQualifiedName();
+                    String qName = qualifiedName.getQualifiedName();
                     if (module != null)
                     {
-                        PsiClass javaResults = typeInfo1.findClass(scope, GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module));
-                        if (javaResults != null)
+                        PsiClass aClass = psiFacade.findClass(qName, GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module));
+                        if (aClass != null)
                         {
-                            return new ResolveResult[]{new JSResolveResult(javaResults)};
+                            return new ResolveResult[]{new JSResolveResult(aClass)};
                         }
                     }
 
-                    PsiPackage javaResults1 = typeInfo1.findPackage(scope);
-                    if (javaResults1 != null)
+                    PsiPackage aPackage = psiFacade.findPackage(qName);
+                    if (aPackage != null)
                     {
-                        return new ResolveResult[]{new JSResolveResult(javaResults1)};
+                        return new ResolveResult[]{new JSResolveResult(aPackage)};
                     }
                 }
             }
 
-            BaseJSSymbolProcessor.TypeInfo typeInfo2 = processor.getTypeInfo();
-            if (!typeInfo2.myContextLevels.isEmpty() && (module = ModuleUtilCore.findModuleForPsiElement(this.myContainingFile)) != null)
+            BaseJSSymbolProcessor.TypeInfo typeInfo = processor.getTypeInfo();
+            if (!typeInfo.myContextLevels.isEmpty() && (module = ModuleUtilCore.findModuleForPsiElement(this.myContainingFile)) != null)
             {
-                JavaPsiFacade psiFacade1 = JavaPsiFacade.getInstance(this.myContainingFile.getProject());
-                GlobalSearchScope scope1 = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module);
-                SmartList javaResults2 = new SmartList();
+                JavaPsiFacade psiFacade = JavaPsiFacade.getInstance(this.myContainingFile.getProject());
+                GlobalSearchScope scope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module);
+                List<ResolveResult> javaResults = new SmartList();
                 boolean contextResolvesToJavaClass = false;
-                Iterator i$ = typeInfo2.myContextLevels.iterator();
+                Iterator var9 = typeInfo.myContextLevels.iterator();
 
-                while (i$.hasNext())
+                while (var9.hasNext())
                 {
-                    JSContextLevel level = (JSContextLevel) i$.next();
+                    JSContextLevel level = (JSContextLevel) var9.next();
                     JSQualifiedName qualifiedName = level.myNamespace.getQualifiedName();
                     if (level.myRelativeLevel == 0 && qualifiedName != null)
                     {
-                        PsiClass aClass = psiFacade1.findClass(qualifiedName.getQualifiedName(), scope1);
+                        PsiClass aClass = psiFacade.findClass(qualifiedName.getQualifiedName(), scope);
                         if (aClass != null)
                         {
                             contextResolvesToJavaClass = true;
-                            List results = this.resolveInPsiClass(aClass, level.myNamespace.getJSContext() == JSContext.STATIC);
-                            javaResults2.addAll(results);
+                            List<ResolveResult> results = this.resolveInPsiClass(aClass, level.myNamespace.getJSContext() == JSContext.STATIC);
+                            javaResults.addAll(results);
                         }
                     }
                 }
 
                 if (contextResolvesToJavaClass)
                 {
-                    return javaResults2.isEmpty() ? ResolveResult.EMPTY_ARRAY : (ResolveResult[]) javaResults2.toArray(new ResolveResult[javaResults2.size()]);
+                    return javaResults.toArray(ResolveResult.EMPTY_ARRAY);
                 }
             }
         }
 
-        return WalkUpResolveProcessor.convertResults(taggedResolveResults);
+        return processor.getResults();
     }
 
     /**

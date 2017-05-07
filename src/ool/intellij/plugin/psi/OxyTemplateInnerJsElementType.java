@@ -19,6 +19,7 @@ import com.intellij.psi.templateLanguages.TemplateDataElementType;
 import com.intellij.psi.templateLanguages.TemplateLanguageFileViewProvider;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * 2/5/15
@@ -43,7 +44,8 @@ public class OxyTemplateInnerJsElementType extends TemplateDataElementType
     }
 
     @Override
-    protected CharSequence createTemplateText(CharSequence buf, Lexer lexer)
+    protected CharSequence createTemplateText(@NotNull CharSequence charSequence, @NotNull Lexer lexer,
+                                              @NotNull RangesCollector rangesCollector)
     {
         if (offsets.get() == null || variables.get() == null)
         {
@@ -54,7 +56,7 @@ public class OxyTemplateInnerJsElementType extends TemplateDataElementType
         offsets.get().push(new LinkedList<>());
         variables.get().push(new LinkedList<>());
 
-        return super.createTemplateText(buf, lexer);
+        return super.createTemplateText(charSequence, lexer, rangesCollector);
     }
 
     @Override

@@ -48,6 +48,11 @@ public class JsFormatting extends AbstractFormattingTest
         checkFormatting("indent_spacing_6");
     }
 
+    public void testIndentAndSpacing7()
+    {
+        checkFormatting("indent_spacing_7");
+    }
+
     public void testCompositeRoot1()
     {
         checkFormatting("composite_root_1");

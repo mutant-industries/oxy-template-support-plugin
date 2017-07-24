@@ -1,8 +1,10 @@
 package ool.intellij.plugin.lexer;
 
-import com.intellij.psi.tree.IElementType;
 import java.io.IOException;
+
 import ool.intellij.plugin.lang.lexer.OxyTemplateLexerAdapter;
+
+import com.intellij.psi.tree.IElementType;
 import org.junit.Before;
 
 /**

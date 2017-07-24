@@ -24,8 +24,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.formatter.xml.XmlFormattingPolicy;
-import com.intellij.webcore.template.formatter.AbstractTemplateLanguageFormattingModelBuilder;
-import com.intellij.webcore.template.formatter.TemplateLanguageBlock;
+import com.intellij.xml.template.formatter.AbstractXmlTemplateFormattingModelBuilder;
+import com.intellij.xml.template.formatter.TemplateLanguageBlock;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,7 +36,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public class OxyTemplateBlock extends TemplateLanguageBlock
 {
-    public OxyTemplateBlock(AbstractTemplateLanguageFormattingModelBuilder modelBuilder,
+    public OxyTemplateBlock(AbstractXmlTemplateFormattingModelBuilder modelBuilder,
                             @NotNull ASTNode astNode, @Nullable Wrap wrap, @Nullable Alignment alignment, CodeStyleSettings codeStyleSettings, XmlFormattingPolicy xmlFormattingPolicy, Indent indent)
     {
         super(modelBuilder, astNode, wrap, alignment, codeStyleSettings, xmlFormattingPolicy, indent);

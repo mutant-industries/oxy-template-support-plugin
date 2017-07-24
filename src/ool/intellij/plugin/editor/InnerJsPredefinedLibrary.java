@@ -39,7 +39,14 @@ public class InnerJsPredefinedLibrary extends JSPredefinedLibraryProvider
 
     @NotNull
     @Override
-    public Set<VirtualFile> getRequiredLibraryFiles()
+    public Set<VirtualFile> getRequiredLibraryFilesToIndex()
+    {
+        return getVirtualFiles();
+    }
+
+    @NotNull
+    @Override
+    public Set<VirtualFile> getRequiredLibraryFilesForResolve(@NotNull Project project)
     {
         return getVirtualFiles();
     }

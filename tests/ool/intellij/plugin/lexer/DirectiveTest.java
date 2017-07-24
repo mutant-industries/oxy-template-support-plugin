@@ -4,11 +4,11 @@ import java.io.IOException;
 
 import ool.intellij.plugin.psi.OxyTemplateTypes;
 
-import static com.intellij.psi.TokenType.*;
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Assert;
 import org.junit.Test;
+
+import static com.intellij.psi.TokenType.WHITE_SPACE;
+import static org.junit.Assert.assertEquals;
 
 /**
  * 12/13/14

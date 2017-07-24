@@ -9,7 +9,7 @@ import com.intellij.formatting.Block;
 import com.intellij.formatting.Indent;
 import com.intellij.formatting.Spacing;
 import com.intellij.psi.formatter.xml.XmlFormattingPolicy;
-import com.intellij.webcore.template.formatter.TemplateSyntheticBlock;
+import com.intellij.xml.template.formatter.TemplateSyntheticBlock;
 import org.jetbrains.annotations.NotNull;
 
 /**

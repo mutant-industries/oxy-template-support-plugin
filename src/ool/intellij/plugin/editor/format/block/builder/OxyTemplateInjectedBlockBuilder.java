@@ -30,7 +30,7 @@ import com.intellij.psi.impl.source.xml.XmlDocumentImpl;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.psi.xml.XmlText;
-import com.intellij.webcore.template.formatter.AbstractTemplateLanguageFormattingModelBuilder;
+import com.intellij.xml.template.formatter.AbstractXmlTemplateFormattingModelBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,9 +43,9 @@ public class OxyTemplateInjectedBlockBuilder
 {
     protected final XmlFormattingPolicy policy;
 
-    protected final AbstractTemplateLanguageFormattingModelBuilder builder;
+    protected final AbstractXmlTemplateFormattingModelBuilder builder;
 
-    public OxyTemplateInjectedBlockBuilder(@NotNull final AbstractTemplateLanguageFormattingModelBuilder builder,
+    public OxyTemplateInjectedBlockBuilder(@NotNull final AbstractXmlTemplateFormattingModelBuilder builder,
                                            @NotNull final XmlFormattingPolicy policy)
     {
         this.builder = builder;
@@ -102,7 +102,7 @@ public class OxyTemplateInjectedBlockBuilder
             }
 
             /**
-             * shift to topmost coverable element, e.g.:
+             * shift to topmost element, that covers the range, e.g.:
              * ...html...<m:foo... - T_XML_TAG_START -> MACRO_[EMPTY_]TAG
              */
             while (OxyTemplateHelper.checkRangeContainsParent(elementAt, allowedRangeLocal, getOuterLanguageElement()))

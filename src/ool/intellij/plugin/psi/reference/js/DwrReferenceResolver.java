@@ -73,9 +73,9 @@ public class DwrReferenceResolver extends JSReferenceExpressionResolver
 
                 if (remoteProxyAnnotation != null && remoteProxyAnnotation.isAnnotationType())
                 {
-                    for (PsiReference remoteProxyAnnotationRefernce : ReferencesSearch.search(remoteProxyAnnotation).findAll())
+                    for (PsiReference remoteProxyAnnotationReference : ReferencesSearch.search(remoteProxyAnnotation).findAll())
                     {
-                        PsiElement reference = remoteProxyAnnotationRefernce.getElement();
+                        PsiElement reference = remoteProxyAnnotationReference.getElement();
 
                         if ((dwrClass = PsiTreeUtil.getParentOfType(reference, PsiClass.class)) != null
                                 && dwrClass.getName().equals(myReferencedName))

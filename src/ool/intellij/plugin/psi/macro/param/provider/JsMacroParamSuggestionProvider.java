@@ -175,7 +175,7 @@ public class JsMacroParamSuggestionProvider extends ParamSuggestionProvider<JSPr
 
     /**
      * @param argument argument of call expression
-     * @return parent call expression, where utils namespace is spipped e.g.:
+     * @return parent call expression, where utils namespace is skipped e.g.:
      * oxy.foo(params) -> oxy.foo
      * oxy.bar(utils.extend(params, {param: false}) -> oxy.bar
      */

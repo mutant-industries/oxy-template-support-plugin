@@ -11,8 +11,8 @@ import com.intellij.formatting.Wrap;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.formatter.xml.XmlFormattingPolicy;
 import com.intellij.psi.templateLanguages.OuterLanguageElement;
-import com.intellij.webcore.template.formatter.AbstractTemplateLanguageFormattingModelBuilder;
-import com.intellij.webcore.template.formatter.TemplateXmlTagBlock;
+import com.intellij.xml.template.formatter.AbstractXmlTemplateFormattingModelBuilder;
+import com.intellij.xml.template.formatter.TemplateXmlTagBlock;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -24,12 +24,12 @@ public class OxyTemplateXmlTagBlock extends TemplateXmlTagBlock
 {
     private final XmlInjectedBlockBuilder injectedBlockBuilder;
 
-    public OxyTemplateXmlTagBlock(AbstractTemplateLanguageFormattingModelBuilder abstractTemplateLanguageFormattingModelBuilder,
+    public OxyTemplateXmlTagBlock(AbstractXmlTemplateFormattingModelBuilder abstractXmlTemplateFormattingModelBuilder,
                                   ASTNode astNode, Wrap wrap, Alignment alignment, XmlFormattingPolicy xmlFormattingPolicy, Indent indent)
     {
-        super(abstractTemplateLanguageFormattingModelBuilder, astNode, wrap, alignment, xmlFormattingPolicy, indent);
+        super(abstractXmlTemplateFormattingModelBuilder, astNode, wrap, alignment, xmlFormattingPolicy, indent);
 
-        injectedBlockBuilder = new XmlInjectedBlockBuilder(xmlFormattingPolicy, abstractTemplateLanguageFormattingModelBuilder);
+        injectedBlockBuilder = new XmlInjectedBlockBuilder(xmlFormattingPolicy, abstractXmlTemplateFormattingModelBuilder);
     }
 
     @Nullable

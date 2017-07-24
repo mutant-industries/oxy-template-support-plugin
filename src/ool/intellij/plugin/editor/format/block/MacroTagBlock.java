@@ -23,7 +23,7 @@ import com.intellij.psi.formatter.xml.AbstractXmlBlock;
 import com.intellij.psi.formatter.xml.XmlFormattingPolicy;
 import com.intellij.psi.impl.source.SourceTreeToPsiMap;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.webcore.template.formatter.AbstractTemplateLanguageFormattingModelBuilder;
+import com.intellij.xml.template.formatter.AbstractXmlTemplateFormattingModelBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,7 +35,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public class MacroTagBlock extends OxyTemplateForeignElementWrapper
 {
-    public MacroTagBlock(@NotNull AbstractTemplateLanguageFormattingModelBuilder builder, @NotNull ASTNode node, @Nullable Wrap wrap,
+    public MacroTagBlock(@NotNull AbstractXmlTemplateFormattingModelBuilder builder, @NotNull ASTNode node, @Nullable Wrap wrap,
                          @Nullable Alignment alignment, CodeStyleSettings settings, XmlFormattingPolicy formattingPolicy, @Nullable Indent indent)
     {
         super(builder, node, wrap, alignment, settings, formattingPolicy, indent);

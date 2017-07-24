@@ -65,7 +65,7 @@ public class InnerJsTypeEvaluator extends NashornJSTypeEvaluator
             return;
         }
         // function parameter
-        else if (jsVariable instanceof JSParameter && (type = ((JSParameter) jsVariable).getType()) != null)
+        else if (jsVariable instanceof JSParameter && (type = jsVariable.getType()) != null)
         {
             type.accept(new SimplifiedClassNameResolver(myContext.targetFile));
         }

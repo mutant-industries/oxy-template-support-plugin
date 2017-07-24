@@ -14,14 +14,12 @@ import com.intellij.formatting.Indent;
 import com.intellij.formatting.Spacing;
 import com.intellij.formatting.Wrap;
 import com.intellij.lang.ASTNode;
-import com.intellij.lang.Language;
-import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
-import com.intellij.lang.javascript.formatter.blocks.JSBlock;
+import com.intellij.lang.javascript.formatter.JSBlockContext;
+import com.intellij.lang.javascript.formatter.blocks.JSBlockEx;
 import com.intellij.lang.javascript.formatter.blocks.alignment.ASTNodeBasedAlignmentFactory;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.formatter.common.InjectedLanguageBlockWrapper;
-import com.intellij.webcore.template.formatter.IndentInheritingBlock;
+import com.intellij.xml.template.formatter.IndentInheritingBlock;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author Petr Mayr <p.mayr@oxyonline.cz>
  */
-public class InnerJsBlock extends JSBlock implements IndentInheritingBlock
+public class InnerJsBlock extends JSBlockEx implements IndentInheritingBlock
 {
     private TextRange allowedRange;
 
@@ -42,10 +40,10 @@ public class InnerJsBlock extends JSBlock implements IndentInheritingBlock
 
     private Indent inheritedIndent;
 
-    public InnerJsBlock(ASTNode child, Alignment childAlignment, Indent inheritedIndent, Wrap wrap, CodeStyleSettings topSettings,
-                        ASTNodeBasedAlignmentFactory sharedAlignmentFactory, Language dialect, JSCodeStyleSettings jsCodeStyleSettings)
+    public InnerJsBlock(@NotNull ASTNode child, @Nullable Alignment childAlignment, @Nullable Indent inheritedIndent, @Nullable Wrap wrap,
+                        @Nullable ASTNodeBasedAlignmentFactory sharedAlignmentFactory, @NotNull JSBlockContext jsBlockContext)
     {
-        super(child, childAlignment, inheritedIndent, wrap, topSettings, sharedAlignmentFactory, dialect, jsCodeStyleSettings);
+        super(child, childAlignment, inheritedIndent, wrap, sharedAlignmentFactory, jsBlockContext);
     }
 
     @NotNull
@@ -199,6 +197,12 @@ public class InnerJsBlock extends JSBlock implements IndentInheritingBlock
     {
         inheritedIndent = indent;
         useInheritedIndent = true;
+    }
+
+    @Override
+    protected boolean isChainedCallsFormattingSupported()
+    {
+        return false;
     }
 
 }

@@ -27,8 +27,8 @@ import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.formatter.FormatterUtil;
 import com.intellij.psi.formatter.xml.XmlFormattingPolicy;
-import com.intellij.webcore.template.formatter.AbstractTemplateLanguageFormattingModelBuilder;
-import com.intellij.webcore.template.formatter.IndentInheritingBlock;
+import com.intellij.xml.template.formatter.AbstractXmlTemplateFormattingModelBuilder;
+import com.intellij.xml.template.formatter.IndentInheritingBlock;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,7 +43,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public class OxyTemplateForeignElementWrapper extends JSBlock implements IndentInheritingBlock
 {
-    protected final AbstractTemplateLanguageFormattingModelBuilder builder;
+    protected final AbstractXmlTemplateFormattingModelBuilder builder;
 
     protected final OxyTemplateInjectedBlockBuilder injectedBlockBuilder;
 
@@ -57,13 +57,13 @@ public class OxyTemplateForeignElementWrapper extends JSBlock implements IndentI
 
     private List<Block> children;
 
-    public OxyTemplateForeignElementWrapper(@NotNull AbstractTemplateLanguageFormattingModelBuilder builder, @NotNull ASTNode node, Wrap wrap,
+    public OxyTemplateForeignElementWrapper(@NotNull AbstractXmlTemplateFormattingModelBuilder builder, @NotNull ASTNode node, Wrap wrap,
                                             Alignment alignment, CodeStyleSettings settings, XmlFormattingPolicy policy, Indent indent)
     {
         this(builder, node, wrap, alignment, settings, policy, indent, node.getTextRange());
     }
 
-    public OxyTemplateForeignElementWrapper(@NotNull AbstractTemplateLanguageFormattingModelBuilder builder, @NotNull ASTNode node, Wrap wrap,
+    public OxyTemplateForeignElementWrapper(@NotNull AbstractXmlTemplateFormattingModelBuilder builder, @NotNull ASTNode node, Wrap wrap,
                                             Alignment alignment, CodeStyleSettings settings, XmlFormattingPolicy policy, Indent indent, TextRange range)
     {
         super(node, alignment, indent, wrap, settings);
@@ -104,7 +104,7 @@ public class OxyTemplateForeignElementWrapper extends JSBlock implements IndentI
         ASTNode child = element.getNode();
 
         final Alignment textAlignment = Alignment.createAlignment();
-        ArrayList<Block> result = new ArrayList<>(5);
+        ArrayList<Block> result = new ArrayList<>();
 
         while (child != null)
         {
@@ -154,14 +154,12 @@ public class OxyTemplateForeignElementWrapper extends JSBlock implements IndentI
     protected ASTNode processChild(@NotNull List<Block> result, @NotNull final ASTNode child, @Nullable final Wrap wrap,
                                    @Nullable final Alignment alignment, @Nullable final Indent indent)
     {
-        final PsiElement childPsi = child.getPsi();
-
-        if (childPsi.getNode().getElementType() == OxyTemplateTypes.T_TEMPLATE_HTML_CODE)
+        if (child.getElementType() == OxyTemplateTypes.T_TEMPLATE_HTML_CODE)
         {
             return injectedBlockBuilder.buildInjectedBlocks(result, child, indent,
                     TextRange.create(child.getStartOffset(), getContentRange().getEndOffset()));
         }
-        else if (childPsi.getNode().getElementType() == OxyTemplateTypes.T_TEMPLATE_JAVASCRIPT_CODE)
+        else if (child.getElementType() == OxyTemplateTypes.T_TEMPLATE_JAVASCRIPT_CODE)
         {
             return injectedBlockBuilder.buildInjectedJsBlocks(result, child, indent,
                     TextRange.create(child.getStartOffset(), getContentRange().getEndOffset()));
@@ -193,7 +191,7 @@ public class OxyTemplateForeignElementWrapper extends JSBlock implements IndentI
             ASTNode nextSibling = child;
 
             /**
-             * Open block marker has no indent in the case when it is followeb by } and
+             * Open block marker has no indent in the case when it is followed by } and
              *  - it is the last child of this block - ...<%}
              *  - it is followed by white space, that fills the range of this block and the white space doesn't contain
              *      line breaks - ...<% }

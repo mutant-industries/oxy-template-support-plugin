@@ -1,10 +1,11 @@
 package ool.intellij.plugin.format;
 
+import java.io.File;
+
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.psi.codeStyle.CodeStyleManager;
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
-import java.io.File;
+import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Petr Mayr <p.mayr@oxyonline.cz>
  */
-abstract public class AbstractFormattingTest extends LightCodeInsightFixtureTestCase
+abstract public class AbstractFormattingTest extends LightPlatformCodeInsightFixtureTestCase
 {
     @NonNls
     private static final String TEST_DATA_BASE_DIR = "testData";

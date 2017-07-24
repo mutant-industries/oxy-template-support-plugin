@@ -1,11 +1,13 @@
 package ool.intellij.plugin.lexer;
 
-import static com.intellij.psi.TokenType.WHITE_SPACE;
 import java.io.IOException;
+
 import ool.intellij.plugin.psi.OxyTemplateTypes;
 
-import static org.junit.Assert.assertEquals;
 import org.junit.Test;
+
+import static com.intellij.psi.TokenType.WHITE_SPACE;
+import static org.junit.Assert.assertEquals;
 
 /**
  * 2/7/15

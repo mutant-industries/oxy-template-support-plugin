@@ -28,7 +28,7 @@ public class OxyTemplateJsSpecificHandlersFactory extends NashornJSSpecificHandl
 
     @NotNull
     @Override
-    public JSTypeEvaluator newTypeEvaluator(JSEvaluateContext context, JSTypeProcessor processor, boolean ecma)
+    public JSTypeEvaluator newTypeEvaluator(JSEvaluateContext context, JSTypeProcessor processor)
     {
         return new InnerJsTypeEvaluator(context, processor);
     }

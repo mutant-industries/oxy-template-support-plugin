@@ -6,7 +6,8 @@ macros.oxy.test = {
         <%
         if (a) { %>
             <div
-                    class="<%= a %>">&nbsp;</div><%
+                    class="<%= a %>">&nbsp;
+            </div><%
         }
     }
 };

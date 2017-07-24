@@ -14,7 +14,8 @@ macros.oxy.test = {
 
             <% if (b) { %>
                 <div class="class"
-                     title="title">&nbsp;</div>
+                     title="title">&nbsp;
+                </div>
             <% } %>
         </div>
     <% }

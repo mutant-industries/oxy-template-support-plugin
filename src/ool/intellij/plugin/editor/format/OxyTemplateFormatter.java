@@ -16,7 +16,6 @@ import ool.intellij.plugin.psi.OxyTemplateTypes;
 import com.intellij.formatting.ASTBlock;
 import com.intellij.formatting.Alignment;
 import com.intellij.formatting.Block;
-import com.intellij.formatting.FormattingModel;
 import com.intellij.formatting.Indent;
 import com.intellij.formatting.Wrap;
 import com.intellij.lang.ASTNode;
@@ -25,38 +24,19 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
-import com.intellij.psi.formatter.DocumentBasedFormattingModel;
 import com.intellij.psi.formatter.xml.SyntheticBlock;
 import com.intellij.psi.formatter.xml.XmlBlock;
 import com.intellij.psi.formatter.xml.XmlFormattingPolicy;
 import com.intellij.psi.formatter.xml.XmlTagBlock;
-import com.intellij.psi.templateLanguages.OuterLanguageElement;
-import com.intellij.psi.templateLanguages.TemplateLanguageFileViewProvider;
-import com.intellij.webcore.template.formatter.AbstractTemplateLanguageFormattingModelBuilder;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.xml.template.formatter.AbstractXmlTemplateFormattingModelBuilder;
 
 /**
  * 1/3/15
  *
  * @author Petr Mayr <p.mayr@oxyonline.cz>
  */
-public class OxyTemplateFormatter extends AbstractTemplateLanguageFormattingModelBuilder
+public class OxyTemplateFormatter extends AbstractXmlTemplateFormattingModelBuilder
 {
-    @Nullable
-    @Override
-    public FormattingModel createTemplateFormattingModel(@NotNull PsiFile psiFile, @NotNull TemplateLanguageFileViewProvider templateLanguageFileViewProvider,
-                                                         @NotNull OuterLanguageElement outerLanguageElement, @NotNull CodeStyleSettings codeStyleSettings, @Nullable Indent indent)
-    {
-        if (outerLanguageElement.getNode().getElementType() == OxyTemplateTypes.T_INNER_TEMPLATE_ELEMENT)
-        {
-            return new DocumentBasedFormattingModel(createDataLanguageRootBlock(outerLanguageElement, null, codeStyleSettings,
-                    getPolicy(codeStyleSettings, psiFile), psiFile, indent), psiFile.getProject(), codeStyleSettings, psiFile.getFileType(), psiFile);
-        }
-
-        return super.createTemplateFormattingModel(psiFile, templateLanguageFileViewProvider, outerLanguageElement, codeStyleSettings, indent);
-    }
-
     @Override
     protected boolean isTemplateFile(PsiFile psiFile)
     {

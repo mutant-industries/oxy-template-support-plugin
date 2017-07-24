@@ -25,7 +25,7 @@ macros = {
 };
 
 /**
- * Output printwriter
+ * Output writer
  */
 out = {
 

@@ -9,7 +9,7 @@ import com.intellij.lang.Language;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.formatter.xml.XmlFormattingPolicy;
 import com.intellij.psi.formatter.xml.XmlInjectedLanguageBlockBuilder;
-import com.intellij.webcore.template.formatter.AbstractTemplateLanguageFormattingModelBuilder;
+import com.intellij.xml.template.formatter.AbstractXmlTemplateFormattingModelBuilder;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -19,12 +19,12 @@ import org.jetbrains.annotations.NotNull;
  */
 public class XmlInjectedBlockBuilder extends XmlInjectedLanguageBlockBuilder
 {
-    private final AbstractTemplateLanguageFormattingModelBuilder builder;
+    private final AbstractXmlTemplateFormattingModelBuilder builder;
 
     private final XmlFormattingPolicy policy;
 
     public XmlInjectedBlockBuilder(@NotNull final XmlFormattingPolicy formattingPolicy,
-                                   @NotNull final AbstractTemplateLanguageFormattingModelBuilder builder)
+                                   @NotNull final AbstractXmlTemplateFormattingModelBuilder builder)
     {
         super(formattingPolicy);
         this.builder = builder;

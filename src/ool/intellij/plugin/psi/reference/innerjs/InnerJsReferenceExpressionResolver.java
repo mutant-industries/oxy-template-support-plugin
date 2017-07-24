@@ -18,10 +18,10 @@ import com.intellij.lang.javascript.psi.JSQualifiedName;
 import com.intellij.lang.javascript.psi.JSQualifiedNameImpl;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
-import com.intellij.lang.javascript.psi.resolve.BaseJSSymbolProcessor;
 import com.intellij.lang.javascript.psi.resolve.JSContextLevel;
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
 import com.intellij.lang.javascript.psi.resolve.JSTaggedResolveResult;
+import com.intellij.lang.javascript.psi.resolve.JSTypeInfo;
 import com.intellij.lang.javascript.psi.resolve.WalkUpResolveProcessor;
 import com.intellij.lang.javascript.psi.types.JSContext;
 import com.intellij.openapi.module.Module;
@@ -187,7 +187,7 @@ public class InnerJsReferenceExpressionResolver extends NashornJSReferenceExpres
                 }
             }
 
-            BaseJSSymbolProcessor.TypeInfo typeInfo = processor.getTypeInfo();
+            JSTypeInfo typeInfo = processor.getTypeInfo();
             if (!typeInfo.myContextLevels.isEmpty() && (module = ModuleUtilCore.findModuleForPsiElement(this.myContainingFile)) != null)
             {
                 JavaPsiFacade psiFacade = JavaPsiFacade.getInstance(this.myContainingFile.getProject());

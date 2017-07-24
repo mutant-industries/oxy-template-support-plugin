@@ -40,14 +40,14 @@ public class OxyTemplateElementFactory
     @NotNull
     public static MacroEmptyTag createMacroEmptyTag(@NotNull Project project, @NonNls String name, @NonNls String... attributes)
     {
-        StringBuilder attributeListBulder = new StringBuilder();
+        StringBuilder attributeListBuilder = new StringBuilder();
 
         for (String attribute : attributes)
         {
-            attributeListBulder.append(attribute).append(" ");
+            attributeListBuilder.append(attribute).append(" ");
         }
 
-        return ((MacroEmptyTag) createFile(project, "<m:" + name + " " + attributeListBulder + "/>").getFirstChild());
+        return ((MacroEmptyTag) createFile(project, "<m:" + name + " " + attributeListBuilder + "/>").getFirstChild());
     }
 
     @NotNull

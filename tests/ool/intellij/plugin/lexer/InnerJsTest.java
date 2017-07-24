@@ -1,11 +1,13 @@
 package ool.intellij.plugin.lexer;
 
-import com.intellij.psi.TokenType;
 import java.io.IOException;
+
 import ool.intellij.plugin.psi.OxyTemplateTypes;
 
-import static org.junit.Assert.assertEquals;
+import com.intellij.psi.TokenType;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * 12/13/14

@@ -22,8 +22,8 @@ import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.EditorFactory;
-import com.intellij.openapi.editor.event.DocumentAdapter;
 import com.intellij.openapi.editor.event.DocumentEvent;
+import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -209,7 +209,7 @@ public class CompiledPreviewController extends AbstractProjectComponent
     {
         updateQueue = new MergingUpdateQueue("LIVE_PREVIEW_QUEUE", 1000, true, null, myProject);
 
-        EditorFactory.getInstance().getEventMulticaster().addDocumentListener(new DocumentAdapter()
+        EditorFactory.getInstance().getEventMulticaster().addDocumentListener(new DocumentListener()
         {
             @Override
             public void documentChanged(DocumentEvent e)

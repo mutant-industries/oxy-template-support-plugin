@@ -1,19 +1,16 @@
 package ool.intellij.plugin.editor.format;
 
-import ool.intellij.plugin.editor.format.block.innerJs.InnerJsBlock;
+import ool.intellij.plugin.editor.format.block.innerJs.InnerJsBlockFactory;
+import ool.intellij.plugin.lang.OxyTemplate;
 
-import com.intellij.formatting.Alignment;
-import com.intellij.formatting.Indent;
-import com.intellij.formatting.Wrap;
-import com.intellij.lang.ASTNode;
+import com.intellij.formatting.FormattingMode;
 import com.intellij.lang.Language;
-import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
+import com.intellij.lang.LanguageFormatting;
+import com.intellij.lang.javascript.formatter.JSBlockContext;
 import com.intellij.lang.javascript.formatter.JavascriptFormattingModelBuilder;
-import com.intellij.lang.javascript.formatter.blocks.JSBlock;
-import com.intellij.lang.javascript.formatter.blocks.alignment.ASTNodeBasedAlignmentFactory;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
+import com.intellij.xml.template.formatter.AbstractXmlTemplateFormattingModelBuilder;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * 2/25/15
@@ -22,10 +19,20 @@ import org.jetbrains.annotations.Nullable;
  */
 public class OxyTemplateInnerJsFormatter extends JavascriptFormattingModelBuilder
 {
-    @Override
-    public JSBlock createSubBlock(@NotNull ASTNode child, Alignment childAlignment, Indent childIndent, Wrap wrap,
-                                  @NotNull CodeStyleSettings topSettings, @NotNull Language dialect, @Nullable ASTNodeBasedAlignmentFactory sharedAlignmentFactory, @NotNull JSCodeStyleSettings jsCodeStyleSettings)
+    private final AbstractXmlTemplateFormattingModelBuilder builder;
+
+    public OxyTemplateInnerJsFormatter()
     {
-        return new InnerJsBlock(child, childAlignment, childIndent, wrap, topSettings, sharedAlignmentFactory, dialect, jsCodeStyleSettings);
+        super();
+
+        builder = (AbstractXmlTemplateFormattingModelBuilder) LanguageFormatting.INSTANCE.forLanguage(OxyTemplate.INSTANCE);
     }
+
+    @NotNull
+    @Override
+    protected JSBlockContext createBlockFactory(CodeStyleSettings settings, Language dialect, FormattingMode mode)
+    {
+        return new InnerJsBlockFactory(builder, settings, dialect, null, mode);
+    }
+
 }

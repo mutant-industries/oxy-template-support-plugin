@@ -15,8 +15,8 @@ import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.formatter.xml.XmlFormattingPolicy;
 import com.intellij.psi.templateLanguages.OuterLanguageElement;
-import com.intellij.webcore.template.formatter.AbstractTemplateLanguageFormattingModelBuilder;
-import com.intellij.webcore.template.formatter.TemplateXmlBlock;
+import com.intellij.xml.template.formatter.AbstractXmlTemplateFormattingModelBuilder;
+import com.intellij.xml.template.formatter.TemplateXmlBlock;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,12 +29,12 @@ public class OxyTemplateXmlBlock extends TemplateXmlBlock
 {
     private final XmlInjectedBlockBuilder injectedBlockBuilder;
 
-    public OxyTemplateXmlBlock(AbstractTemplateLanguageFormattingModelBuilder abstractTemplateLanguageFormattingModelBuilder,
+    public OxyTemplateXmlBlock(AbstractXmlTemplateFormattingModelBuilder abstractXmlTemplateFormattingModelBuilder,
                                ASTNode astNode, Wrap wrap, Alignment alignment, XmlFormattingPolicy xmlFormattingPolicy, Indent indent, TextRange textRange)
     {
-        super(abstractTemplateLanguageFormattingModelBuilder, astNode, wrap, alignment, xmlFormattingPolicy, indent, textRange);
+        super(abstractXmlTemplateFormattingModelBuilder, astNode, wrap, alignment, xmlFormattingPolicy, indent, textRange);
 
-        injectedBlockBuilder = new XmlInjectedBlockBuilder(xmlFormattingPolicy, abstractTemplateLanguageFormattingModelBuilder);
+        injectedBlockBuilder = new XmlInjectedBlockBuilder(xmlFormattingPolicy, abstractXmlTemplateFormattingModelBuilder);
     }
 
     @Nullable

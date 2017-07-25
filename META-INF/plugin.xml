@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>ool.intellij.plugin</id>
     <name>Oxy template support</name>
-    <version>1.3.6</version>
+    <version>1.3.7</version>
     <vendor email="p.mayr@oxyonline.cz" url="http://stash.oxyonline.local/projects/CZC/repos/macro-support-plugin">
         oXy Online s.r.o.
     </vendor>
@@ -15,6 +15,12 @@
     ]]></description>
 
     <change-notes><![CDATA[
+        <b>1.3.7</b>
+        <ul>
+            <li>
+                vyhledávání referencí dwr metod
+            </li>
+        </ul>
         <b>1.3.6</b>
         <ul>
             <li>
@@ -368,6 +374,7 @@
         <referencesSearch implementation="ool.intellij.plugin.editor.usages.search.GlobalVariableReferenceSearch"/>
         <referencesSearch implementation="ool.intellij.plugin.editor.usages.search.JavaSpecialGetterReferenceSearch"/>
         <methodReferencesSearch implementation="ool.intellij.plugin.editor.usages.search.JavaGetterReferenceSearch"/>
+        <methodReferencesSearch implementation="ool.intellij.plugin.editor.usages.search.DwrMethodReferenceSearch"/>
         <documentationProvider implementation="ool.intellij.plugin.editor.documentation.MacroParamDocumentationProvider"/>
         <gotoSymbolContributor implementation="ool.intellij.plugin.editor.gotosymbol.MacroGotoSymbolContributor"/>
         <lang.psiStructureViewFactory language="OxyTemplate" implementationClass="ool.intellij.plugin.editor.structure.OxyTemplateStructureViewFactory"/>

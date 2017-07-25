@@ -1,30 +1,33 @@
 package ool.intellij.plugin.editor.usages.search;
 
+import ool.intellij.plugin.psi.reference.js.DwrReferenceResolver;
+
+import com.intellij.ide.highlighter.JavaFileType;
+import com.intellij.lang.javascript.JavaScriptFileType;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.openapi.application.QueryExecutorBase;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiModifier;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.RequestResultProcessor;
-import com.intellij.psi.search.SearchRequestCollector;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.search.UsageSearchContext;
 import com.intellij.psi.search.searches.MethodReferencesSearch;
 import com.intellij.util.Processor;
-import com.sun.xml.internal.ws.util.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Searches usages of getters on entities / extenders etc. in templates.
+ * Searches usages of dwr methods (@RemoteMethod) in javascript
  *
- * 5/17/16
+ * 7/25/17
  *
  * @author Petr Mayr <p.mayr@oxyonline.cz>
  */
-public class JavaGetterReferenceSearch extends QueryExecutorBase<PsiReference, MethodReferencesSearch.SearchParameters>
+public class DwrMethodReferenceSearch extends QueryExecutorBase<PsiReference, MethodReferencesSearch.SearchParameters>
 {
-    public JavaGetterReferenceSearch()
+    public DwrMethodReferenceSearch()
     {
         super(true);
     }
@@ -33,27 +36,27 @@ public class JavaGetterReferenceSearch extends QueryExecutorBase<PsiReference, M
     public void processQuery(@NotNull MethodReferencesSearch.SearchParameters queryParameters,
                              @NotNull Processor<PsiReference> consumer)
     {
-        doSearch(queryParameters.getMethod(), queryParameters.getOptimizer(), queryParameters.getEffectiveSearchScope());
-    }
+        PsiMethod method = queryParameters.getMethod();
 
-    static void doSearch(@NotNull final PsiMethod method, @NotNull final SearchRequestCollector optimizer, SearchScope effectiveSearchScope)
-    {
-        if ( ! method.getModifierList().hasModifierProperty(PsiModifier.PUBLIC))
+        if ( ! method.getModifierList().hasModifierProperty(PsiModifier.PUBLIC) || ! DwrReferenceResolver.isDwrMethod(method))
         {
             return;
         }
 
-        String methodName = method.getName();
+        String query = method.getName();
+        SearchScope scope = queryParameters.getEffectiveSearchScope();
 
-        if ( ! methodName.matches("((^is)|(^get))[A-Z].*"))
+        if (scope instanceof GlobalSearchScope)
         {
-            return;
+            // intersect(union(original scope, js file type scope), not(java file type scope))
+            GlobalSearchScope jsFilesScope = GlobalSearchScope.getScopeRestrictedByFileTypes(GlobalSearchScope.allScope(method.getProject()),
+                    JavaScriptFileType.INSTANCE);
+
+            scope = jsFilesScope.uniteWith((GlobalSearchScope) scope).intersectWith(GlobalSearchScope.notScope(GlobalSearchScope
+                    .getScopeRestrictedByFileTypes(GlobalSearchScope.allScope(method.getProject()), JavaFileType.INSTANCE)));
         }
 
-        String query = StringUtils.decapitalize(methodName.replaceFirst("(^is)|(^get)", ""));
-        SearchScope scope = OxyTemplateReferenceSearch.restrictScopeToOxyTemplates(effectiveSearchScope);
-
-        optimizer.searchWord(query, scope, UsageSearchContext.IN_CODE, true, method,
+        queryParameters.getOptimizer().searchWord(query, scope, UsageSearchContext.IN_CODE, true, method,
                 new RequestResultProcessor()
                 {
                     @Override

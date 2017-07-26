@@ -7,6 +7,7 @@ import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionProvider;
 import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.codeInsight.completion.CompletionType;
+import com.intellij.codeInsight.lookup.AutoCompletionPolicy;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.util.ProcessingContext;
@@ -36,7 +37,8 @@ public class ExpressionStatement extends CompletionContributor
                 {
                     if (parameters.getPosition().getPrevSibling() == null)
                     {
-                        resultSet.consume(LookupElementBuilder.create(EXPRESSION_PREFIX + " "));
+                        resultSet.consume(LookupElementBuilder.create(EXPRESSION_PREFIX + " ")
+                                .withAutoCompletionPolicy(AutoCompletionPolicy.GIVE_CHANCE_TO_OVERWRITE));
                     }
                 }
             }

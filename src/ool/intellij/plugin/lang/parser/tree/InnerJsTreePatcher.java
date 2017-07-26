@@ -1,4 +1,4 @@
-package ool.intellij.plugin.lang;
+package ool.intellij.plugin.lang.parser.tree;
 
 import ool.intellij.plugin.psi.OxyTemplateHelper;
 

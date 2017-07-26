@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>ool.intellij.plugin</id>
     <name>Oxy template support</name>
-    <version>1.3.7</version>
+    <version>1.4</version>
     <vendor email="p.mayr@oxyonline.cz" url="http://stash.oxyonline.local/projects/CZC/repos/macro-support-plugin">
         oXy Online s.r.o.
     </vendor>
@@ -15,6 +15,12 @@
     ]]></description>
 
     <change-notes><![CDATA[
+        <b>1.4</b>
+        <ul>
+            <li>
+                opravy, revize funkcionality
+            </li>
+        </ul>
         <b>1.3.7</b>
         <ul>
             <li>
@@ -319,8 +325,8 @@
                                implementationClass="ool.intellij.plugin.lang.parser.definition.OxyTemplateInnerJsParserDefinition"/>
         <lang.parserDefinition language="CompiledPreview"
                                implementationClass="ool.intellij.plugin.lang.parser.definition.CompiledPreviewParserDefinition"/>
-        <lang.treePatcher language="OxyTemplateInnerJs" implementationClass="ool.intellij.plugin.lang.InnerJsTreePatcher"/>
-        <lang.treePatcher language="HTML" implementationClass="ool.intellij.plugin.lang.XmlTreePatcher" order="first"/>
+        <lang.treePatcher language="OxyTemplateInnerJs" implementationClass="ool.intellij.plugin.lang.parser.tree.InnerJsTreePatcher"/>
+        <lang.treePatcher language="HTML" implementationClass="ool.intellij.plugin.lang.parser.tree.XmlTreePatcher" order="first"/>
         <editorHighlighterProvider filetype="OxyTemplate"
                                    implementationClass="ool.intellij.plugin.editor.highlighter.OxyTemplateHighlighterProvider"/>
         <lang.syntaxHighlighterFactory language="OxyTemplate"
@@ -369,6 +375,7 @@
                          implementationClass="ool.intellij.plugin.editor.inspection.RedundantIncludeInspection"/>
         <fileBasedIndex implementation="ool.intellij.plugin.file.index.nacro.js.JsMacroNameIndex"/>
         <lang.findUsagesProvider language="OxyTemplate" implementationClass="ool.intellij.plugin.editor.usages.OxyTemplateFindUsagesProvider"/>
+        <lang.findUsagesProvider language="OxyTemplateInnerJs" implementationClass="ool.intellij.plugin.editor.usages.OxyTemplateInnerJsFindUsagesProvider"/>
         <psi.referenceContributor implementation="ool.intellij.plugin.psi.reference.java.LiteralJsMacroReferenceContributor" order="first"/>
         <referencesSearch implementation="ool.intellij.plugin.editor.usages.search.JavaMacroReferenceSearch"/>
         <referencesSearch implementation="ool.intellij.plugin.editor.usages.search.GlobalVariableReferenceSearch"/>

@@ -52,7 +52,10 @@ public class XmlMacroParamName extends CompletionContributor
                     MacroCall macroCall = elementAt instanceof PsiWhiteSpace && elementAt.getPrevSibling() instanceof MacroCall ?
                             (MacroCall) elementAt.getPrevSibling() : PsiTreeUtil.getParentOfType(parameters.getOriginalPosition(), MacroCall.class);
 
-                    assert macroCall != null;
+                    if (macroCall == null)
+                    {
+                        return;
+                    }
 
                     List<MacroAttribute> attributes = macroCall.getMacroAttributeList();
 

@@ -279,6 +279,4 @@ public class ParameterQuoteTest extends AbstractLexerTest
         assertEquals(null, nextToken());
     }
 
-
-
 }

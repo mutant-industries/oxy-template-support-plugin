@@ -39,7 +39,7 @@ public class ParamQuoteHandler extends TypedHandlerDelegate
 
         PsiElement elementAt;
 
-        if (c == '"')
+        if (c == '"' || c == '\'')
         {
             // <%@ layout "_ %> -> <%@ layout "_" %>, <m:foo.bar param="_ -> <m:foo.bar param="_"
             PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
@@ -68,26 +68,26 @@ public class ParamQuoteHandler extends TypedHandlerDelegate
                 }
                 else if (elementAt instanceof DirectiveStatement)
                 {
-                    if (((DirectiveStatement) elementAt).getDirectiveParamWrapperList().size() == 0)
+                    if (c == '"' && ((DirectiveStatement) elementAt).getDirectiveParamWrapperList().size() == 0)
                     {
-                        editor.getDocument().insertString(offset, "\"");
+                        editor.getDocument().insertString(offset, String.valueOf(c));
                     }
                 }
-                else if (elementAt instanceof PsiErrorElement
+                else if (c == '"' && elementAt instanceof PsiErrorElement
                         && elementAt.getPrevSibling().getNode().getElementType() == OxyTemplateTypes.T_DIRECTIVE)
                 {
-                    editor.getDocument().insertString(offset, "\"");
+                    editor.getDocument().insertString(offset, String.valueOf(c));
                 }
             }
 
             if (elementAt.getNode().getElementType() == OxyTemplateTypes.T_MACRO_PARAM_ASSIGNMENT)
             {
-                editor.getDocument().insertString(offset, "\"");
+                editor.getDocument().insertString(offset, String.valueOf(c));
             }
-            else if (elementAt.getNode().getElementType() == OxyTemplateTypes.T_DIRECTIVE
+            else if (c == '"' && elementAt.getNode().getElementType() == OxyTemplateTypes.T_DIRECTIVE
                     && elementAt.getNextSibling().getNode().getStartOffset() == offset)
             {
-                editor.getDocument().insertString(offset, "\"");
+                editor.getDocument().insertString(offset, String.valueOf(c));
             }
         }
         else if (c == '=')

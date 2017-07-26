@@ -26,7 +26,7 @@ public class BackspaceHandler extends BackspaceHandlerDelegate
     {
         int offset = editor.getCaretModel().getOffset();
 
-        if (editor.getDocument().getTextLength() != offset && c == '"' && isBetweenParameterQuotes(file, offset))
+        if (editor.getDocument().getTextLength() != offset && isBetweenParameterQuotes(file, offset))
         {
             editor.getDocument().deleteString(offset, offset + 1);
         }

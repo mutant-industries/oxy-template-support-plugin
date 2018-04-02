@@ -74,7 +74,7 @@ public class InnerJsTypeEvaluator extends NashornJSTypeEvaluator
     }
 
     @Override
-    protected boolean addTypeFromResolveResult(@NotNull PsiElement resolveResult, boolean hasSomeType)
+    protected boolean addTypeFromResolveResult(@NotNull PsiElement resolveResult)
     {
         JSType type;
 
@@ -93,13 +93,13 @@ public class InnerJsTypeEvaluator extends NashornJSTypeEvaluator
             return true;
         }
 
-        return super.addTypeFromResolveResult(resolveResult, hasSomeType);
+        return super.addTypeFromResolveResult(resolveResult);
     }
 
 
     // TODO temp code, see https://youtrack.jetbrains.com/issue/WEB-16383
     @Override
-    protected void evaluateCallExpressionTypes(JSCallExpression callExpression, @NotNull JSEvaluateContext.JSEvaluationPlace place)
+    protected void evaluateCallExpressionTypes(@NotNull JSCallExpression callExpression, @NotNull JSEvaluateContext.JSEvaluationPlace place)
     {
         PsiElement resolve;
 

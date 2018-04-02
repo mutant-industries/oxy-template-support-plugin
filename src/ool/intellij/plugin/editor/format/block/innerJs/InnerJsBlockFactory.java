@@ -39,7 +39,7 @@ public class InnerJsBlockFactory extends JSBlockContext
 
     @NotNull
     @Override
-    protected JSBlock createSubBlock(@NotNull ASTNode child, Alignment childAlignment, Indent childIndent, Wrap wrap, ASTNodeBasedAlignmentFactory sharedAlignmentFactory)
+    protected JSBlock createSubBlock(@NotNull ASTNode child, Alignment childAlignment, Indent childIndent, Wrap wrap, ASTNodeBasedAlignmentFactory sharedAlignmentFactory, @Nullable JSBlock parentBlock)
     {
         return new InnerJsBlock(child, childAlignment, childIndent, wrap, sharedAlignmentFactory, this);
     }

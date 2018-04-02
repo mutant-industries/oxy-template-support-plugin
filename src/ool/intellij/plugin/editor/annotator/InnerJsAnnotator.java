@@ -38,26 +38,23 @@ public class InnerJsAnnotator extends JavaScriptAnnotatingVisitor
     }
 
     @Override
-    protected void checkCallReferences(JSCallExpression node, JSReferenceExpression referenceExpression)
-    {
-        String referenceText = MacroIndex.normalizeMacroName(referenceExpression.getText());
-
-        if (MacroIndex.isInMacroNamespace(referenceText) && referenceExpression.resolve() == null)
-        {
-            myHolder.createWarningAnnotation(referenceExpression, I18nSupport.message("annotator.unresolved.macro.reference.tooltip"));
-
-            return;
-        }
-
-        super.checkCallReferences(node, referenceExpression);
-    }
-
-    @Override
     public void visitJSReferenceExpression(JSReferenceExpression node)
     {
         if (MacroIndex.isInMacroDefinition(node))
         {
             return;
+        }
+
+        if (node.getParent() instanceof JSCallExpression)
+        {
+            String referenceText = MacroIndex.normalizeMacroName(node.getText());
+
+            if (MacroIndex.isInMacroNamespace(referenceText) && node.resolve() == null)
+            {
+                myHolder.createWarningAnnotation(node, I18nSupport.message("annotator.unresolved.macro.reference.tooltip"));
+
+                return;
+            }
         }
 
         super.visitJSReferenceExpression(node);

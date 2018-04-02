@@ -52,25 +52,25 @@ public class InnerJsTypeEvaluator extends NashornJSTypeEvaluator
     }
 
     @Override
-    protected void addTypeFromVariableResolveResult(@NotNull JSVariable jsVariable)
+    protected boolean addTypeFromAmdModuleReference(@NotNull JSParameter parameter)
     {
         JSProperty macro;
         JSType type;
 
         // macro first parameter
-        if (jsVariable instanceof JSParameter && (macro = checkMacroFirstParameter((JSParameter) jsVariable)) != null)
+        if ((macro = checkMacroFirstParameter(parameter)) != null)
         {
-            addType(getMacroFirstParameterType(macro), jsVariable);
+            addType(getMacroFirstParameterType(macro), parameter);
 
-            return;
+            return true;
         }
         // function parameter
-        else if (jsVariable instanceof JSParameter && (type = jsVariable.getType()) != null)
+        else if ((type = parameter.getType()) != null)
         {
             type.accept(new SimplifiedClassNameResolver(myContext.targetFile));
         }
 
-        super.addTypeFromVariableResolveResult(jsVariable);
+        return super.addTypeFromAmdModuleReference(parameter);
     }
 
     @Override

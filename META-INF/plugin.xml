@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>ool.intellij.plugin</id>
     <name>Oxy template support</name>
-    <version>1.4</version>
+    <version>1.4.1a</version>
     <vendor email="p.mayr@oxyonline.cz" url="http://stash.oxyonline.local/projects/CZC/repos/macro-support-plugin">
         oXy Online s.r.o.
     </vendor>
@@ -15,6 +15,12 @@
     ]]></description>
 
     <change-notes><![CDATA[
+        <b>1.4.1</b>
+        <ul>
+            <li>
+                kompatibilita s 2017.3
+            </li>
+        </ul>
         <b>1.4</b>
         <ul>
             <li>
@@ -395,8 +401,8 @@
         <dialectSpecificHandlersFactory language="OxyTemplateInnerJs" implementationClass="ool.intellij.plugin.file.OxyTemplateJsSpecificHandlersFactory"/>
         <dialectSpecificHandlersFactory language="CompiledPreview" implementationClass="ool.intellij.plugin.file.OxyTemplateJsSpecificHandlersFactory"/>
         <frameworkIndexingHandler implementation="ool.intellij.plugin.psi.reference.innerjs.InnerJsJavaTypeConverter"/>
-        <elementScopeProvider language="OxyTemplateInnerJs" implementationClass="ool.intellij.plugin.psi.reference.innerjs.InnerJsResolveScopeProvider"/>
-        <elementScopeProvider language="CompiledPreview" implementationClass="ool.intellij.plugin.psi.reference.innerjs.CompiledPreviewResolveScopeProvider"/>
+        <elementScopeProvider implementation="ool.intellij.plugin.psi.reference.innerjs.InnerJsResolveScopeProvider"/>
+        <elementScopeProvider implementation="ool.intellij.plugin.psi.reference.innerjs.CompiledPreviewResolveScopeProvider"/>
         <analysisHandlersFactory language="OxyTemplateInnerJs" implementationClass="ool.intellij.plugin.lang.InnerJsAnalysisHandlersFactory"/>
     </extensions>
 

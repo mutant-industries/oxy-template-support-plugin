@@ -1,19 +1,17 @@
 package ool.intellij.plugin.psi.reference.innerjs;
 
-import java.util.Arrays;
-import java.util.List;
-
 import ool.intellij.plugin.file.type.OxyTemplateFileType;
 
 import com.intellij.lang.javascript.library.JSPredefinedLibraryProvider;
 import com.intellij.lang.javascript.psi.resolve.JSElementResolveScopeProvider;
+import com.intellij.lang.javascript.psi.resolve.JSResolveScopeProvider;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.ProjectScope;
 import com.intellij.webcore.libraries.ScriptingLibraryModel;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * 1/30/14
@@ -22,26 +20,28 @@ import org.jetbrains.annotations.NotNull;
  */
 public class InnerJsResolveScopeProvider implements JSElementResolveScopeProvider
 {
-    @NonNls
-    private static final List<String> IGNORED_LIBS_LIST = Arrays.asList(
-            "DOMCore.js", "DOMXPath.js", "DOMEvents.js", "DOMTraversalAndRange.js", "HTML5.js", "DHTML.js", "WebGL.js",
-            "AJAX.js", "lib.d.ts");
-
-    @NotNull
+    @Nullable
     @Override
     public GlobalSearchScope getElementResolveScope(@NotNull PsiElement element)
     {
+        VirtualFile virtualFile = JSResolveScopeProvider.getFileForScopeEvaluation(element);
+
+        if (virtualFile == null || ! isApplicable(virtualFile))
+        {
+            return null;
+        }
+
         GlobalSearchScope scope = getBaseScope(element);
 
         for (ScriptingLibraryModel model : JSPredefinedLibraryProvider.getAllPredefinedLibraries(element.getProject()))
         {
+            if ( ! model.getName().equals("oxy-predefined") || ! model.getName().equals("Nashorn"))
+            {
+                continue;
+            }
+
             for (VirtualFile file : model.getAllFiles())
             {
-                if (IGNORED_LIBS_LIST.contains(file.getName()))
-                {
-                    continue;
-                }
-
                 scope = scope.uniteWith(GlobalSearchScope.fileScope(element.getProject(), file));
             }
         }
@@ -57,10 +57,9 @@ public class InnerJsResolveScopeProvider implements JSElementResolveScopeProvide
                 OxyTemplateFileType.INSTANCE);
     }
 
-//    @Override
-//    protected boolean isApplicable(@NotNull VirtualFile virtualFile)
-//    {
-//        return virtualFile.getFileType() == OxyTemplateFileType.INSTANCE;
-//    }
+    protected boolean isApplicable(@NotNull VirtualFile virtualFile)
+    {
+        return virtualFile.getFileType() == OxyTemplateFileType.INSTANCE;
+    }
 
 }

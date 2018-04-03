@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>ool.intellij.plugin</id>
     <name>Oxy template support</name>
-    <version>1.4.2</version>
+    <version>1.5</version>
     <vendor email="p.mayr@oxyonline.cz" url="http://stash.oxyonline.local/projects/CZC/repos/macro-support-plugin">
         oXy Online s.r.o.
     </vendor>

@@ -20,32 +20,32 @@ import org.jetbrains.annotations.NotNull;
 public class GlobalVariableReferenceSearch extends OxyTemplateReferenceSearch
 {
     @Override
-    public void processQuery(@NotNull ReferencesSearch.SearchParameters queryParameters, @NotNull Processor<PsiReference> consumer)
+    public void processQuery(@NotNull ReferencesSearch.SearchParameters searchParameters, @NotNull Processor<? super PsiReference> processor)
     {
-        if ( ! (queryParameters.getElementToSearch() instanceof GlobalVariableDefinition))
+        if ( ! (searchParameters.getElementToSearch() instanceof GlobalVariableDefinition))
         {
             return;
         }
 
-        final GlobalVariableDefinition target = (GlobalVariableDefinition) queryParameters.getElementToSearch();
-        SearchScope scope = restrictScopeToOxyTemplates(queryParameters.getEffectiveSearchScope());
+        final GlobalVariableDefinition target = (GlobalVariableDefinition) searchParameters.getElementToSearch();
+        SearchScope scope = restrictScopeToOxyTemplates(searchParameters.getEffectiveSearchScope());
 
-        queryParameters.getOptimizer().searchWord(target.getName(), scope, UsageSearchContext.IN_CODE, true, target.getExpression(),
+        searchParameters.getOptimizer().searchWord(target.getName(), scope, UsageSearchContext.IN_CODE, true, target.getExpression(),
                 new RequestResultProcessor()
                 {
                     @Override
-                    public boolean processTextOccurrence(@NotNull PsiElement element, int offsetInElement, @NotNull Processor<PsiReference> consumer)
+                    public boolean processTextOccurrence(@NotNull PsiElement psiElement, int offsetInElement, @NotNull Processor<? super PsiReference> processor)
                     {
                         PsiReference reference;
 
-                        if (element instanceof JSReferenceExpression && (reference = element.getReference()) != null)
+                        if (psiElement instanceof JSReferenceExpression && (reference = psiElement.getReference()) != null)
                         {
                             PsiElement resolveResult = reference.resolve();
 
                             if (resolveResult instanceof GlobalVariableDefinition && target.getExpression()
                                     .isEquivalentTo(((GlobalVariableDefinition) resolveResult).getExpression()))
                             {
-                                return consumer.process(reference);
+                                return processor.process(reference);
                             }
 
                         }
@@ -55,5 +55,4 @@ public class GlobalVariableReferenceSearch extends OxyTemplateReferenceSearch
                 }
         );
     }
-
 }

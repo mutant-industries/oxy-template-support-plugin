@@ -100,7 +100,7 @@ public class IncludeOptimizer implements ImportOptimizer
     }
 
     /**
-     * <%@ include_once "file.jsm" %><// ignore-optimizer //>
+     * <%@ include_once "file.jsm" %><// suppress-optimizer //>
      *
      * @param statement
      * @return true if statement is not to be touched by optimizer

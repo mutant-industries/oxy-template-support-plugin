@@ -21,9 +21,9 @@ import org.jetbrains.annotations.NotNull;
 public class JavaMacroReferenceSearch extends OxyTemplateReferenceSearch
 {
     @Override
-    public void processQuery(@NotNull ReferencesSearch.SearchParameters queryParameters, @NotNull Processor<PsiReference> consumer)
+    public void processQuery(@NotNull ReferencesSearch.SearchParameters searchParameters, @NotNull Processor<? super PsiReference> processor)
     {
-        final PsiElement target = queryParameters.getElementToSearch();
+        final PsiElement target = searchParameters.getElementToSearch();
         PsiClass psiClass;
 
         if ( ! (target instanceof PsiClass) || ! OxyTemplateIndexUtil.isMacro(psiClass = (PsiClass) target))
@@ -31,13 +31,12 @@ public class JavaMacroReferenceSearch extends OxyTemplateReferenceSearch
             return;
         }
 
-        SearchScope scope = restrictScopeToOxyTemplates(queryParameters.getEffectiveSearchScope());
+        SearchScope scope = restrictScopeToOxyTemplates(searchParameters.getEffectiveSearchScope());
 
         assert psiClass.getName() != null;
 
         final String query = StringUtil.decapitalize(psiClass.getName().replaceFirst(MacroIndex.JAVA_MACRO_SUFFIX + "$", ""));
 
-        queryParameters.getOptimizer().searchWord(query, scope, UsageSearchContext.IN_CODE, true, target);
+        searchParameters.getOptimizer().searchWord(query, scope, UsageSearchContext.IN_CODE, true, target);
     }
-
 }

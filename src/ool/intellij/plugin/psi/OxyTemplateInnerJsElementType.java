@@ -44,8 +44,8 @@ public class OxyTemplateInnerJsElementType extends TemplateDataElementType
     }
 
     @Override
-    protected CharSequence createTemplateText(@NotNull CharSequence charSequence, @NotNull Lexer lexer,
-                                              @NotNull RangesCollector rangesCollector)
+    protected CharSequence createTemplateText(@NotNull CharSequence sourceCode, @NotNull Lexer baseLexer,
+                                              @NotNull RangeCollector rangeCollector)
     {
         if (offsets.get() == null || variables.get() == null)
         {
@@ -56,13 +56,15 @@ public class OxyTemplateInnerJsElementType extends TemplateDataElementType
         offsets.get().push(new LinkedList<>());
         variables.get().push(new LinkedList<>());
 
-        return super.createTemplateText(charSequence, lexer, rangesCollector);
+        return super.createTemplateText(sourceCode, baseLexer, rangeCollector);
     }
 
     @Override
-    protected void appendCurrentTemplateToken(StringBuilder result, CharSequence buf, Lexer lexer)
+    protected void appendCurrentTemplateToken(@NotNull StringBuilder result, @NotNull CharSequence buf,
+                                              @NotNull Lexer lexer, @NotNull RangeCollector collector)
     {
-        super.appendCurrentTemplateToken(result, buf, lexer);
+        super.appendCurrentTemplateToken(result, buf, lexer, collector);
+
 
         /**
          * The only place, where the javascript block is preceded by " is the variable declaration in macro parameter,

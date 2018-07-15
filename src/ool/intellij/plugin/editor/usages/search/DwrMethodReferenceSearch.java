@@ -33,10 +33,10 @@ public class DwrMethodReferenceSearch extends QueryExecutorBase<PsiReference, Me
     }
 
     @Override
-    public void processQuery(@NotNull MethodReferencesSearch.SearchParameters queryParameters,
-                             @NotNull Processor<PsiReference> consumer)
+    public void processQuery(@NotNull MethodReferencesSearch.SearchParameters searchParameters,
+                             @NotNull Processor<? super PsiReference> processor)
     {
-        PsiMethod method = queryParameters.getMethod();
+        PsiMethod method = searchParameters.getMethod();
 
         if ( ! method.getModifierList().hasModifierProperty(PsiModifier.PUBLIC) || ! DwrReferenceResolver.isDwrMethod(method))
         {
@@ -44,7 +44,7 @@ public class DwrMethodReferenceSearch extends QueryExecutorBase<PsiReference, Me
         }
 
         String query = method.getName();
-        SearchScope scope = queryParameters.getEffectiveSearchScope();
+        SearchScope scope = searchParameters.getEffectiveSearchScope();
 
         if (scope instanceof GlobalSearchScope)
         {
@@ -56,16 +56,16 @@ public class DwrMethodReferenceSearch extends QueryExecutorBase<PsiReference, Me
                     .getScopeRestrictedByFileTypes(GlobalSearchScope.allScope(method.getProject()), JavaFileType.INSTANCE)));
         }
 
-        queryParameters.getOptimizer().searchWord(query, scope, UsageSearchContext.IN_CODE, true, method,
+        searchParameters.getOptimizer().searchWord(query, scope, UsageSearchContext.IN_CODE, true, method,
                 new RequestResultProcessor()
                 {
                     @Override
-                    public boolean processTextOccurrence(@NotNull PsiElement element, int offsetInElement, @NotNull Processor<PsiReference> consumer)
+                    public boolean processTextOccurrence(@NotNull PsiElement psiElement, int offsetInElement, @NotNull Processor<? super PsiReference> processor)
                     {
                         PsiElement reference;
 
-                        return ! ((element instanceof JSReferenceExpression && (reference = ((JSReferenceExpression) element).resolve()) != null)
-                                && reference.isEquivalentTo(method)) || consumer.process((JSReferenceExpression) element);
+                        return ! ((psiElement instanceof JSReferenceExpression && (reference = ((JSReferenceExpression) psiElement).resolve()) != null)
+                                && reference.isEquivalentTo(method)) || processor.process((JSReferenceExpression) psiElement);
 
                     }
                 }

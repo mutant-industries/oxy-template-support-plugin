@@ -30,10 +30,10 @@ public class JavaGetterReferenceSearch extends QueryExecutorBase<PsiReference, M
     }
 
     @Override
-    public void processQuery(@NotNull MethodReferencesSearch.SearchParameters queryParameters,
-                             @NotNull Processor<PsiReference> consumer)
+    public void processQuery(@NotNull MethodReferencesSearch.SearchParameters searchParameters,
+                             @NotNull Processor<? super PsiReference> processor)
     {
-        doSearch(queryParameters.getMethod(), queryParameters.getOptimizer(), queryParameters.getEffectiveSearchScope());
+        doSearch(searchParameters.getMethod(), searchParameters.getOptimizer(), searchParameters.getEffectiveSearchScope());
     }
 
     static void doSearch(@NotNull final PsiMethod method, @NotNull final SearchRequestCollector optimizer, SearchScope effectiveSearchScope)
@@ -57,13 +57,12 @@ public class JavaGetterReferenceSearch extends QueryExecutorBase<PsiReference, M
                 new RequestResultProcessor()
                 {
                     @Override
-                    public boolean processTextOccurrence(@NotNull PsiElement element, int offsetInElement, @NotNull Processor<PsiReference> consumer)
+                    public boolean processTextOccurrence(@NotNull PsiElement psiElement, int offsetInElement, @NotNull Processor<? super PsiReference> processor)
                     {
                         PsiElement reference;
 
-                        return ! ((element instanceof JSReferenceExpression && (reference = ((JSReferenceExpression) element).resolve()) != null)
-                                && reference.isEquivalentTo(method)) || consumer.process((JSReferenceExpression) element);
-
+                        return ! ((psiElement instanceof JSReferenceExpression && (reference = ((JSReferenceExpression) psiElement).resolve()) != null)
+                                && reference.isEquivalentTo(method)) || processor.process((JSReferenceExpression) psiElement);
                     }
                 }
         );

@@ -16,13 +16,12 @@ import org.jetbrains.annotations.NotNull;
 public class JavaSpecialGetterReferenceSearch extends OxyTemplateReferenceSearch
 {
     @Override
-    public void processQuery(@NotNull ReferencesSearch.SearchParameters queryParameters, @NotNull Processor<PsiReference> consumer)
+    public void processQuery(@NotNull ReferencesSearch.SearchParameters searchParameters, @NotNull Processor<? super PsiReference> processor)
     {
-        if (queryParameters.getElementToSearch() instanceof PsiMethod)
+        if (searchParameters.getElementToSearch() instanceof PsiMethod)
         {
-            JavaGetterReferenceSearch.doSearch((PsiMethod) queryParameters.getElementToSearch(), queryParameters.getOptimizer(),
-                    queryParameters.getEffectiveSearchScope());
+            JavaGetterReferenceSearch.doSearch((PsiMethod) searchParameters.getElementToSearch(), searchParameters.getOptimizer(),
+                    searchParameters.getEffectiveSearchScope());
         }
     }
-
 }

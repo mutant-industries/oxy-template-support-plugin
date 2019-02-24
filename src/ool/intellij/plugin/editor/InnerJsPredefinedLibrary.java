@@ -1,9 +1,11 @@
 package ool.intellij.plugin.editor;
 
 import java.net.URL;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.intellij.lang.javascript.library.JSCorePredefinedLibrariesProvider;
 import com.intellij.lang.javascript.library.JSPredefinedLibraryProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtil;
@@ -32,21 +34,13 @@ public class InnerJsPredefinedLibrary extends JSPredefinedLibraryProvider
         Set<VirtualFile> virtualFiles = getVirtualFiles();
 
         ScriptingLibraryModel scriptingLibraryModel = ScriptingLibraryModel.createPredefinedLibrary(LIBRARY_NAME,
-                virtualFiles.toArray(new VirtualFile[virtualFiles.size()]), true);
+                virtualFiles.toArray(new VirtualFile[0]), false);
 
         return new ScriptingLibraryModel[]{scriptingLibraryModel};
     }
 
-    @NotNull
     @Override
-    public Set<VirtualFile> getRequiredLibraryFilesToIndex()
-    {
-        return getVirtualFiles();
-    }
-
-    @NotNull
-    @Override
-    public Set<VirtualFile> getRequiredLibraryFilesForResolve(@NotNull Project project)
+    public Collection<VirtualFile> getFilesForGlobalsProcessing()
     {
         return getVirtualFiles();
     }
@@ -60,6 +54,8 @@ public class InnerJsPredefinedLibrary extends JSPredefinedLibraryProvider
             URL fileUrl = InnerJsPredefinedLibrary.class.getResource(libFileName);
             virtualFiles.add(VfsUtil.findFileByURL(fileUrl));
         }
+
+        virtualFiles.addAll(JSCorePredefinedLibrariesProvider.getJavaScriptCorePredefinedLibraryFiles());
 
         return virtualFiles;
     }

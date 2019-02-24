@@ -91,10 +91,4 @@ public class Directive extends CompletionContributor
         }
     }
 
-    @Override
-    public boolean invokeAutoPopup(@NotNull PsiElement position, char typeChar)
-    {
-        return typeChar == ' ' && position.getNode().getElementType() == OxyTemplateTypes.T_OPEN_BLOCK_MARKER_DIRECTIVE;
-    }
-
 }

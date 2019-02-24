@@ -26,7 +26,7 @@ macros.oxy.test = {
                     <% oxy.baz({param1: params.var7, param2: 'string'}, function () { %>
                         <li class="<%= item._class %><%= params.current == index ? ' open' : '' %>">
                             <%
-                            if (typeof(a) == 'function') {
+                            if (typeof (a) == 'function') {
                                 a(var9);
                             } else {
                                 bar.baz(var10, function () {

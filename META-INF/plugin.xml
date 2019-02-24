@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>ool.intellij.plugin</id>
     <name>Oxy template support</name>
-    <version>1.5.1</version>
+    <version>1.5.2</version>
     <vendor email="p.mayr@oxyonline.cz" url="http://stash.oxyonline.local/projects/CZC/repos/macro-support-plugin">
         oXy Online s.r.o.
     </vendor>
@@ -15,6 +15,15 @@
     ]]></description>
 
     <change-notes><![CDATA[
+        <b>1.5.2</b>
+        <ul>
+            <li>
+                kompatibilita s 2018.3
+            </li>
+            <li>
+                reference do jazykového bundlu z js getMessage()
+            </li>
+        </ul>
         <b>1.5.1</b>
         <ul>
             <li>
@@ -102,13 +111,13 @@
         <b>1.0</b>
         <ul>
             <li>
-                refrence a našeptávání metod tříd / extenderů v java kontextu
+                reference a našeptávání metod tříd / extenderů v java kontextu
             </li>
             <li>
                 resolve typu proměnné ve for each, oxy.repeat, resolve typu globálních proměnných
             </li>
             <li>
-                refrence, našeptávání a refactoring kontrolérů a jejich metod na globální proměnné controllers
+                reference, našeptávání a refactoring kontrolérů a jejich metod na globální proměnné controllers
             </li>
             <li>
                 parametry maker lze zapisovat bez prefixu params, našeptávání na objektu params
@@ -333,7 +342,7 @@
     </change-notes>
 
     <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Build+Number+Ranges for description -->
-    <idea-version since-build="182"/>
+    <idea-version since-build="183"/>
 
     <extensions defaultExtensionNs="com.intellij">
         <fileTypeFactory implementation="ool.intellij.plugin.file.OxyTemplateFileTypeFactory"/>
@@ -369,6 +378,7 @@
         <typedHandler implementation="ool.intellij.plugin.editor.type.BlockMarkerHandler"/>
         <typedHandler implementation="ool.intellij.plugin.editor.type.ParamQuoteHandler"/>
         <typedHandler implementation="ool.intellij.plugin.editor.type.TagCloseHandler"/>
+        <typedHandler implementation="ool.intellij.plugin.editor.type.ParamAutoPopupHandler"/>
         <backspaceHandlerDelegate implementation="ool.intellij.plugin.editor.type.BackspaceHandler"/>
         <enterHandlerDelegate implementation="ool.intellij.plugin.editor.type.EnterHandler"/>
         <lang.commenter language="OxyTemplate" implementationClass="ool.intellij.plugin.editor.comment.OxyTemplateCommenter"/>
@@ -395,6 +405,7 @@
         <lang.findUsagesProvider language="OxyTemplate" implementationClass="ool.intellij.plugin.editor.usages.OxyTemplateFindUsagesProvider"/>
         <lang.findUsagesProvider language="OxyTemplateInnerJs" implementationClass="ool.intellij.plugin.editor.usages.OxyTemplateInnerJsFindUsagesProvider"/>
         <psi.referenceContributor implementation="ool.intellij.plugin.psi.reference.java.LiteralJsMacroReferenceContributor" order="first"/>
+        <psi.referenceContributor implementation="ool.intellij.plugin.psi.reference.innerjs.MessageBundleReferenceContributor" order="first"/>
         <referencesSearch implementation="ool.intellij.plugin.editor.usages.search.JavaMacroReferenceSearch"/>
         <referencesSearch implementation="ool.intellij.plugin.editor.usages.search.GlobalVariableReferenceSearch"/>
         <referencesSearch implementation="ool.intellij.plugin.editor.usages.search.JavaSpecialGetterReferenceSearch"/>

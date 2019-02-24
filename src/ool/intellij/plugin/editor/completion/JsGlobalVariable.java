@@ -40,8 +40,6 @@ public class JsGlobalVariable extends CompletionContributor
 
         for (GlobalVariableDefinition variable : GlobalVariableIndex.getGlobals(parameters.getOriginalFile().getProject()).values())
         {
-            assert variable.getName() != null;
-
             String typeText = (variable.getType() == null || variable.getName().equals(GlobalVariableTypeProvider.CONTROLLERS_GLOBAL_VARIABLE_NAME))
                     ? "" : variable.getType().getTypeText().replaceFirst("^.+\\.", "");
 

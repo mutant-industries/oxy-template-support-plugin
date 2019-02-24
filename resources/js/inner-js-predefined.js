@@ -51,7 +51,7 @@ out = {
 };
 
 /**
- * @param {String} messageCode
+ * @param {...string} messageCode
  * @return String
  */
 getMessage = function (messageCode) {};

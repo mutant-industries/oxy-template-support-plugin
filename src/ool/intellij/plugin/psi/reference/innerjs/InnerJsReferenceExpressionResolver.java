@@ -1,6 +1,5 @@
 package ool.intellij.plugin.psi.reference.innerjs;
 
-import java.util.Iterator;
 import java.util.List;
 
 import ool.intellij.plugin.psi.OxyTemplateHelper;
@@ -8,35 +7,22 @@ import ool.intellij.plugin.psi.reference.MacroReferenceResolver;
 import ool.intellij.plugin.psi.reference.innerjs.globals.GlobalVariableDefinition;
 import ool.intellij.plugin.psi.reference.innerjs.globals.GlobalVariableIndex;
 
-import com.intellij.lang.javascript.index.JSSymbolUtil;
 import com.intellij.lang.javascript.nashorn.resolve.NashornJSReferenceExpressionResolver;
 import com.intellij.lang.javascript.psi.JSCallExpression;
 import com.intellij.lang.javascript.psi.JSDefinitionExpression;
 import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.JSProperty;
-import com.intellij.lang.javascript.psi.JSQualifiedName;
-import com.intellij.lang.javascript.psi.JSQualifiedNameImpl;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
-import com.intellij.lang.javascript.psi.resolve.JSContextLevel;
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
-import com.intellij.lang.javascript.psi.resolve.JSTaggedResolveResult;
-import com.intellij.lang.javascript.psi.resolve.JSTypeInfo;
-import com.intellij.lang.javascript.psi.resolve.WalkUpResolveProcessor;
-import com.intellij.lang.javascript.psi.types.JSContext;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMember;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiModifierListOwner;
-import com.intellij.psi.PsiPackage;
 import com.intellij.psi.ResolveResult;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
@@ -53,6 +39,7 @@ public class InnerJsReferenceExpressionResolver extends NashornJSReferenceExpres
         super(expression, ignorePerformanceLimits);
     }
 
+    @NotNull
     @Override
     public ResolveResult[] resolve(@NotNull JSReferenceExpressionImpl expression, boolean incompleteCode)
     {
@@ -98,7 +85,8 @@ public class InnerJsReferenceExpressionResolver extends NashornJSReferenceExpres
         return parentResult;
     }
 
-//    @Override
+    @NotNull
+    @Override
     protected List<ResolveResult> resolveInPsiClass(PsiClass aClass, boolean isStatic)
     {
         List<ResolveResult> result = superResolveInPsiClassModified(aClass, isStatic);
@@ -117,7 +105,7 @@ public class InnerJsReferenceExpressionResolver extends NashornJSReferenceExpres
     }
 
     @NotNull
-    protected MacroReferenceResolver getMacroReferenceResolver()
+    private MacroReferenceResolver getMacroReferenceResolver()
     {
         return MacroReferenceResolver.DEFAULT;
     }
@@ -134,95 +122,6 @@ public class InnerJsReferenceExpressionResolver extends NashornJSReferenceExpres
     }
 
     /**
-     *  !!    TEMP CODE -  https://youtrack.jetbrains.com/issue/IDEA-138078    !!
-     *
-     * duplicated code to {@link NashornJSReferenceExpressionResolver#getResultsFromProcessor(WalkUpResolveProcessor)}
-     *  - {@link super#resolveInPsiClass(PsiClass, boolean)} will one day (hopefully) be protected
-     */
-    // --------------------------------------------------------------------------------------------------------------
-    // --------------------------------------------------------------------------------------------------------------
-    protected ResolveResult[] getResultsFromProcessor(WalkUpResolveProcessor processor)
-    {
-        List<JSTaggedResolveResult> taggedResolveResults = processor.getTaggedResolveResults();
-        if (taggedResolveResults.isEmpty() || (taggedResolveResults.get(0)).hasTag(JSTaggedResolveResult.ResolveResultTag.PARTIAL))
-        {
-            Module module;
-            if (JSSymbolUtil.isAccurateReferenceExpression(this.myRef))
-            {
-                if (this.myQualifier instanceof JSReferenceExpression)
-                {
-                    PsiElement qualifierResolve = ((JSReferenceExpression) this.myQualifier).resolve();
-                    if (qualifierResolve instanceof PsiClass)
-                    {
-                        List<ResolveResult> results = this.resolveInPsiClass((PsiClass) qualifierResolve, true);
-                        return results.isEmpty() ? ResolveResult.EMPTY_ARRAY : results.toArray(new ResolveResult[results.size()]);
-                    }
-                }
-
-                JavaPsiFacade psiFacade = JavaPsiFacade.getInstance(this.myContainingFile.getProject());
-                module = ModuleUtilCore.findModuleForPsiElement(this.myContainingFile);
-                JSQualifiedName qualifiedName = JSSymbolUtil.getAccurateReferenceName(this.myRef);
-                if (qualifiedName != null)
-                {
-                    qualifiedName = ((JSQualifiedNameImpl) qualifiedName).withoutInnermostComponent("Packages");
-                }
-
-                if (qualifiedName != null)
-                {
-                    String qName = qualifiedName.getQualifiedName();
-                    if (module != null)
-                    {
-                        PsiClass aClass = psiFacade.findClass(qName, GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module));
-                        if (aClass != null)
-                        {
-                            return new ResolveResult[]{new JSResolveResult(aClass)};
-                        }
-                    }
-
-                    PsiPackage aPackage = psiFacade.findPackage(qName);
-                    if (aPackage != null)
-                    {
-                        return new ResolveResult[]{new JSResolveResult(aPackage)};
-                    }
-                }
-            }
-
-            JSTypeInfo typeInfo = processor.getTypeInfo();
-            if (!typeInfo.myContextLevels.isEmpty() && (module = ModuleUtilCore.findModuleForPsiElement(this.myContainingFile)) != null)
-            {
-                JavaPsiFacade psiFacade = JavaPsiFacade.getInstance(this.myContainingFile.getProject());
-                GlobalSearchScope scope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module);
-                List<ResolveResult> javaResults = new SmartList();
-                boolean contextResolvesToJavaClass = false;
-                Iterator var9 = typeInfo.myContextLevels.iterator();
-
-                while (var9.hasNext())
-                {
-                    JSContextLevel level = (JSContextLevel) var9.next();
-                    JSQualifiedName qualifiedName = level.myNamespace.getQualifiedName();
-                    if (level.myRelativeLevel == 0 && qualifiedName != null)
-                    {
-                        PsiClass aClass = psiFacade.findClass(qualifiedName.getQualifiedName(), scope);
-                        if (aClass != null)
-                        {
-                            contextResolvesToJavaClass = true;
-                            List<ResolveResult> results = this.resolveInPsiClass(aClass, level.myNamespace.getJSContext() == JSContext.STATIC);
-                            javaResults.addAll(results);
-                        }
-                    }
-                }
-
-                if (contextResolvesToJavaClass)
-                {
-                    return javaResults.toArray(ResolveResult.EMPTY_ARRAY);
-                }
-            }
-        }
-
-        return processor.getResults();
-    }
-
-    /**
      * modified supertype method, fixes the following issue: https://youtrack.jetbrains.com/issue/IDEA-138078
      *
      * @param aClass
@@ -232,7 +131,7 @@ public class InnerJsReferenceExpressionResolver extends NashornJSReferenceExpres
     @NotNull
     private List<ResolveResult> superResolveInPsiClassModified(PsiClass aClass, boolean isStatic)
     {
-        SmartList<ResolveResult> results = new SmartList<>();
+        List<ResolveResult> results = new SmartList<>();
         Object candidates;
         Object field;
 

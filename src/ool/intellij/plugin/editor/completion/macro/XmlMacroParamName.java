@@ -24,7 +24,6 @@ import com.intellij.openapi.editor.CaretModel;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
-import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
@@ -104,23 +103,6 @@ public class XmlMacroParamName extends CompletionContributor
                 }
             }
         );
-    }
-
-    @Override
-    public boolean invokeAutoPopup(@NotNull PsiElement position, char typeChar)
-    {
-        if (typeChar == ' ')
-        {
-            IElementType elementType = position.getNode().getElementType();
-
-            if (elementType == OxyTemplateTypes.T_MACRO_NAME || elementType == OxyTemplateTypes.T_MACRO_PARAM_BOUNDARY
-                    && position.getParent().getLastChild().isEquivalentTo(position))
-            {
-                return true;
-            }
-        }
-
-        return false;
     }
 
 }

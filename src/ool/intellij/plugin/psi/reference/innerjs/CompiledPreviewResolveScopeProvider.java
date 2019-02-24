@@ -1,9 +1,9 @@
 package ool.intellij.plugin.psi.reference.innerjs;
 
-import ool.intellij.plugin.file.type.CompiledPreviewFileType;
+import ool.intellij.plugin.lang.CompiledPreview;
 
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,9 +22,9 @@ public class CompiledPreviewResolveScopeProvider extends InnerJsResolveScopeProv
     }
 
     @Override
-    protected boolean isApplicable(@NotNull VirtualFile virtualFile)
+    protected boolean isApplicable(@NotNull PsiFile psiFile)
     {
-        return virtualFile.getFileType() == CompiledPreviewFileType.INSTANCE;
+        return psiFile.getLanguage() == CompiledPreview.INSTANCE;
     }
 
 }

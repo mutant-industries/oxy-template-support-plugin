@@ -3,6 +3,7 @@ package ool.intellij.plugin.psi;
 import java.util.LinkedList;
 import java.util.Stack;
 
+import ool.intellij.plugin.lang.OxyTemplateInnerJs;
 import ool.intellij.plugin.psi.visitor.LineBreaksFixingElementVisitor;
 
 import com.intellij.lang.ASTNode;
@@ -83,7 +84,7 @@ public class OxyTemplateInnerJsElementType extends TemplateDataElementType
     }
 
     @Override
-    protected void prepareParsedTemplateFile(final FileElement root)
+    protected void prepareParsedTemplateFile(@NotNull final FileElement root)
     {
         convertReferencesToVariables(root);
         root.acceptTree(new LineBreaksFixingElementVisitor(offsets.get().pop()));
@@ -104,7 +105,10 @@ public class OxyTemplateInnerJsElementType extends TemplateDataElementType
                 continue;
             }
 
-            ASTNode replacement = JSChangeUtil.createJSTreeFromText(root.getManager().getProject(), "var " + elementAt.getText());
+            ASTNode replacement = JSChangeUtil.createStatementFromText(root.getManager().getProject(), "var " + elementAt.getText(),
+                    OxyTemplateInnerJs.INSTANCE, false);
+
+            assert replacement != null;
 
             replacement.removeRange(replacement.getFirstChildNode(), replacement.getLastChildNode());
 

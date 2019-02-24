@@ -29,7 +29,7 @@ public class MacroGotoSymbolContributor implements GotoClassContributor
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toSet());
 
-        return names.toArray(new String[names.size()]);
+        return names.toArray(new String[0]);
     }
 
     @NotNull

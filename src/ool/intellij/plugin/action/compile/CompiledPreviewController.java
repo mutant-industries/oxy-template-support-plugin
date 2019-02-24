@@ -19,7 +19,7 @@ import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.notification.NotificationGroup;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
-import com.intellij.openapi.components.AbstractProjectComponent;
+import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.event.DocumentEvent;
@@ -52,12 +52,14 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Petr Mayr <p.mayr@oxyonline.cz>
  */
-public class CompiledPreviewController extends AbstractProjectComponent
+public class CompiledPreviewController implements ProjectComponent
 {
     @NonNls
     private static final String COMPILED_FILE_SUFFIX = ".compiled";
 
     public static final Key<PsiFile> ORIGINAL_FILE_KEY = Key.create("COMPILED_ORIGINAL");
+
+    private final Project myProject;
 
     private ToolWindow consoleWindow;
 
@@ -69,7 +71,7 @@ public class CompiledPreviewController extends AbstractProjectComponent
 
     public CompiledPreviewController(Project project)
     {
-        super(project);
+        myProject = project;
     }
 
     @NotNull
@@ -212,7 +214,7 @@ public class CompiledPreviewController extends AbstractProjectComponent
         EditorFactory.getInstance().getEventMulticaster().addDocumentListener(new DocumentListener()
         {
             @Override
-            public void documentChanged(DocumentEvent e)
+            public void documentChanged(@NotNull DocumentEvent e)
             {
                 Document document = e.getDocument();
                 VirtualFile file = FileDocumentManager.getInstance().getFile(document);

@@ -14,7 +14,7 @@ import ool.intellij.plugin.psi.visitor.MacroNameVisitor;
 import com.intellij.lang.javascript.psi.JSCallExpression;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.JSProperty;
-import com.intellij.lang.javascript.psi.JSRecursiveElementVisitor;
+import com.intellij.lang.javascript.psi.JSRecursiveWalkingElementVisitor;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -70,7 +70,7 @@ public class OxyTemplateHelper
             }
         }.visitFile(psiFile);
 
-        new JSRecursiveElementVisitor()
+        new JSRecursiveWalkingElementVisitor()
         {
             @Override
             public void visitJSCallExpression(@NotNull JSCallExpression node)

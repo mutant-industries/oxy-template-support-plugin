@@ -35,7 +35,7 @@ public class MacroReferenceSet
             references.add(new MacroReference(element, text.lastIndexOf(".") + 1 + offsetShift, text.length() + offsetShift));
         }
 
-        return references.toArray(new PsiReference[references.size()]);
+        return references.toArray(new PsiReference[0]);
     }
 
 }

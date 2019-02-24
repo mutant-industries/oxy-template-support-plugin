@@ -4,12 +4,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import ool.intellij.plugin.file.index.OxyTemplateIndexUtil;
-import ool.intellij.plugin.file.index.nacro.MacroIndex;
-import ool.intellij.plugin.lang.OxyTemplate;
-import ool.intellij.plugin.lang.OxyTemplateInnerJs;
-import ool.intellij.plugin.psi.MacroAttribute;
-import ool.intellij.plugin.psi.MacroCall;
-import ool.intellij.plugin.psi.MacroParam;
 import ool.intellij.plugin.psi.macro.param.MacroParamHelper;
 import ool.intellij.plugin.psi.macro.param.descriptor.MacroParamDescriptor;
 import ool.intellij.plugin.psi.reference.innerjs.globals.GlobalVariableDefinition;
@@ -22,19 +16,13 @@ import com.intellij.lang.javascript.psi.JSParameter;
 import com.intellij.lang.javascript.psi.JSProperty;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.JSType;
-import com.intellij.lang.javascript.psi.JSVarStatement;
-import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext;
-import com.intellij.lang.javascript.psi.resolve.JSSimpleTypeProcessor;
-import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator;
 import com.intellij.lang.javascript.psi.resolve.JSTypeProcessor;
-import com.intellij.lang.javascript.psi.types.JSArrayTypeImpl;
 import com.intellij.lang.javascript.psi.types.JSRecordTypeImpl;
 import com.intellij.lang.javascript.psi.types.JSTypeSource;
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiPackage;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -74,26 +62,17 @@ public class InnerJsTypeEvaluator extends NashornJSTypeEvaluator
     }
 
     @Override
-    protected boolean addTypeFromResolveResult(@NotNull PsiElement resolveResult)
+    protected boolean addTypeFromElementResolveResult(PsiElement resolveResult)
     {
-        JSType type;
-
-        // oxy.repeat
-        if ((type = checkForEachDefinition(resolveResult)) != null)
-        {
-            addType(type, resolveResult);
-
-            return true;
-        }
         // globals
-        else if (resolveResult instanceof GlobalVariableDefinition)
+        if (resolveResult instanceof GlobalVariableDefinition)
         {
             addType(((GlobalVariableDefinition) resolveResult).getType(), resolveResult);
 
             return true;
         }
 
-        return super.addTypeFromResolveResult(resolveResult);
+        return super.addTypeFromElementResolveResult(resolveResult);
     }
 
 
@@ -140,72 +119,6 @@ public class InnerJsTypeEvaluator extends NashornJSTypeEvaluator
         type.accept(new SimplifiedClassNameResolver(myContext.targetFile));
 
         return type;
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-    @Nullable
-    private static JSType checkForEachDefinition(@NotNull final PsiElement element)
-    {
-        PsiElement elementLocal = element;
-
-        if (elementLocal.getParent() instanceof JSVarStatement)
-        {
-            elementLocal = elementLocal.getParent();
-        }
-
-        // repeat macro - var keyword is missing
-        if (elementLocal instanceof PsiPackage || ! (elementLocal.getFirstChild() instanceof JSVariable))
-        {
-            return null;
-        }
-
-        PsiElement elementAt = elementLocal.getContainingFile().getViewProvider()
-                .findElementAt(elementLocal.getNode().getStartOffset(), OxyTemplate.INSTANCE);
-
-        assert elementAt != null;
-
-        MacroAttribute attribute = PsiTreeUtil.getParentOfType(elementAt, MacroAttribute.class);
-
-        if (attribute == null || ! MacroIndex.REPEAT_MACRO_VARIABLE_DEFINITION.equals(attribute.getMacroParamName().getText()))
-        {
-            return null;
-        }
-
-        MacroCall macroCall = PsiTreeUtil.getParentOfType(attribute, MacroCall.class);
-
-        assert macroCall != null;
-
-        for (MacroAttribute macroAttribute : macroCall.getMacroAttributeList())
-        {
-            if (MacroIndex.REPEAT_MACRO_LIST_DEFINITION.equals(macroAttribute.getMacroParamName().getText()))
-            {
-                MacroParam macroParam;
-
-                if ((macroParam = macroAttribute.getMacroParam()) == null)
-                {
-                    return null;
-                }
-
-                PsiElement list = elementLocal.getContainingFile().getViewProvider().findElementAt(macroParam.getNode().getStartOffset()
-                        + macroParam.getTextLength() - 1, OxyTemplateInnerJs.INSTANCE);
-
-                JSReferenceExpression statement = PsiTreeUtil.getParentOfType(list, JSReferenceExpression.class);
-
-                if (statement != null)
-                {
-                    JSSimpleTypeProcessor typeProcessor = new JSSimpleTypeProcessor();
-
-                    JSTypeEvaluator.evaluateTypes(statement, statement.getContainingFile(), typeProcessor);
-
-                    if (typeProcessor.getType() instanceof JSArrayTypeImpl)
-                    {
-                        return ((JSArrayTypeImpl) typeProcessor.getType()).getType();
-                    }
-                }
-            }
-        }
-
-        return null;
     }
 
     /**

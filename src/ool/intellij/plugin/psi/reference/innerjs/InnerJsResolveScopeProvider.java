@@ -1,12 +1,13 @@
 package ool.intellij.plugin.psi.reference.innerjs;
 
 import ool.intellij.plugin.file.type.OxyTemplateFileType;
+import ool.intellij.plugin.lang.OxyTemplateInnerJs;
 
 import com.intellij.lang.javascript.library.JSPredefinedLibraryProvider;
 import com.intellij.lang.javascript.psi.resolve.JSElementResolveScopeProvider;
-import com.intellij.lang.javascript.psi.resolve.JSResolveScopeProvider;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.ProjectScope;
 import com.intellij.webcore.libraries.ScriptingLibraryModel;
@@ -24,9 +25,9 @@ public class InnerJsResolveScopeProvider implements JSElementResolveScopeProvide
     @Override
     public GlobalSearchScope getElementResolveScope(@NotNull PsiElement element)
     {
-        VirtualFile virtualFile = JSResolveScopeProvider.getFileForScopeEvaluation(element);
+        PsiFile psiFile = element.getContainingFile();
 
-        if (virtualFile == null || ! isApplicable(virtualFile))
+        if (psiFile == null || ! isApplicable(psiFile))
         {
             return null;
         }
@@ -35,7 +36,7 @@ public class InnerJsResolveScopeProvider implements JSElementResolveScopeProvide
 
         for (ScriptingLibraryModel model : JSPredefinedLibraryProvider.getAllPredefinedLibraries(element.getProject()))
         {
-            if ( ! model.getName().equals("oxy-predefined") || ! model.getName().equals("Nashorn"))
+            if ( ! model.getName().equals("oxy-predefined") && ! model.getName().equals("Nashorn"))
             {
                 continue;
             }
@@ -57,9 +58,9 @@ public class InnerJsResolveScopeProvider implements JSElementResolveScopeProvide
                 OxyTemplateFileType.INSTANCE);
     }
 
-    protected boolean isApplicable(@NotNull VirtualFile virtualFile)
+    protected boolean isApplicable(@NotNull PsiFile psiFile)
     {
-        return virtualFile.getFileType() == OxyTemplateFileType.INSTANCE;
+        return psiFile.getLanguage() == OxyTemplateInnerJs.INSTANCE;
     }
 
 }

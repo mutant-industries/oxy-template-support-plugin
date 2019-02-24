@@ -5,6 +5,7 @@ import ool.intellij.plugin.lang.OxyTemplate;
 import ool.intellij.plugin.lang.parser.definition.OxyTemplateParserDefinition;
 import ool.intellij.plugin.psi.OxyTemplateTypes;
 
+import com.intellij.codeInsight.AutoPopupController;
 import com.intellij.codeInsight.editorActions.TypedHandlerDelegate;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
@@ -22,8 +23,9 @@ import org.jetbrains.annotations.NotNull;
  */
 public class BlockMarkerHandler extends TypedHandlerDelegate
 {
+    @NotNull
     @Override
-    public Result charTyped(char c, Project project, @NotNull Editor editor, @NotNull PsiFile file)
+    public Result charTyped(char c, @NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file)
     {
         PsiElement elementAt;
         FileViewProvider provider = file.getViewProvider();
@@ -66,6 +68,22 @@ public class BlockMarkerHandler extends TypedHandlerDelegate
             }
 
             editor.getDocument().insertString(offset, delimiters.second.toString());
+        }
+
+        return Result.CONTINUE;
+    }
+
+    @NotNull
+    @Override
+    public Result checkAutoPopup(char charTyped, @NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file)
+    {
+        PsiElement elementAt;
+        int offset = editor.getCaretModel().getOffset();
+
+        if (charTyped == ' ' && offset > 0 && (elementAt = file.findElementAt(offset - 1)) != null
+                && elementAt.getNode().getElementType() == OxyTemplateTypes.T_OPEN_BLOCK_MARKER_DIRECTIVE)
+        {
+            AutoPopupController.getInstance(project).autoPopupMemberLookup(editor, null);
         }
 
         return Result.CONTINUE;

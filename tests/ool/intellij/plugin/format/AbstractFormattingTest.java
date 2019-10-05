@@ -5,7 +5,7 @@ import java.io.File;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.psi.codeStyle.CodeStyleManager;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Petr Mayr <p.mayr@oxyonline.cz>
  */
-abstract public class AbstractFormattingTest extends LightPlatformCodeInsightFixtureTestCase
+abstract public class AbstractFormattingTest extends BasePlatformTestCase
 {
     @NonNls
     private static final String TEST_DATA_BASE_DIR = "testData";
@@ -31,6 +31,7 @@ abstract public class AbstractFormattingTest extends LightPlatformCodeInsightFix
     @NonNls
     abstract protected String getTestDataDir();
 
+    @Override
     protected String getTestDataPath()
     {
         return TEST_DATA_BASE_DIR + File.separator + FORMATTER_TEST_DATA_BASE_DIR +
@@ -44,11 +45,10 @@ abstract public class AbstractFormattingTest extends LightPlatformCodeInsightFix
 
     protected void checkFormatting(@NotNull @NonNls final String file)
     {
-        final String original = getTestDataPath() + file + TEST_FILE_SUFFIX;
         final String expected = getExpectedDataPath() + file + TEST_FILE_SUFFIX;
 
         CommandProcessor.getInstance().executeCommand(getProject(), () -> {
-            myFixture.configureByFiles(original);
+            myFixture.configureByFiles(file + TEST_FILE_SUFFIX);
 
             ApplicationManager.getApplication().runWriteAction(() -> {
                 CodeStyleManager.getInstance(getProject()).reformat(myFixture.getFile());

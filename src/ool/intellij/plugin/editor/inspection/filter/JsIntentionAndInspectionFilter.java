@@ -7,7 +7,7 @@ import com.intellij.codeInspection.InspectionProfileEntry;
 import com.intellij.lang.javascript.highlighting.IntentionAndInspectionFilter;
 import com.intellij.lang.javascript.inspections.JSCommentMatchesSignatureInspection;
 import com.intellij.lang.javascript.inspections.JSDuplicatedDeclarationInspection;
-import com.intellij.lang.javascript.inspections.JSUnusedAssignmentInspection;
+import com.intellij.lang.javascript.inspection.JSUnusedAssignmentInspection;
 import com.intellij.lang.javascript.inspections.JSValidateJSDocInspection;
 import com.intellij.lang.javascript.inspections.UnterminatedStatementJSInspection;
 import com.sixrr.inspectjs.validity.BadExpressionStatementJSInspection;

@@ -26,6 +26,7 @@ import com.intellij.lang.javascript.psi.types.JSCompositeTypeImpl;
 import com.intellij.lang.javascript.psi.types.JSTypeImpl;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
@@ -35,7 +36,6 @@ import com.intellij.psi.PsiModifier;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.InheritanceUtil;
-import com.sun.xml.internal.ws.util.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -150,7 +150,7 @@ public class JavaContext extends CompletionContributor
 
                 if (insertText.matches("((^is)|(^get)|(^set))[A-Z].*"))
                 {
-                    insertText = presentableText = StringUtils.decapitalize(insertText.replaceFirst("(^is)|(^get)|(^set)", ""));
+                    insertText = presentableText = StringUtil.decapitalize(insertText.replaceFirst("(^is)|(^get)|(^set)", ""));
                 }
                 else
                 {

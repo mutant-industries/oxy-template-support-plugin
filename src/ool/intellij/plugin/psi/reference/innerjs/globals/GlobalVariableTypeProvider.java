@@ -98,7 +98,7 @@ public class GlobalVariableTypeProvider implements CachedValueProvider<JSType>
                         JSTypeSource source = JSTypeSourceFactory.createTypeSource(controller, true);
                         JSType jsType = JSTypeUtils.createType(controller.getQualifiedName(), source);
                         JSRecordTypeImpl.PropertySignature signature = new JSRecordTypeImpl.PropertySignatureImpl(controller.getName(),
-                                jsType, false);
+                                jsType, false, false);
 
                         members.add(signature);
                         cacheDependencies.add(controller);

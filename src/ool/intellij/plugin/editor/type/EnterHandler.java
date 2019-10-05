@@ -7,7 +7,7 @@ import ool.intellij.plugin.psi.BlockCloseStatement;
 import ool.intellij.plugin.psi.BlockOpenStatement;
 import ool.intellij.plugin.psi.OxyTemplateTypes;
 
-import com.intellij.codeInsight.editorActions.enter.EnterBetweenBracesHandler;
+import com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegateAdapter;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.CaretModel;
 import com.intellij.openapi.editor.Editor;
@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author Petr Mayr <p.mayr@oxyonline.cz>
  */
-public class EnterHandler extends EnterBetweenBracesHandler
+public class EnterHandler extends EnterHandlerDelegateAdapter
 {
     @Override
     public Result preprocessEnter(@NotNull final PsiFile file,
@@ -126,12 +126,6 @@ public class EnterHandler extends EnterBetweenBracesHandler
         }
 
         return false;
-    }
-
-    @Override
-    protected boolean isBracePair(char c1, char c2)
-    {
-        return c1 == '{' && c2 == '}';
     }
 
 }

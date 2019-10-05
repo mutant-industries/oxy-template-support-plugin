@@ -53,7 +53,7 @@ public class InnerJsTypeEvaluator extends NashornJSTypeEvaluator
             return true;
         }
         // function parameter
-        else if ((type = parameter.getType()) != null)
+        else if ((type = parameter.getJSType()) != null)
         {
             type.accept(new SimplifiedClassNameResolver(myContext.targetFile));
         }
@@ -62,23 +62,23 @@ public class InnerJsTypeEvaluator extends NashornJSTypeEvaluator
     }
 
     @Override
-    protected boolean addTypeFromElementResolveResult(PsiElement resolveResult)
+    protected void addTypeFromElementResolveResult(PsiElement resolveResult)
     {
         // globals
         if (resolveResult instanceof GlobalVariableDefinition)
         {
             addType(((GlobalVariableDefinition) resolveResult).getType(), resolveResult);
 
-            return true;
+            return;
         }
 
-        return super.addTypeFromElementResolveResult(resolveResult);
+        super.addTypeFromElementResolveResult(resolveResult);
     }
 
 
     // TODO temp code, see https://youtrack.jetbrains.com/issue/WEB-16383
     @Override
-    protected void evaluateCallExpressionTypes(@NotNull JSCallExpression callExpression, @NotNull JSEvaluateContext.JSEvaluationPlace place)
+    protected void evaluateCallExpressionTypes(@NotNull JSCallExpression callExpression)
     {
         PsiElement resolve;
 
@@ -90,7 +90,7 @@ public class InnerJsTypeEvaluator extends NashornJSTypeEvaluator
             return;
         }
 
-        super.evaluateCallExpressionTypes(callExpression, place);
+        super.evaluateCallExpressionTypes(callExpression);
     }
     // -------------------------------------------------------------------
 
@@ -110,7 +110,7 @@ public class InnerJsTypeEvaluator extends NashornJSTypeEvaluator
             }
 
             JSRecordTypeImpl.PropertySignature signature = new JSRecordTypeImpl.PropertySignatureImpl(paramDescriptor.getName(),
-                    paramDescriptor.getType(), ! paramDescriptor.isRequired());
+                    paramDescriptor.getType(), ! paramDescriptor.isRequired(), false);
 
             members.add(signature);
         }

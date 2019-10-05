@@ -2,6 +2,7 @@ package ool.intellij.plugin.editor.usages.search;
 
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.openapi.application.QueryExecutorBase;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiModifier;
@@ -12,7 +13,6 @@ import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.search.UsageSearchContext;
 import com.intellij.psi.search.searches.MethodReferencesSearch;
 import com.intellij.util.Processor;
-import com.sun.xml.internal.ws.util.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -50,7 +50,7 @@ public class JavaGetterReferenceSearch extends QueryExecutorBase<PsiReference, M
             return;
         }
 
-        String query = StringUtils.decapitalize(methodName.replaceFirst("(^is)|(^get)", ""));
+        String query = StringUtil.decapitalize(methodName.replaceFirst("(^is)|(^get)", ""));
         SearchScope scope = OxyTemplateReferenceSearch.restrictScopeToOxyTemplates(effectiveSearchScope);
 
         optimizer.searchWord(query, scope, UsageSearchContext.IN_CODE, true, method,

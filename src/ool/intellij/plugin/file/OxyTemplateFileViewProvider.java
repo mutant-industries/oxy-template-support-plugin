@@ -65,7 +65,7 @@ public class OxyTemplateFileViewProvider extends MultiplePsiFilesPerDocumentFile
             dataLang = OxyTemplate.getDefaultTemplateLang().getLanguage();
         }
 
-        Language substituteLang = LanguageSubstitutors.INSTANCE.substituteLanguage(dataLang, file, manager.getProject());
+        Language substituteLang = LanguageSubstitutors.getInstance().substituteLanguage(dataLang, file, manager.getProject());
 
         // only use a substituted language if it's templateable
         if (TemplateDataLanguageMappings.getTemplateableLanguages().contains(substituteLang))

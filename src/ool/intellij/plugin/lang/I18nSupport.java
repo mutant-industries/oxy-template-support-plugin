@@ -4,7 +4,7 @@ import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
 import java.util.ResourceBundle;
 
-import com.intellij.CommonBundle;
+import com.intellij.AbstractBundle;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.PropertyKey;
@@ -23,7 +23,7 @@ public class I18nSupport
 
     public static String message(@PropertyKey(resourceBundle = BUNDLE) String key, Object... params)
     {
-        return CommonBundle.message(getBundle(), key, params);
+        return AbstractBundle.message(getBundle(), key, params);
     }
 
     @NotNull
@@ -40,7 +40,7 @@ public class I18nSupport
         {
             bundle = ResourceBundle.getBundle(BUNDLE);
 
-            oxyTemplateSupportBundle = new SoftReference(bundle);
+            oxyTemplateSupportBundle = new SoftReference<>(bundle);
         }
 
         return bundle;

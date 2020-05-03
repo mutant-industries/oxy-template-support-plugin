@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>ool.intellij.plugin</id>
     <name>Oxy template support</name>
-    <version>1.5.3</version>
+    <version>1.5.4</version>
     <vendor email="p.mayr@oxyonline.cz" url="http://stash.oxyonline.local/projects/CZC/repos/macro-support-plugin">
         oXy Online s.r.o.
     </vendor>
@@ -15,6 +15,12 @@
     ]]></description>
 
     <change-notes><![CDATA[
+        <b>1.5.4</b>
+        <ul>
+            <li>
+                kompatibilita s 2020.1
+            </li>
+        </ul>
         <b>1.5.3</b>
         <ul>
             <li>
@@ -348,7 +354,7 @@
     </change-notes>
 
     <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Build+Number+Ranges for description -->
-    <idea-version since-build="193"/>
+    <idea-version since-build="201"/>
 
     <extensions defaultExtensionNs="com.intellij">
         <fileType name="OxyTemplate" language="OxyTemplate" extensions="jsm;jst" fieldName="INSTANCE"  implementationClass="ool.intellij.plugin.file.type.OxyTemplateFileType"/>

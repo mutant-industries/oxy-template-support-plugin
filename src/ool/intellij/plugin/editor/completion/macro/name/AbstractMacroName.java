@@ -12,6 +12,7 @@ import com.intellij.codeInsight.completion.CompletionContributor;
 import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.openapi.actionSystem.IdeActions;
+import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
@@ -57,7 +58,7 @@ abstract public class AbstractMacroName extends CompletionContributor
         if (parameters.getInvocationCount() == 1)
         {
             result.addLookupAdvertisement(I18nSupport.message("completion.macro.name.advertisement",
-                    getActionShortcut(IdeActions.ACTION_CODE_COMPLETION)));
+                    KeymapUtil.getFirstKeyboardShortcutText(IdeActions.ACTION_CODE_COMPLETION)));
 
             restriction = new LinkedList<>(OxyTemplateHelper.getIncludedFiles(parameters.getOriginalFile()).values());
             restriction.add(parameters.getOriginalFile().getVirtualFile());

@@ -34,16 +34,19 @@ public class InnerJsResolveScopeProvider implements JSElementResolveScopeProvide
 
         GlobalSearchScope scope = getBaseScope(element);
 
-        for (ScriptingLibraryModel model : JSPredefinedLibraryProvider.getAllPredefinedLibraries(element.getProject()))
+        for (JSPredefinedLibraryProvider provider : JSPredefinedLibraryProvider.EP_NAME.getExtensionList())
         {
-            if ( ! model.getName().equals("oxy-predefined") && ! model.getName().equals("Nashorn"))
+            for (ScriptingLibraryModel model : provider.getPredefinedLibraries(element.getProject()))
             {
-                continue;
-            }
+                if ( ! model.getName().equals("oxy-predefined") && ! model.getName().equals("Nashorn"))
+                {
+                    continue;
+                }
 
-            for (VirtualFile file : model.getAllFiles())
-            {
-                scope = scope.uniteWith(GlobalSearchScope.fileScope(element.getProject(), file));
+                for (VirtualFile file : model.getAllFiles())
+                {
+                    scope = scope.uniteWith(GlobalSearchScope.fileScope(element.getProject(), file));
+                }
             }
         }
 

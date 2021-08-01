@@ -8,7 +8,7 @@ import ool.intellij.plugin.psi.MacroCall;
 import ool.intellij.plugin.psi.MacroParam;
 
 import com.intellij.codeInsight.daemon.impl.analysis.JavaGenericsUtil;
-import com.intellij.lang.javascript.nashorn.resolve.NashornJSTypeEvaluatorHelper;
+import com.intellij.lang.javascript.index.FrameworkIndexingHandler;
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.JSType;
@@ -19,9 +19,12 @@ import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext;
 import com.intellij.lang.javascript.psi.resolve.JSSimpleTypeProcessor;
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator;
 import com.intellij.lang.javascript.psi.types.JSArrayTypeImpl;
+import com.intellij.lang.javascript.psi.types.JSContext;
+import com.intellij.lang.javascript.psi.types.JSNamedType;
 import com.intellij.lang.javascript.psi.types.JSTypeSource;
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiExpression;
 import com.intellij.psi.PsiField;
@@ -29,6 +32,7 @@ import com.intellij.psi.PsiMember;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiPackage;
 import com.intellij.psi.PsiType;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.ProjectScope;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -40,13 +44,14 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author Petr Mayr <p.mayr@oxyonline.cz>
  */
-public class InnerJsJavaTypeConverter extends NashornJSTypeEvaluatorHelper
+public class InnerJsJavaTypeConverter extends FrameworkIndexingHandler
 {
     @Override
     public boolean addTypeFromResolveResult(@NotNull JSTypeEvaluator evaluator, @NotNull JSEvaluateContext context,
                                             @NotNull PsiElement result)
     {
         JSType type;
+        String qualifiedName = null;
 
         if ((type = checkForEachDefinition(result)) != null)
         {
@@ -62,7 +67,25 @@ public class InnerJsJavaTypeConverter extends NashornJSTypeEvaluatorHelper
             return true;
         }
 
-        return super.addTypeFromResolveResult(evaluator, context, result);
+        if (result instanceof PsiClass)
+        {
+            qualifiedName = ((PsiClass)result).getQualifiedName();
+        }
+        else if (result instanceof PsiPackage)
+        {
+            qualifiedName = ((PsiPackage)result).getQualifiedName();
+        }
+
+        if (qualifiedName != null)
+        {
+            type = JSNamedType.createType(qualifiedName, JSTypeSourceFactory.createTypeSource(result, true), JSContext.STATIC);
+
+            evaluator.addType(type);
+
+            return true;
+        }
+
+        return false;
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -77,7 +100,8 @@ public class InnerJsJavaTypeConverter extends NashornJSTypeEvaluatorHelper
         }
 
         // repeat macro - var keyword is missing
-        if (elementLocal instanceof PsiPackage || ! (elementLocal.getFirstChild() instanceof JSVariable))
+        if (elementLocal instanceof PsiPackage || ! (elementLocal.getLastChild() instanceof JSVariable)
+                || elementLocal.getLastChild().getPrevSibling() instanceof PsiWhiteSpace)
         {
             return null;
         }

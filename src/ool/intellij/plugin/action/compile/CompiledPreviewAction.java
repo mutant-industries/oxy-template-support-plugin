@@ -2,10 +2,9 @@ package ool.intellij.plugin.action.compile;
 
 import ool.intellij.plugin.file.OxyTemplateFile;
 
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.LangDataKeys;
-import com.intellij.openapi.project.DumbAware;
+import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
@@ -15,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Petr Mayr <p.mayr@oxyonline.cz>
  */
-public class CompiledPreviewAction extends AnAction implements DumbAware
+public class CompiledPreviewAction extends DumbAwareAction
 {
     @Override
     public void update(@NotNull AnActionEvent e)

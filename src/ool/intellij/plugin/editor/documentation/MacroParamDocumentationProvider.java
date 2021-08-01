@@ -129,7 +129,7 @@ public class MacroParamDocumentationProvider extends AbstractDocumentationProvid
         if ((comment = JSStubBasedPsiTreeUtil.findDocComment(macro)) != null)
         {
             JSDocPlainCommentBuilder builder = new JSDocPlainCommentBuilder();
-            JSDocumentationUtils.processDocumentationTextFromComment(comment.getNode(), builder);
+            JSDocumentationUtils.processDocumentationTextFromComment(comment, comment.getNode(), builder);
 
             String doc = builder.getDoc().trim();
 

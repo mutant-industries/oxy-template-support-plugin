@@ -39,7 +39,10 @@ public class JsMacroNameDataIndexer extends MacroIndex implements DataIndexer<St
         {
             if (psiElement instanceof JSExpressionStatement
                     && (psiElement = PsiTreeUtil.getChildOfAnyType(psiElement, JSAssignmentExpression.class)) != null
-                    && psiElement.getFirstChild() instanceof JSDefinitionExpression)
+                    && psiElement.getFirstChild() instanceof JSDefinitionExpression
+                    // functions without namespace are not indexed:
+                    && psiElement.getFirstChild().getFirstChild() instanceof JSReferenceExpression
+                    && psiElement.getFirstChild().getFirstChild().getChildren().length > 1)
             {
                 String rootNamespace = psiElement.getFirstChild().getText().replace(MACRO_REGISTRY_NAMESPACE + ".", "");
                 boolean firstIteration = true;

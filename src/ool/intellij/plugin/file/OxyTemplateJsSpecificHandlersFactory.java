@@ -7,7 +7,6 @@ import com.intellij.lang.javascript.nashorn.NashornJSSpecificHandlersFactory;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext;
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator;
-import com.intellij.lang.javascript.psi.resolve.JSTypeProcessor;
 import com.intellij.psi.impl.source.resolve.ResolveCache.PolyVariantResolver;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,9 +27,9 @@ public class OxyTemplateJsSpecificHandlersFactory extends NashornJSSpecificHandl
 
     @NotNull
     @Override
-    public JSTypeEvaluator newTypeEvaluator(JSEvaluateContext context, JSTypeProcessor processor)
+    public JSTypeEvaluator newTypeEvaluator(@NotNull JSEvaluateContext context)
     {
-        return new InnerJsTypeEvaluator(context, processor);
+        return new InnerJsTypeEvaluator(context);
     }
 
 }

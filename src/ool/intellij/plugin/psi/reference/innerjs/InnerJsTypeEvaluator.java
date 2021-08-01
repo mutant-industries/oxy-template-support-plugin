@@ -34,9 +34,9 @@ import org.jetbrains.annotations.Nullable;
  */
 public class InnerJsTypeEvaluator extends NashornJSTypeEvaluator
 {
-    public InnerJsTypeEvaluator(JSEvaluateContext context, JSTypeProcessor processor)
+    public InnerJsTypeEvaluator(@NotNull JSEvaluateContext context)
     {
-        super(context, processor);
+        super(context);
     }
 
     @Override

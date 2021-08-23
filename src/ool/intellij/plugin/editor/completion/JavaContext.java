@@ -9,8 +9,8 @@ import java.util.stream.Collectors;
 import ool.intellij.plugin.editor.completion.handler.TrailingPatternConsumer;
 import ool.intellij.plugin.lang.OxyTemplateInnerJs;
 import ool.intellij.plugin.psi.reference.innerjs.ExtenderProvider;
-import ool.web.model.BaseExtender;
-import ool.web.model.Extender;
+import ool.common.web.model.BaseExtender;
+import ool.common.web.model.Extender;
 
 import com.intellij.codeInsight.completion.CompletionContributor;
 import com.intellij.codeInsight.completion.CompletionParameters;

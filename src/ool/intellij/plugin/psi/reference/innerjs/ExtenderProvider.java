@@ -37,7 +37,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public class ExtenderProvider
 {
-    private static final String EXTENDER_INTERFACE_FQN = ool.web.model.ExtenderProvider.class.getName();
+    private static final String EXTENDER_INTERFACE_FQN = ool.common.web.model.ExtenderProvider.class.getName();
     @NonNls
     private static final String CLASS_GETTER_METHOD_MANE = "getExtendedClass";
     @NonNls

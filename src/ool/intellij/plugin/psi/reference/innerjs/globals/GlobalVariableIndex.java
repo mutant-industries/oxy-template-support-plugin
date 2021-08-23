@@ -43,9 +43,9 @@ public class GlobalVariableIndex implements CachedValueProvider<Map<String, Glob
             Key.create("GLOBAL_VARIABLES_KEY");
 
     @NonNls
-    private static final String MODEL_PROVIDER_REGISTRY_FQN = "ool.web.model.ondemand.ModelProviderRegistry";
+    private static final String MODEL_PROVIDER_REGISTRY_FQN = "ool.common.web.model.ondemand.ModelProviderRegistry";
     @NonNls
-    private static final String GLOBAL_MODEL_PROVIDER_FQN = "ool.web.model.ondemand.GlobalModelProvider";
+    private static final String GLOBAL_MODEL_PROVIDER_FQN = "ool.common.web.model.ondemand.GlobalModelProvider";
     @NonNls
     private static final String REGISTER_METHOD_NAME = "register";
     @NonNls

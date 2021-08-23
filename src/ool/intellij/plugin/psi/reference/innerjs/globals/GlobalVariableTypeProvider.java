@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import ool.intellij.plugin.psi.reference.innerjs.InnerJsJavaTypeConverter;
-import ool.web.model.ondemand.GlobalModelProvider;
+import ool.common.web.model.ondemand.GlobalModelProvider;
 
 import com.google.common.collect.ImmutableList;
 import com.intellij.lang.javascript.psi.JSType;

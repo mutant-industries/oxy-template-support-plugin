@@ -17,10 +17,4 @@ public class CompiledPreview extends JSLanguageDialect
         super("CompiledPreview", DialectOptionHolder.OTHER);
     }
 
-    @Override
-    public String getFileExtension()
-    {
-        return "js";
-    }
-
 }

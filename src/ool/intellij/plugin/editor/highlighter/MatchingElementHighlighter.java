@@ -21,7 +21,7 @@ public class MatchingElementHighlighter implements BraceMatcher
     private static final int OXY_TEMPLATE_TOKEN_GROUP = 2;
 
     @Override
-    public boolean isLBraceToken(HighlighterIterator iterator, CharSequence fileText, FileType fileType)
+    public boolean isLBraceToken(HighlighterIterator iterator, @NotNull CharSequence fileText, @NotNull FileType fileType)
     {
         IElementType tokenType = iterator.getTokenType();
 
@@ -66,7 +66,7 @@ public class MatchingElementHighlighter implements BraceMatcher
     }
 
     @Override
-    public boolean isRBraceToken(HighlighterIterator iterator, CharSequence fileText, FileType fileType)
+    public boolean isRBraceToken(HighlighterIterator iterator, @NotNull CharSequence fileText, @NotNull FileType fileType)
     {
         IElementType tokenType = iterator.getTokenType();
 
@@ -107,7 +107,7 @@ public class MatchingElementHighlighter implements BraceMatcher
     }
 
     @Override
-    public boolean isPairBraces(IElementType tokenType, IElementType tokenType2)
+    public boolean isPairBraces(@NotNull IElementType tokenType, @NotNull IElementType tokenType2)
     {
         return tokenType == OxyTemplateTypes.T_XML_TAG_START && tokenType2 == OxyTemplateTypes.T_XML_CLOSE_TAG_END
                 || tokenType == OxyTemplateTypes.T_XML_CLOSE_TAG_END && tokenType2 == OxyTemplateTypes.T_XML_TAG_START
@@ -120,7 +120,7 @@ public class MatchingElementHighlighter implements BraceMatcher
     }
 
     @Override
-    public boolean isStructuralBrace(HighlighterIterator iterator, CharSequence text, FileType fileType)
+    public boolean isStructuralBrace(@NotNull HighlighterIterator iterator, @NotNull CharSequence text, @NotNull FileType fileType)
     {
         return false;
     }
@@ -166,13 +166,13 @@ public class MatchingElementHighlighter implements BraceMatcher
     }
 
     @Override
-    public int getCodeConstructStart(PsiFile file, int openingBraceOffset)
+    public int getCodeConstructStart(@NotNull PsiFile file, int openingBraceOffset)
     {
         return openingBraceOffset;
     }
 
     @Override
-    public int getBraceTokenGroupId(IElementType tokenType)
+    public int getBraceTokenGroupId(@NotNull IElementType tokenType)
     {
         return OXY_TEMPLATE_TOKEN_GROUP;
     }

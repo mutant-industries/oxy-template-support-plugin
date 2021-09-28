@@ -43,7 +43,7 @@ public class XmlMacroParamName extends CompletionContributor
             new CompletionProvider<CompletionParameters>()
             {
                 @Override
-                public void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context,
+                public void addCompletions(@NotNull CompletionParameters parameters, @NotNull ProcessingContext context,
                                            @NotNull CompletionResultSet resultSet)
                 {
                     PsiElement elementAt = parameters.getOriginalFile().getViewProvider().findElementAt(parameters.getOffset() - 1, OxyTemplate.INSTANCE);
@@ -90,7 +90,7 @@ public class XmlMacroParamName extends CompletionContributor
                             .withInsertHandler(new TrailingPatternConsumer(INSERT_CONSUME)
                             {
                                 @Override
-                                public void handleInsert(InsertionContext context, LookupElement item)
+                                public void handleInsert(@NotNull InsertionContext context, @NotNull LookupElement item)
                                 {
                                     CaretModel caretModel = context.getEditor().getCaretModel();
                                     caretModel.moveToOffset(caretModel.getOffset() - 1);

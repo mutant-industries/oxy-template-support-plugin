@@ -17,10 +17,4 @@ public class OxyTemplateInnerJs extends JSLanguageDialect
         super("OxyTemplateInnerJs", DialectOptionHolder.OTHER);
     }
 
-    @Override
-    public String getFileExtension()
-    {
-        return "js";
-    }
-
 }

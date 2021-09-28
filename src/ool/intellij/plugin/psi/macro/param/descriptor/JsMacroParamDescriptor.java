@@ -8,8 +8,8 @@ import ool.intellij.plugin.file.index.OxyTemplateIndexUtil;
 import com.intellij.lang.javascript.JSDocTokenTypes;
 import com.intellij.lang.javascript.psi.JSProperty;
 import com.intellij.lang.javascript.psi.JSType;
-import com.intellij.lang.javascript.psi.JSTypeUtils;
 import com.intellij.lang.javascript.psi.jsdoc.JSDocTag;
+import com.intellij.lang.javascript.psi.types.JSTypeParser;
 import com.intellij.lang.javascript.psi.types.JSTypeSource;
 import com.intellij.psi.PsiElement;
 import org.apache.commons.lang.StringUtils;
@@ -115,7 +115,7 @@ public class JsMacroParamDescriptor extends MacroParamDescriptor<JSProperty>
         if (docTag.getValue() != null && StringUtils.isNotEmpty(simpleTypeName = docTag.getValue()
                 .getText().replaceFirst("^\\{", "").replaceFirst("\\}$", "")))
         {
-            return JSTypeUtils.createType(simpleTypeName, JSTypeSource.EXPLICITLY_DECLARED);
+            return JSTypeParser.createType(simpleTypeName, JSTypeSource.EXPLICITLY_DECLARED);
         }
 
         return null;

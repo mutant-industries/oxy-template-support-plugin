@@ -10,6 +10,7 @@ import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiFile;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static ool.intellij.plugin.lang.parser.definition.OxyTemplateParserDefinition.PARAMETER_QUOTES;
@@ -22,7 +23,7 @@ import static ool.intellij.plugin.lang.parser.definition.OxyTemplateParserDefini
 public class BackspaceHandler extends BackspaceHandlerDelegate
 {
     @Override
-    public void beforeCharDeleted(char c, PsiFile file, Editor editor)
+    public void beforeCharDeleted(char c, @NotNull PsiFile file, Editor editor)
     {
         int offset = editor.getCaretModel().getOffset();
 
@@ -33,7 +34,7 @@ public class BackspaceHandler extends BackspaceHandlerDelegate
     }
 
     @Override
-    public boolean charDeleted(char c, PsiFile file, Editor editor)
+    public boolean charDeleted(char c, @NotNull PsiFile file, @NotNull Editor editor)
     {
         return true;
     }

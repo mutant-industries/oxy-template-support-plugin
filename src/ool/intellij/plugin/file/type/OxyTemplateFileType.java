@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 public class OxyTemplateFileType extends LanguageFileType
 {
     @NonNls
-    private static final Icon DEFAULT_ICON = IconLoader.getIcon("/icons/default.png");
+    private static final Icon DEFAULT_ICON = IconLoader.getIcon("/icons/default.png", OxyTemplateFileType.class);
 
     @NonNls
     public static final String DEFAULT_EXTENSION = "jsm;jst";

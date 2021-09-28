@@ -59,7 +59,7 @@ public class MacroReference implements PsiPolyVariantReference
     }
 
     @Override
-    public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException
+    public PsiElement handleElementRename(@NotNull String newElementName) throws IncorrectOperationException
     {
         final ElementManipulator<PsiElement> manipulator = CachingReference.getManipulator(referencingElement);
 
@@ -80,13 +80,14 @@ public class MacroReference implements PsiPolyVariantReference
                 .resolveWithCaching(this, MacroReferenceResolver.DEFAULT, false, false, referencingElement.getContainingFile());
     }
 
+    @NotNull
     @Override
     public TextRange getRangeInElement()
     {
         return TextRange.create(startOffset, endOffset);
     }
 
-
+    @NotNull
     @Override
     public PsiElement getElement()
     {

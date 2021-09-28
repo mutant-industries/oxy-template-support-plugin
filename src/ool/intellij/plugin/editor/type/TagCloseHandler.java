@@ -29,8 +29,9 @@ import org.jetbrains.annotations.Nullable;
  */
 public class TagCloseHandler extends TypedHandlerDelegate
 {
+    @NotNull
     @Override
-    public Result beforeCharTyped(char c, Project project, @NotNull Editor editor, @NotNull PsiFile file, FileType fileType)
+    public Result beforeCharTyped(char c, @NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file, @NotNull FileType fileType)
     {
         FileViewProvider provider = file.getViewProvider();
         int offset;

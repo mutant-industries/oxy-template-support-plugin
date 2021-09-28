@@ -1,8 +1,8 @@
 package ool.intellij.plugin.lang;
 
+import com.intellij.ide.highlighter.HtmlFileType;
 import com.intellij.lang.Language;
 import com.intellij.openapi.fileTypes.LanguageFileType;
-import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.psi.templateLanguages.TemplateLanguage;
 
 /**
@@ -21,7 +21,7 @@ public class OxyTemplate extends Language implements TemplateLanguage
 
     public static LanguageFileType getDefaultTemplateLang()
     {
-        return StdFileTypes.HTML;
+        return HtmlFileType.INSTANCE;
     }
 
 }

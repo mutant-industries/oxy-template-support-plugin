@@ -31,8 +31,9 @@ public class XmlInjectedBlockBuilder extends XmlInjectedLanguageBlockBuilder
         this.policy = formattingPolicy;
     }
 
+    @NotNull
     @Override
-    public Block createInjectedBlock(ASTNode node, Block originalBlock, Indent indent, int offset, TextRange range, Language language)
+    public Block createInjectedBlock(@NotNull ASTNode node, @NotNull Block originalBlock, Indent indent, int offset, TextRange range, Language language)
     {
         return new OxyTemplateForeignElementWrapper(builder, node, null, null, getSettings(), policy, indent, range);
     }

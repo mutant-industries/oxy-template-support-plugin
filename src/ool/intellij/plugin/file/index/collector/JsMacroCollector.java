@@ -23,7 +23,7 @@ public class JsMacroCollector extends MacroCollector<JSElement, JsMacroNameIndex
     }
 
     @Override
-    public boolean process(VirtualFile file, JsMacroNameIndexedElement macroNameElement)
+    public boolean process(@NotNull VirtualFile file, JsMacroNameIndexedElement macroNameElement)
     {
         PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
 

@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 import ool.intellij.plugin.file.index.OxyTemplateIndexUtil;
 
 import com.intellij.lang.javascript.psi.JSType;
-import com.intellij.lang.javascript.psi.JSTypeUtils;
+import com.intellij.lang.javascript.psi.types.JSTypeParser;
 import com.intellij.lang.javascript.psi.types.JSTypeSource;
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
 import com.intellij.psi.PsiClass;
@@ -41,7 +41,7 @@ public class JavaMacroParamDescriptor extends MacroParamDescriptor<PsiClass>
         this.defaultValue = defaultValue;
 
         JSTypeSource typeSource = JSTypeSourceFactory.createTypeSource(macro, rawType != null);
-        type = JSTypeUtils.createType(rawType, typeSource);
+        type = JSTypeParser.createType(rawType, typeSource);
 
         PsiDocComment comment = macro.getDocComment();
 

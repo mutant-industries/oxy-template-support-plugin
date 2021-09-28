@@ -9,6 +9,7 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.openapi.editor.CaretModel;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.util.TextRange;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * 1/31/15
@@ -25,7 +26,7 @@ public class TrailingPatternConsumer implements InsertHandler<LookupElement>
     }
 
     @Override
-    public void handleInsert(InsertionContext context, LookupElement item)
+    public void handleInsert(@NotNull InsertionContext context, @NotNull LookupElement item)
     {
         Document document = context.getDocument();
 

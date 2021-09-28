@@ -17,9 +17,10 @@ import com.intellij.execution.filters.TextConsoleBuilderFactory;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.notification.NotificationGroup;
+import com.intellij.notification.NotificationGroupManager;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
-import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.event.DocumentEvent;
@@ -36,8 +37,6 @@ import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
-import com.intellij.openapi.wm.ToolWindowAnchor;
-import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
@@ -53,7 +52,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Petr Mayr <p.mayr@oxyonline.cz>
  */
-public class CompiledPreviewController implements ProjectComponent
+public final class CompiledPreviewController implements Disposable
 {
     @NonNls
     private static final String COMPILED_FILE_SUFFIX = ".compiled";
@@ -62,37 +61,66 @@ public class CompiledPreviewController implements ProjectComponent
 
     private final Project myProject;
 
+    private final ConsoleView console;
+
+    private final NotificationGroup compilerNotificationGroup;
+
+    private final DocumentListener documentUpdateListener;
+
+    private final MergingUpdateQueue updateQueue;
+
     private ToolWindow consoleWindow;
 
-    private ConsoleView console;
-
-    private NotificationGroup compilerNotificationGroup;
-
-    private MergingUpdateQueue updateQueue;
-
-    public CompiledPreviewController(Project project)
+    public CompiledPreviewController(@NotNull Project project)
     {
         myProject = project;
+        compilerNotificationGroup = NotificationGroupManager.getInstance().getNotificationGroup("oxy.CompilerMessages");
+
+        TextConsoleBuilder consoleBuilder = TextConsoleBuilderFactory.getInstance().createBuilder(myProject);
+
+        console = consoleBuilder.getConsole();
+
+        updateQueue = new MergingUpdateQueue("LIVE_PREVIEW_QUEUE", 1000, true, null, myProject);
+
+        documentUpdateListener = new DocumentListener()
+        {
+            @Override
+            public void documentChanged(@NotNull DocumentEvent e)
+            {
+                Document document = e.getDocument();
+                VirtualFile file = FileDocumentManager.getInstance().getFile(document);
+
+                if (file == null || file.getFileType() != OxyTemplateFileType.INSTANCE)
+                {
+                    return;
+                }
+
+                updateQueue.cancelAllUpdates();
+                updateQueue.queue(new CompiledPreviewUpdater(Boolean.TRUE, myProject));
+            }
+        };
+
+        EditorFactory.getInstance().getEventMulticaster().addDocumentListener(documentUpdateListener, myProject);
     }
 
-    @NotNull
     @Override
-    public String getComponentName()
+    public void dispose()
     {
-        return "oxy.template.compiledPreviewController";
+        EditorFactory.getInstance().getEventMulticaster().removeDocumentListener(documentUpdateListener);
+
+        updateQueue.dispose();
     }
 
-    @Override
-    public void projectOpened()
+    public void initToolWindow(@NotNull ToolWindow consoleWindow)
     {
-        initCompiledCodeUpdater();
-        initConsoleView();
-    }
+        this.consoleWindow = consoleWindow;
 
-    @Override
-    public void projectClosed()
-    {
-        console.dispose();
+        ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
+
+        JComponent consoleComponent = console.getComponent();
+        Content content = contentFactory.createContent(consoleComponent, "", false);
+
+        consoleWindow.getContentManager().addContent(content);
     }
 
     public boolean showCompiledCode(@NotNull final PsiFile originalFile)
@@ -212,54 +240,11 @@ public class CompiledPreviewController implements ProjectComponent
         return true;
     }
 
-    // ----------------------------------------------------------------------------------------------------
-    private void initCompiledCodeUpdater()
-    {
-        updateQueue = new MergingUpdateQueue("LIVE_PREVIEW_QUEUE", 1000, true, null, myProject);
-
-        EditorFactory.getInstance().getEventMulticaster().addDocumentListener(new DocumentListener()
-        {
-            @Override
-            public void documentChanged(@NotNull DocumentEvent e)
-            {
-                Document document = e.getDocument();
-                VirtualFile file = FileDocumentManager.getInstance().getFile(document);
-
-                if (file == null || file.getFileType() != OxyTemplateFileType.INSTANCE)
-                {
-                    return;
-                }
-
-                updateQueue.cancelAllUpdates();
-                updateQueue.queue(new CompiledPreviewUpdater(Boolean.TRUE, myProject));
-            }
-        }, myProject);
-    }
-
-    private void initConsoleView()
-    {
-        ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
-        ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(myProject);
-
-        TextConsoleBuilderFactory factory = TextConsoleBuilderFactory.getInstance();
-        TextConsoleBuilder consoleBuilder = factory.createBuilder(myProject);
-        console = consoleBuilder.getConsole();
-
-        JComponent consoleComponent = console.getComponent();
-        Content content = contentFactory.createContent(consoleComponent, "", false);
-
-        consoleWindow = toolWindowManager.registerToolWindow(I18nSupport.message("action.live.update.compiler.output"), true, ToolWindowAnchor.BOTTOM, myProject, true);
-        consoleWindow.getContentManager().addContent(content);
-        consoleWindow.setIcon(OxyTemplateFileType.INSTANCE.getIcon());
-
-        compilerNotificationGroup = NotificationGroup.toolWindowGroup("Template compiler messages", I18nSupport.message("action.live.update.compiler.output"));
-    }
-
     private void onCompilerError(@NotNull final TemplateCompilerException exception, @NotNull final VirtualFile virtualFile)
     {
         ErrorInformation errorInformation;
 
-        if ( ! consoleWindow.isVisible())
+        if (consoleWindow == null || ! consoleWindow.isVisible())
         {
             compilerNotificationGroup.createNotification(I18nSupport.message("action.live.update.compilation.error.message"),
                     MessageType.ERROR).notify(myProject);

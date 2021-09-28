@@ -12,6 +12,7 @@ import com.intellij.codeInsight.lookup.InsertHandlerDecorator;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementDecorator;
 import com.intellij.lang.javascript.psi.JSElement;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * 1/21/15
@@ -21,7 +22,7 @@ import com.intellij.lang.javascript.psi.JSElement;
 public class IncludeAutoInsert implements InsertHandlerDecorator<LookupElement>
 {
     @Override
-    public void handleInsert(InsertionContext context, LookupElementDecorator<LookupElement> item)
+    public void handleInsert(@NotNull InsertionContext context, @NotNull LookupElementDecorator<LookupElement> item)
     {
         item.getDelegate().handleInsert(context);
 

@@ -13,6 +13,7 @@ import ool.intellij.plugin.psi.OxyTemplateTypes;
 import com.intellij.formatting.Alignment;
 import com.intellij.formatting.Block;
 import com.intellij.formatting.ChildAttributes;
+import com.intellij.formatting.FormattingContext;
 import com.intellij.formatting.FormattingModel;
 import com.intellij.formatting.FormattingModelBuilder;
 import com.intellij.formatting.Indent;
@@ -78,7 +79,7 @@ public class OxyTemplateBlock extends TemplateLanguageBlock
 
             assert modelBuilder != null && jsPsiFile != null;
 
-            FormattingModel childModel = modelBuilder.createModel(jsPsiFile, getSettings());
+            FormattingModel childModel = modelBuilder.createModel(FormattingContext.create(jsPsiFile, getSettings()));
             list.add(new InnerJsBlockWrapper((InnerJsBlock) childModel.getRootBlock(), astNode.getStartOffset(),
                     astNode.getTextRange(), Indent.getSpaceIndent(2, true), null));
         }

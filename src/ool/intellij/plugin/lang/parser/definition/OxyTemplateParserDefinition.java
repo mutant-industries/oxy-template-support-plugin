@@ -105,18 +105,21 @@ public class OxyTemplateParserDefinition implements ParserDefinition
         return new OxyTemplateParser();
     }
 
+    @NotNull
     @Override
     public IFileElementType getFileNodeType()
     {
         return FILE;
     }
 
+    @NotNull
     @Override
-    public PsiFile createFile(FileViewProvider viewProvider)
+    public PsiFile createFile(@NotNull FileViewProvider viewProvider)
     {
         return new OxyTemplateFile(viewProvider);
     }
 
+    @NotNull
     @Override
     public SpaceRequirements spaceExistenceTypeBetweenTokens(ASTNode left, ASTNode right)
     {

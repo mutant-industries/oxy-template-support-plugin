@@ -12,7 +12,6 @@ import com.intellij.lang.javascript.index.FrameworkIndexingHandler;
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.JSType;
-import com.intellij.lang.javascript.psi.JSTypeUtils;
 import com.intellij.lang.javascript.psi.JSVarStatement;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext;
@@ -20,7 +19,8 @@ import com.intellij.lang.javascript.psi.resolve.JSSimpleTypeProcessor;
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator;
 import com.intellij.lang.javascript.psi.types.JSArrayTypeImpl;
 import com.intellij.lang.javascript.psi.types.JSContext;
-import com.intellij.lang.javascript.psi.types.JSNamedType;
+import com.intellij.lang.javascript.psi.types.JSNamedTypeFactory;
+import com.intellij.lang.javascript.psi.types.JSTypeParser;
 import com.intellij.lang.javascript.psi.types.JSTypeSource;
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
 import com.intellij.openapi.project.Project;
@@ -55,14 +55,14 @@ public class InnerJsJavaTypeConverter extends FrameworkIndexingHandler
 
         if ((type = checkForEachDefinition(result)) != null)
         {
-            evaluator.addType(type, result);
+            evaluator.addType(type);
 
             return true;
         }
         // TODO temp code, see https://youtrack.jetbrains.com/issue/WEB-16383
         if (result instanceof PsiMember && (type = getPsiElementJsType(result)) != null)
         {
-            evaluator.addType(type, result);
+            evaluator.addType(type);
 
             return true;
         }
@@ -78,7 +78,7 @@ public class InnerJsJavaTypeConverter extends FrameworkIndexingHandler
 
         if (qualifiedName != null)
         {
-            type = JSNamedType.createType(qualifiedName, JSTypeSourceFactory.createTypeSource(result, true), JSContext.STATIC);
+            type = JSNamedTypeFactory.createType(qualifiedName, JSTypeSourceFactory.createTypeSource(result, true), JSContext.STATIC);
 
             evaluator.addType(type);
 
@@ -178,7 +178,7 @@ public class InnerJsJavaTypeConverter extends FrameworkIndexingHandler
         {
             JSTypeSource typeSource = JSTypeSourceFactory.createTypeSource(element, true);
 
-            return JSTypeUtils.createType(modifyCollectionType(type, element.getProject()), typeSource);
+            return JSTypeParser.createType(modifyCollectionType(type, element.getProject()), typeSource);
         }
 
         return null;

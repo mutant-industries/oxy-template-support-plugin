@@ -59,7 +59,7 @@ public class CompiledPreviewUpdater extends Update
                 continue;
             }
 
-            project.getComponent(CompiledPreviewController.class).showCompiledCode(originalFile, editor.getDocument());
+            project.getService(CompiledPreviewController.class).showCompiledCode(originalFile, editor.getDocument());
         }
     }
 

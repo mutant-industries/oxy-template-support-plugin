@@ -38,7 +38,7 @@ public class XmlMacroNamespace extends CompletionContributor
             {
                 @Override
                 public void addCompletions(@NotNull CompletionParameters parameters,
-                                           ProcessingContext context,
+                                           @NotNull ProcessingContext context,
                                            @NotNull CompletionResultSet resultSet)
                 {
                     FileViewProvider provider = parameters.getOriginalFile().getViewProvider();
@@ -52,7 +52,7 @@ public class XmlMacroNamespace extends CompletionContributor
                         .withInsertHandler(new TrailingPatternConsumer(INSERT_CONSUME)
                         {
                             @Override
-                            public void handleInsert(InsertionContext context, LookupElement item)
+                            public void handleInsert(@NotNull InsertionContext context, @NotNull LookupElement item)
                             {
                                 super.handleInsert(context, item);
 

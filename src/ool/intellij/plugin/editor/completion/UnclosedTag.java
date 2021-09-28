@@ -38,7 +38,7 @@ public class UnclosedTag extends CompletionContributor
             {
                 @Override
                 public void addCompletions(@NotNull CompletionParameters parameters,
-                                           ProcessingContext context,
+                                           @NotNull ProcessingContext context,
                                            @NotNull CompletionResultSet resultSet)
                 {
                     FileViewProvider provider = parameters.getOriginalFile().getViewProvider();

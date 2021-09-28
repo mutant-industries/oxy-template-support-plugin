@@ -32,7 +32,7 @@ public class ExpressionStatement extends CompletionContributor
 
                 @Override
                 public void addCompletions(@NotNull CompletionParameters parameters,
-                                           ProcessingContext context,
+                                           @NotNull ProcessingContext context,
                                            @NotNull CompletionResultSet resultSet)
                 {
                     if (parameters.getPosition().getPrevSibling() == null)

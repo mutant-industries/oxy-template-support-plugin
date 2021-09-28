@@ -6,7 +6,7 @@ import ool.intellij.plugin.psi.MacroName;
 import ool.intellij.plugin.psi.MacroTag;
 import ool.intellij.plugin.psi.visitor.OxyTemplateAnnotatingVisitor;
 
-import com.intellij.lang.annotation.Annotation;
+import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +25,7 @@ public class XmlMacroNameAnnotator extends OxyTemplateAnnotatingVisitor
 
         if ((reference = macroName.getReference()) == null || reference.resolve() == null)
         {
-            holder.createWarningAnnotation(macroName, I18nSupport.message("annotator.unresolved.macro.reference.tooltip"));
+            holder.newAnnotation(HighlightSeverity.WARNING, I18nSupport.message("annotator.unresolved.macro.reference.tooltip")).create();
         }
 
         if (macroName.isClosingTagMacroName())
@@ -39,11 +39,9 @@ public class XmlMacroNameAnnotator extends OxyTemplateAnnotatingVisitor
 
             if ( ! tag.getMacroName().getText().equals(macroName.getText()))
             {
-                Annotation annotation = holder.createWarningAnnotation(macroName,
-                        I18nSupport.message("annotator.not.matching.tags.reference.tooltip"));
-
-                annotation.registerFix(new NotMatchingTagsQuickFix(macroName, tag.getMacroName()));
-                annotation.registerFix(new NotMatchingTagsQuickFix(tag.getMacroName(), macroName));
+                holder.newAnnotation(HighlightSeverity.WARNING, I18nSupport.message("annotator.not.matching.tags.reference.tooltip")).range(macroName)
+                        .withFix(new NotMatchingTagsQuickFix(macroName, tag.getMacroName()))
+                        .withFix(new NotMatchingTagsQuickFix(tag.getMacroName(), macroName)).create();
             }
         }
     }

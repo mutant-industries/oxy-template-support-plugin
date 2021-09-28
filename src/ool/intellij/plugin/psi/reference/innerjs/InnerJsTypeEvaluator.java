@@ -17,7 +17,6 @@ import com.intellij.lang.javascript.psi.JSProperty;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext;
-import com.intellij.lang.javascript.psi.resolve.JSTypeProcessor;
 import com.intellij.lang.javascript.psi.types.JSRecordTypeImpl;
 import com.intellij.lang.javascript.psi.types.JSTypeSource;
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
@@ -48,7 +47,7 @@ public class InnerJsTypeEvaluator extends NashornJSTypeEvaluator
         // macro first parameter
         if ((macro = checkMacroFirstParameter(parameter)) != null)
         {
-            addType(getMacroFirstParameterType(macro), parameter);
+            addType(getMacroFirstParameterType(macro));
 
             return true;
         }
@@ -67,7 +66,7 @@ public class InnerJsTypeEvaluator extends NashornJSTypeEvaluator
         // globals
         if (resolveResult instanceof GlobalVariableDefinition)
         {
-            addType(((GlobalVariableDefinition) resolveResult).getType(), resolveResult);
+            addType(((GlobalVariableDefinition) resolveResult).getType());
 
             return;
         }
@@ -85,7 +84,7 @@ public class InnerJsTypeEvaluator extends NashornJSTypeEvaluator
         if (callExpression.getMethodExpression() instanceof JSReferenceExpression
                 && (resolve = ((JSReferenceExpression) callExpression.getMethodExpression()).resolve()) instanceof PsiMethod)
         {
-            addType(InnerJsJavaTypeConverter.getPsiElementJsType(resolve), callExpression);
+            addType(InnerJsJavaTypeConverter.getPsiElementJsType(resolve));
 
             return;
         }

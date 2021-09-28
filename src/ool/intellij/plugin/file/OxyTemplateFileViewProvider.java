@@ -90,8 +90,9 @@ public class OxyTemplateFileViewProvider extends MultiplePsiFilesPerDocumentFile
         return getTemplateDataLanguage(psiManager, virtualFile);
     }
 
+    @NotNull
     @Override
-    protected MultiplePsiFilesPerDocumentFileViewProvider cloneInner(VirtualFile fileCopy)
+    protected MultiplePsiFilesPerDocumentFileViewProvider cloneInner(@NotNull VirtualFile fileCopy)
     {
         return new OxyTemplateFileViewProvider(getManager(), fileCopy, false);
     }

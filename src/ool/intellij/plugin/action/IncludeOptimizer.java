@@ -32,14 +32,14 @@ public class IncludeOptimizer implements ImportOptimizer
     private static final Pattern SUPPRESS_OPTIMIZER_DIRECTIVE = Pattern.compile("<//\\s*suppress-optimizer\\s*//>");
 
     @Override
-    public boolean supports(PsiFile file)
+    public boolean supports(@NotNull PsiFile file)
     {
         return file instanceof OxyTemplateFile;
     }
 
     @NotNull
     @Override
-    public Runnable processFile(final PsiFile file)
+    public Runnable processFile(@NotNull PsiFile file)
     {
         return () ->
         {

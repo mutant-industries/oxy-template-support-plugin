@@ -9,8 +9,8 @@ import ool.web.model.ondemand.GlobalModelProvider;
 
 import com.google.common.collect.ImmutableList;
 import com.intellij.lang.javascript.psi.JSType;
-import com.intellij.lang.javascript.psi.JSTypeUtils;
 import com.intellij.lang.javascript.psi.types.JSRecordTypeImpl;
+import com.intellij.lang.javascript.psi.types.JSTypeParser;
 import com.intellij.lang.javascript.psi.types.JSTypeSource;
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
 import com.intellij.openapi.project.Project;
@@ -96,7 +96,7 @@ public class GlobalVariableTypeProvider implements CachedValueProvider<JSType>
                             && controller.getQualifiedName() != null)
                     {
                         JSTypeSource source = JSTypeSourceFactory.createTypeSource(controller, true);
-                        JSType jsType = JSTypeUtils.createType(controller.getQualifiedName(), source);
+                        JSType jsType = JSTypeParser.createType(controller.getQualifiedName(), source);
                         JSRecordTypeImpl.PropertySignature signature = new JSRecordTypeImpl.PropertySignatureImpl(controller.getName(),
                                 jsType, false, false);
 

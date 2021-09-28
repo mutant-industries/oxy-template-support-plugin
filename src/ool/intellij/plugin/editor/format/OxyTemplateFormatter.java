@@ -29,6 +29,7 @@ import com.intellij.psi.formatter.xml.XmlBlock;
 import com.intellij.psi.formatter.xml.XmlFormattingPolicy;
 import com.intellij.psi.formatter.xml.XmlTagBlock;
 import com.intellij.xml.template.formatter.AbstractXmlTemplateFormattingModelBuilder;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * 1/3/15
@@ -80,7 +81,7 @@ public class OxyTemplateFormatter extends AbstractXmlTemplateFormattingModelBuil
     }
 
     @Override
-    public Block createDataLanguageRootBlock(PsiElement psiElement, Language language, CodeStyleSettings codeStyleSettings, XmlFormattingPolicy xmlFormattingPolicy, PsiFile psiFile, Indent indent)
+    public Block createDataLanguageRootBlock(PsiElement psiElement, Language language, CodeStyleSettings codeStyleSettings, XmlFormattingPolicy xmlFormattingPolicy, @NotNull PsiFile psiFile, Indent indent)
     {
         return new OxyTemplateForeignElementWrapper(this, psiElement.getNode(), null, null, codeStyleSettings, xmlFormattingPolicy, indent);
     }

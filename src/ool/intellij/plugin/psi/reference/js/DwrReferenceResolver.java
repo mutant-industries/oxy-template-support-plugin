@@ -35,6 +35,7 @@ public class DwrReferenceResolver extends JSReferenceExpressionResolver
         super(expression, ignorePerformanceLimits);
     }
 
+    @NotNull
     @Override
     public ResolveResult[] resolve(@NotNull JSReferenceExpressionImpl expression, boolean incompleteCode)
     {

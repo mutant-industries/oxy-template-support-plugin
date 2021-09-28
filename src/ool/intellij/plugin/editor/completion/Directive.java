@@ -67,7 +67,7 @@ public class Directive extends CompletionContributor
                 .withInsertHandler(new TrailingPatternConsumer(INSERT_CONSUME)
                 {
                     @Override
-                    public void handleInsert(InsertionContext context, LookupElement item)
+                    public void handleInsert(@NotNull InsertionContext context, @NotNull LookupElement item)
                     {
                         CaretModel caretModel = context.getEditor().getCaretModel();
                         int offset = caretModel.getOffset();

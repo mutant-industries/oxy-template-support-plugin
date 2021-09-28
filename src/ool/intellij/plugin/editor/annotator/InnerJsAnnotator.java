@@ -3,8 +3,8 @@ package ool.intellij.plugin.editor.annotator;
 import ool.intellij.plugin.file.index.nacro.MacroIndex;
 import ool.intellij.plugin.lang.I18nSupport;
 
-import com.intellij.codeInsight.daemon.impl.HighlightInfoType;
 import com.intellij.lang.annotation.AnnotationHolder;
+import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.highlighting.JSHighlighter;
 import com.intellij.lang.javascript.psi.JSCallExpression;
@@ -30,8 +30,8 @@ public class InnerJsAnnotator extends JavaScriptAnnotatingVisitor
     {
         if (element.getNode().getElementType() == JSTokenTypes.EACH_KEYWORD)
         {
-            myHolder.createAnnotation(HighlightInfoType.SYMBOL_TYPE_SEVERITY, element.getTextRange(), null)
-                    .setTextAttributes(JSHighlighter.JS_KEYWORD);
+            myHolder.newSilentAnnotation(HighlightSeverity.INFORMATION)
+                    .range(element).textAttributes(JSHighlighter.JS_KEYWORD).create();
         }
 
         super.visitElement(element);
@@ -51,7 +51,7 @@ public class InnerJsAnnotator extends JavaScriptAnnotatingVisitor
 
             if (MacroIndex.isInMacroNamespace(referenceText) && node.resolve() == null)
             {
-                myHolder.createWarningAnnotation(node, I18nSupport.message("annotator.unresolved.macro.reference.tooltip"));
+                myHolder.newAnnotation(HighlightSeverity.WARNING, I18nSupport.message("annotator.unresolved.macro.reference.tooltip")).create();
 
                 return;
             }

@@ -1,8 +1,8 @@
 <idea-plugin>
     <id>ool.intellij.plugin</id>
     <name>Oxy Template Support</name>
-    <version>1.5.7</version>
-    <vendor email="p.mayr@oxyonline.cz" url="http://stash.oxyonline.local/projects/CZC/repos/macro-support-plugin">
+    <version>1.5.7.1</version>
+    <vendor email="p.mayr@oxyonline.cz" url="https://github.com/mutant-industries/oxy-template-support-plugin">
         oXy Online s.r.o.
     </vendor>
 
@@ -380,8 +380,10 @@
     <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Build+Number+Ranges for description -->
     <idea-version since-build="212.4746.92"/>
 
+    <resource-bundle>I18n.messages</resource-bundle>
+
     <extensions defaultExtensionNs="com.intellij">
-        <fileType name="OxyTemplate" language="OxyTemplate" extensions="jsm;jst" fieldName="INSTANCE"  implementationClass="ool.intellij.plugin.file.type.OxyTemplateFileType"/>
+        <fileType name="OxyTemplate" language="OxyTemplate" extensions="jsm;jst" fieldName="INSTANCE" implementationClass="ool.intellij.plugin.file.type.OxyTemplateFileType"/>
         <lang.parserDefinition language="OxyTemplate"
                                implementationClass="ool.intellij.plugin.lang.parser.definition.OxyTemplateParserDefinition"/>
         <lang.parserDefinition language="OxyTemplateInnerJs"
@@ -426,13 +428,13 @@
                                  implementationClass="ool.intellij.plugin.psi.manipulator.MacroNameManipulator"/>
         <annotator language="OxyTemplate" implementationClass="ool.intellij.plugin.editor.annotator.XmlMacroNameAnnotator"/>
         <annotator language="OxyTemplate" implementationClass="ool.intellij.plugin.editor.annotator.EncodedEntityAnnotator"/>
-        <localInspection language="OxyTemplate" shortName="UnresolvedInclude" bundle="I18n.messages" key="inspection.unresolved.include.tooltip"
+        <localInspection language="OxyTemplate" shortName="UnresolvedInclude" key="inspection.unresolved.include.tooltip"
                          groupName="Oxy template" enabledByDefault="true" level="WARNING"
                          implementationClass="ool.intellij.plugin.editor.inspection.UnresolvedIncludeInspection"/>
-        <localInspection language="OxyTemplate" shortName="MissingInclude" groupName="Oxy template"  bundle="I18n.messages" key="inspection.missing.include.tooltip"
+        <localInspection language="OxyTemplate" shortName="MissingInclude" groupName="Oxy template" key="inspection.missing.include.tooltip"
                          enabledByDefault="true" level="WARNING"
                          implementationClass="ool.intellij.plugin.editor.inspection.MissingIncludeInspection"/>
-        <localInspection language="OxyTemplate" shortName="RedundantInclude" groupName="Oxy template"  bundle="I18n.messages" key="inspection.redundant.include.tooltip"
+        <localInspection language="OxyTemplate" shortName="RedundantInclude" groupName="Oxy template" key="inspection.redundant.include.tooltip"
                          enabledByDefault="true" level="WARNING"
                          implementationClass="ool.intellij.plugin.editor.inspection.RedundantIncludeInspection"/>
         <fileBasedIndex implementation="ool.intellij.plugin.file.index.nacro.js.JsMacroNameIndex"/>
@@ -451,6 +453,11 @@
         <lang.psiStructureViewFactory language="OxyTemplate" implementationClass="ool.intellij.plugin.editor.structure.OxyTemplateStructureViewFactory"/>
         <lang.importOptimizer language="OxyTemplate" implementationClass="ool.intellij.plugin.action.IncludeOptimizer"/>
         <highlightErrorFilter implementation="ool.intellij.plugin.lang.parser.ErrorFilter"/>
+
+        <toolWindow id="oxy.CompilerOutput" anchor="bottom" icon="/icons/default.png" secondary="false" canCloseContents="true"
+                    factoryClass="ool.intellij.plugin.action.compile.CompilerOutputToolWindow"/>
+        <projectService serviceImplementation="ool.intellij.plugin.action.compile.CompiledPreviewController"/>
+        <notificationGroup id="oxy.CompilerMessages" displayType="TOOL_WINDOW" toolWindowId="oxy.CompilerOutput"/>
     </extensions>
     <extensions defaultExtensionNs="JavaScript">
         <predefinedLibraryProvider implementation="ool.intellij.plugin.editor.InnerJsPredefinedLibrary"/>
@@ -464,15 +471,8 @@
         <analysisHandlersFactory language="OxyTemplateInnerJs" implementationClass="ool.intellij.plugin.lang.InnerJsAnalysisHandlersFactory"/>
     </extensions>
 
-    <project-components>
-        <component>
-            <implementation-class>ool.intellij.plugin.action.compile.CompiledPreviewController</implementation-class>
-        </component>
-    </project-components>
-
     <actions>
-        <action id="oxy.compiledCode" class="ool.intellij.plugin.action.compile.CompiledPreviewAction" text="Compiled Code"
-                icon="/icons/default.png">
+        <action id="oxy.CompiledPreview" class="ool.intellij.plugin.action.compile.CompiledPreviewAction" icon="/icons/default.png">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
             <keyboard-shortcut keymap="$default" first-keystroke="alt C"/>
         </action>

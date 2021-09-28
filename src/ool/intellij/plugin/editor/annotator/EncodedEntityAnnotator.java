@@ -5,9 +5,9 @@ import ool.intellij.plugin.psi.OxyTemplateTypes;
 
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
-import com.intellij.openapi.util.TextRange;
+import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.psi.PsiElement;
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -25,10 +25,9 @@ public class EncodedEntityAnnotator implements Annotator
             return;
         }
 
-        if (StringEscapeUtils.unescapeHtml4(element.getText()).equals(element.getText()))
+        if (StringEscapeUtils.unescapeHtml(element.getText()).equals(element.getText()))
         {
-            holder.createWarningAnnotation(TextRange.create(element.getTextRange().getStartOffset() + 1,
-                    element.getTextRange().getEndOffset() - 1), I18nSupport.message("annotator.invalid.entity.tooltip"));
+            holder.newAnnotation(HighlightSeverity.WARNING, I18nSupport.message("annotator.invalid.entity.tooltip")).range(element).create();
         }
     }
 

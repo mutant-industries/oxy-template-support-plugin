@@ -34,7 +34,7 @@ public class CompiledPreviewAction extends DumbAwareAction
             return;
         }
 
-        project.getComponent(CompiledPreviewController.class).showCompiledCode(originalFile);
+        project.getService(CompiledPreviewController.class).showCompiledCode(originalFile);
     }
 
 }

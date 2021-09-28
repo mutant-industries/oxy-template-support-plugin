@@ -7,6 +7,7 @@ import com.intellij.lang.xml.XmlTemplateTreePatcher;
 import com.intellij.psi.impl.source.tree.CompositeElement;
 import com.intellij.psi.impl.source.tree.TreeElement;
 import com.intellij.psi.templateLanguages.OuterLanguageElement;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * 3/2/15
@@ -16,7 +17,7 @@ import com.intellij.psi.templateLanguages.OuterLanguageElement;
 public class XmlTreePatcher extends XmlTemplateTreePatcher
 {
     @Override
-    public void insert(CompositeElement parent, TreeElement anchorBefore, OuterLanguageElement toInsert)
+    public void insert(@NotNull CompositeElement parent, TreeElement anchorBefore, @NotNull OuterLanguageElement toInsert)
     {
         if (toInsert.getNode().getElementType() != OxyTemplateTypes.T_OUTER_TEMPLATE_ELEMENT
                 || ! OxyTemplateHelper.insertOuterElementToAST(parent, anchorBefore, toInsert))

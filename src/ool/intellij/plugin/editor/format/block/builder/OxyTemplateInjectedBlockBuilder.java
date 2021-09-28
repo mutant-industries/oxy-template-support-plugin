@@ -12,6 +12,7 @@ import ool.intellij.plugin.psi.OxyTemplateTypes;
 
 import com.intellij.formatting.Alignment;
 import com.intellij.formatting.Block;
+import com.intellij.formatting.FormattingContext;
 import com.intellij.formatting.FormattingModel;
 import com.intellij.formatting.FormattingModelBuilder;
 import com.intellij.formatting.Indent;
@@ -194,7 +195,7 @@ public class OxyTemplateInjectedBlockBuilder
         TextRange jsBlockRange = TextRange.create(injectedNode.getStartOffset(),
                 element.getNode().getStartOffset() + element.getTextLength());
 
-        FormattingModel childModel = modelBuilder.createModel(jsPsiFile, policy.getSettings());
+        FormattingModel childModel = modelBuilder.createModel(FormattingContext.create(jsPsiFile, policy.getSettings()));
 
         result.add(new InnerJsBlockWrapper((InnerJsBlock) childModel.getRootBlock(), injectedNode.getStartOffset(),
                 allowedRange.intersection(jsBlockRange), indent));

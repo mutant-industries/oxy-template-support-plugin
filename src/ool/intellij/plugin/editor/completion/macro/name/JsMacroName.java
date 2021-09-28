@@ -63,7 +63,7 @@ public class JsMacroName extends AbstractMacroName
                 .withInsertHandler(new TrailingPatternConsumer(INSERT_CONSUME)
                 {
                     @Override
-                    public void handleInsert(InsertionContext context, LookupElement item)
+                    public void handleInsert(@NotNull InsertionContext context, @NotNull LookupElement item)
                     {
                         CaretModel caretModel = context.getEditor().getCaretModel();
                         caretModel.moveToOffset(caretModel.getOffset() - 2);

@@ -5,6 +5,7 @@ import ool.intellij.plugin.lang.OxyTemplateInnerJs;
 import com.intellij.lang.javascript.nashorn.NashornJSParserDefinition;
 import com.intellij.lang.javascript.types.JSFileElementType;
 import com.intellij.psi.tree.IFileElementType;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * 1/12/15
@@ -15,6 +16,7 @@ public class OxyTemplateInnerJsParserDefinition extends NashornJSParserDefinitio
 {
     private static final IFileElementType FILE = JSFileElementType.create(OxyTemplateInnerJs.INSTANCE);
 
+    @NotNull
     @Override
     public IFileElementType getFileNodeType()
     {

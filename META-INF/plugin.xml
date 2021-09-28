@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>ool.intellij.plugin</id>
-    <name>Oxy template support</name>
-    <version>1.5.6</version>
+    <name>Oxy Template Support</name>
+    <version>1.5.7</version>
     <vendor email="p.mayr@oxyonline.cz" url="http://stash.oxyonline.local/projects/CZC/repos/macro-support-plugin">
         oXy Online s.r.o.
     </vendor>
@@ -18,6 +18,15 @@
     ]]></description>
 
     <change-notes><![CDATA[
+        <b>1.5.7</b>
+        <ul>
+            <li>
+                podpora @see v dokumentaci maker
+            </li>
+            <li>
+                gramatika umožnuje, aby jména maker začínala podtržítkem
+            </li>
+        </ul>
         <b>1.5.6</b>
         <ul>
             <li>
@@ -436,7 +445,8 @@
         <referencesSearch implementation="ool.intellij.plugin.editor.usages.search.JavaSpecialGetterReferenceSearch"/>
         <methodReferencesSearch implementation="ool.intellij.plugin.editor.usages.search.JavaGetterReferenceSearch"/>
         <methodReferencesSearch implementation="ool.intellij.plugin.editor.usages.search.DwrMethodReferenceSearch"/>
-        <documentationProvider implementation="ool.intellij.plugin.editor.documentation.MacroParamDocumentationProvider"/>
+        <lang.documentationProvider language="OxyTemplate" implementationClass="ool.intellij.plugin.editor.documentation.OxyTemplateDocumentationProvider"/>
+        <lang.documentationProvider language="OxyTemplateInnerJs" implementationClass="ool.intellij.plugin.editor.documentation.OxyTemplateDocumentationProvider"/>
         <gotoSymbolContributor implementation="ool.intellij.plugin.editor.gotosymbol.MacroGotoSymbolContributor"/>
         <lang.psiStructureViewFactory language="OxyTemplate" implementationClass="ool.intellij.plugin.editor.structure.OxyTemplateStructureViewFactory"/>
         <lang.importOptimizer language="OxyTemplate" implementationClass="ool.intellij.plugin.action.IncludeOptimizer"/>

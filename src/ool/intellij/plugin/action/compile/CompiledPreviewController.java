@@ -30,6 +30,7 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
 import com.intellij.openapi.fileEditor.impl.EditorWindow;
+import com.intellij.openapi.fileEditor.impl.EditorWithProviderComposite;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.util.Key;
@@ -171,7 +172,12 @@ public class CompiledPreviewController implements ProjectComponent
             }
 
             // switch to editor with recompiled source
-            editorWindow.setEditor(editorWindow.findFileComposite(virtualFile), false);
+            EditorWithProviderComposite editor = editorWindow.findFileComposite(virtualFile);
+
+            if (editor != null)
+            {
+                editorWindow.setEditor(editor, false);
+            }
         }
 
         return result;

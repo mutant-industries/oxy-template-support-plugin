@@ -1,10 +1,18 @@
-/oxy-template-support.iml
-.idea/
-*.java~
-jFlex.jar
-out/
-gen/
-rebel.xml
-idea-flex.skeleton
-*.dot
-AbstractOxyTemplateLexer.java
+### Intellij idea ###
+
+.idea
+
+### Gradle ###
+.gradle
+build/
+
+# Cache of project
+.gradletasknamecache
+
+###
+
+# Generated grammar classes
+src/main/gen
+
+# Template language empty classes
+!lib/common-web-stub.jar

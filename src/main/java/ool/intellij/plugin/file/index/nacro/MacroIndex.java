@@ -25,9 +25,9 @@ import org.jetbrains.annotations.Nullable;
  */
 abstract public class MacroIndex
 {
-    public static final String JAVA_MACRO_INTERFACE_FQN = Macro.class.getName();
+    public static final String MACRO_INTERFACE_FQN = Macro.class.getName();
     @NonNls
-    public static final String JAVA_MACRO_SUFFIX = "Macro";
+    public static final String MACRO_CLASS_NAME_SUFFIX = "Macro";
     @NonNls
     public static final List<String> macrosInDebugNamespace = new LinkedList<>();
     @NonNls
@@ -94,7 +94,7 @@ abstract public class MacroIndex
     {
         final GlobalSearchScope allScope = ProjectScope.getProjectScope(project);
 
-        return JavaPsiFacade.getInstance(project).findClass(JAVA_MACRO_INTERFACE_FQN, allScope);
+        return JavaPsiFacade.getInstance(project).findClass(MACRO_INTERFACE_FQN, allScope);
     }
 
 }

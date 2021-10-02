@@ -35,7 +35,7 @@ public class JavaMacroReferenceSearch extends OxyTemplateReferenceSearch
 
         assert psiClass.getName() != null;
 
-        final String query = StringUtil.decapitalize(psiClass.getName().replaceFirst(MacroIndex.JAVA_MACRO_SUFFIX + "$", ""));
+        final String query = StringUtil.decapitalize(psiClass.getName().replaceFirst(MacroIndex.MACRO_CLASS_NAME_SUFFIX + "$", ""));
 
         searchParameters.getOptimizer().searchWord(query, scope, UsageSearchContext.IN_CODE, true, target);
     }

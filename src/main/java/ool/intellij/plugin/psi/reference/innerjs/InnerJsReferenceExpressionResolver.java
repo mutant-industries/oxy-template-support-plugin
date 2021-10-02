@@ -91,7 +91,7 @@ public class InnerJsReferenceExpressionResolver extends NashornJSReferenceExpres
     {
         List<ResolveResult> result = superResolveInPsiClassModified(aClass, isStatic);
 
-        for (PsiClass extender : ExtenderProvider.getExtenders(aClass))
+        for (PsiClass extender : ExtenderIndex.getExtenders(aClass))
         {
             if (result.size() > 0)
             {

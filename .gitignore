@@ -13,6 +13,3 @@ build/
 
 # Generated grammar classes
 src/main/gen
-
-# Template language empty classes
-!lib/common-web-stub.jar

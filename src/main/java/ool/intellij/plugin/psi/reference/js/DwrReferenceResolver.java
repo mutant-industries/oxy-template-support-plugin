@@ -26,9 +26,9 @@ import org.jetbrains.annotations.NotNull;
 public class DwrReferenceResolver extends JSReferenceExpressionResolver
 {
     @NonNls
-    private static final String DWR_REMOTE_PROXY_FQN = "org.directwebremoting.annotations.RemoteProxy";
+    private static final String DWR_REMOTE_PROXY_ANNOTATION_FQN = "org.directwebremoting.annotations.RemoteProxy";
     @NonNls
-    private static final String DWR_REMOTE_METHOD_FQN = "org.directwebremoting.annotations.RemoteMethod";
+    private static final String DWR_REMOTE_METHOD_ANNOTATION_FQN = "org.directwebremoting.annotations.RemoteMethod";
 
     public DwrReferenceResolver(@NotNull JSReferenceExpressionImpl expression, boolean ignorePerformanceLimits)
     {
@@ -70,7 +70,7 @@ public class DwrReferenceResolver extends JSReferenceExpressionResolver
                 final GlobalSearchScope allScope = GlobalSearchScope.allScope(myRef.getProject());
 
                 PsiClass remoteProxyAnnotation = JavaPsiFacade.getInstance(myRef.getProject())
-                        .findClass(DWR_REMOTE_PROXY_FQN, allScope);
+                        .findClass(DWR_REMOTE_PROXY_ANNOTATION_FQN, allScope);
 
                 if (remoteProxyAnnotation != null && remoteProxyAnnotation.isAnnotationType())
                 {
@@ -93,12 +93,12 @@ public class DwrReferenceResolver extends JSReferenceExpressionResolver
 
     public static boolean isDwrMethod(@NotNull PsiMethod method)
     {
-        return OxyTemplateHelper.hasAnnotation(method, DWR_REMOTE_METHOD_FQN);
+        return OxyTemplateHelper.hasAnnotation(method, DWR_REMOTE_METHOD_ANNOTATION_FQN);
     }
 
     public static boolean isDwrClass(@NotNull PsiClass aClass)
     {
-        return OxyTemplateHelper.hasAnnotation(aClass, DWR_REMOTE_PROXY_FQN);
+        return OxyTemplateHelper.hasAnnotation(aClass, DWR_REMOTE_PROXY_ANNOTATION_FQN);
     }
 
 }

@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import ool.intellij.plugin.psi.reference.innerjs.InnerJsJavaTypeConverter;
-import ool.web.model.ondemand.GlobalModelProvider;
+import ool.common.web.model.ondemand.GlobalModelProvider;
 
 import com.google.common.collect.ImmutableList;
 import com.intellij.lang.javascript.psi.JSType;
@@ -48,11 +48,11 @@ public class GlobalVariableTypeProvider implements CachedValueProvider<JSType>
     @NonNls
     public static final String CONTROLLERS_GLOBAL_VARIABLE_NAME = "controllers";
 
-    private static final String GLOBAL_MODEL_PROVIDER_FQN = GlobalModelProvider.class.getName();
+    private static final String GLOBAL_MODEL_PROVIDER_CLASS_FQN = GlobalModelProvider.class.getName();
     @NonNls
-    private static final String PROVIDE_METHOD_NAME = "provide";
+    private static final String PROVIDE_METHOD = "provide";
     @NonNls
-    private static final String CONTROLLER_FQN = "org.springframework.stereotype.Controller";
+    private static final String CONTROLLER_CLASS_FQN = "org.springframework.stereotype.Controller";
     @NonNls
     private static final String CONTROLLERS_BEANS_FILE_NAME = "web.xml";
 
@@ -84,7 +84,7 @@ public class GlobalVariableTypeProvider implements CachedValueProvider<JSType>
             JSTypeSource typeSource = JSTypeSourceFactory.createTypeSource(expression, true);
             PsiClass controller;
 
-            PsiClass controllerAnnotation = JavaPsiFacade.getInstance(project).findClass(CONTROLLER_FQN, allScope);
+            PsiClass controllerAnnotation = JavaPsiFacade.getInstance(project).findClass(CONTROLLER_CLASS_FQN, allScope);
 
             if (controllerAnnotation != null && controllerAnnotation.isAnnotationType())
             {
@@ -119,7 +119,7 @@ public class GlobalVariableTypeProvider implements CachedValueProvider<JSType>
         // global model provider
         if ((returnStatement = PsiTreeUtil.getParentOfType(expression, PsiReturnStatement.class)) != null
                 && (aClass = PsiTreeUtil.getParentOfType(returnStatement, PsiClass.class)) != null
-                && InheritanceUtil.isInheritor(aClass, GLOBAL_MODEL_PROVIDER_FQN))
+                && InheritanceUtil.isInheritor(aClass, GLOBAL_MODEL_PROVIDER_CLASS_FQN))
         {
             return Result.create(getTypeFromProvider(aClass), cacheDependencies);
         }
@@ -168,7 +168,7 @@ public class GlobalVariableTypeProvider implements CachedValueProvider<JSType>
     @Nullable
     private JSType getTypeFromProvider(@NotNull PsiClass provider)
     {
-        PsiMethod[] provideMethods = provider.findMethodsByName(PROVIDE_METHOD_NAME, true);
+        PsiMethod[] provideMethods = provider.findMethodsByName(PROVIDE_METHOD, true);
         PsiElement elementAt;
         PsiReturnStatement returnStatement;
 

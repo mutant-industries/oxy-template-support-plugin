@@ -5,6 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import ool.common.web.model.ExtenderProvider;
+
 import com.google.common.collect.HashMultimap;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
@@ -35,13 +37,13 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author Petr Mayr <p.mayr@oxyonline.cz>
  */
-public class ExtenderProvider
+public class ExtenderIndex
 {
-    private static final String EXTENDER_INTERFACE_FQN = ool.web.model.ExtenderProvider.class.getName();
+    private static final String EXTENDER_PROVIDER_INTERFACE_FQN = ExtenderProvider.class.getName();
     @NonNls
-    private static final String CLASS_GETTER_METHOD_MANE = "getExtendedClass";
+    private static final String GET_EXTENDED_CLASS_METHOD = "getExtendedClass";
     @NonNls
-    private static final String EXTENDER_GETTER_METHOD_MANE = "provide";
+    private static final String PROVIDE_METHOD = "provide";
     @NonNls
     private static final String EXTENDERS_BEANS_FILE_NAME = "web.xml";
 
@@ -87,7 +89,7 @@ public class ExtenderProvider
                     return CachedValueProvider.Result.create(result, cacheDependencies);
                 }
 
-                PsiMethod[] methodsByName = extenderInterface.findMethodsByName(CLASS_GETTER_METHOD_MANE, false);
+                PsiMethod[] methodsByName = extenderInterface.findMethodsByName(GET_EXTENDED_CLASS_METHOD, false);
 
                 if (methodsByName.length == 0)
                 {
@@ -100,7 +102,7 @@ public class ExtenderProvider
                 for (PsiMethod method : OverridingMethodsSearch.search(methodsByName[0]).findAll())
                 {
                     if ((typeElement = PsiTreeUtil.findChildOfType(method.getReturnTypeElement(), PsiTypeElement.class)) == null
-                            || (returnType = typeElement.getType()) == null || returnType.getCanonicalText().equals(returnType.getPresentableText()))
+                            || (returnType = typeElement.getType()).getCanonicalText().equals(returnType.getPresentableText()))
                     {
                         continue;
                     }
@@ -121,7 +123,7 @@ public class ExtenderProvider
     @Nullable
     private static PsiClass getExtenderFromProvider(@NotNull PsiClass extenderProvider)
     {
-        PsiMethod[] provideMethods = extenderProvider.findMethodsByName(EXTENDER_GETTER_METHOD_MANE, true);
+        PsiMethod[] provideMethods = extenderProvider.findMethodsByName(PROVIDE_METHOD, true);
 
         if (provideMethods.length < 2)
         {
@@ -147,15 +149,7 @@ public class ExtenderProvider
             return (PsiClass) result;
         }
 
-        PsiAnonymousClass anonymousClass = PsiTreeUtil.getNextSiblingOfType(newExpression.getFirstChild(),
-                PsiAnonymousClass.class);
-
-        if (anonymousClass != null)
-        {
-            return anonymousClass;
-        }
-
-        return null;
+        return PsiTreeUtil.getNextSiblingOfType(newExpression.getFirstChild(), PsiAnonymousClass.class);
     }
 
     @Nullable
@@ -163,7 +157,7 @@ public class ExtenderProvider
     {
         final GlobalSearchScope allScope = GlobalSearchScope.allScope(project);
 
-        return JavaPsiFacade.getInstance(project).findClass(EXTENDER_INTERFACE_FQN, allScope);
+        return JavaPsiFacade.getInstance(project).findClass(EXTENDER_PROVIDER_INTERFACE_FQN, allScope);
     }
 
 }

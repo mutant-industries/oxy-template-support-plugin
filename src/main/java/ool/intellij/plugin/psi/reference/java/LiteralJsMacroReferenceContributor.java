@@ -17,6 +17,7 @@ import com.intellij.psi.PsiReferenceRegistrar;
 import com.intellij.psi.impl.source.tree.java.PsiNewExpressionImpl;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -27,6 +28,9 @@ import org.jetbrains.annotations.NotNull;
  */
 public class LiteralJsMacroReferenceContributor extends PsiReferenceContributor
 {
+    @NonNls
+    private static final String MACRO_CALL_CLASS_FQN = MacroCall.class.getName();
+
     @Override
     public void registerReferenceProviders(@NotNull PsiReferenceRegistrar registrar)
     {
@@ -49,7 +53,7 @@ public class LiteralJsMacroReferenceContributor extends PsiReferenceContributor
                     if ((newMacroCallExpression = PsiTreeUtil.getParentOfType(literalExpression,
                             PsiNewExpressionImpl.class)) != null && newMacroCallExpression.getClassReference() != null)
                     {
-                        if (MacroCall.class.getName().equals(newMacroCallExpression.getClassReference().getQualifiedName()))
+                        if (MACRO_CALL_CLASS_FQN.equals(newMacroCallExpression.getClassReference().getQualifiedName()))
                         {
                             return new MacroReferenceSet(literalExpression).getAllReferences();
                         }

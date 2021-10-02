@@ -6,6 +6,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import ool.common.web.model.ondemand.GlobalModelProvider;
+import ool.common.web.model.ondemand.ModelProviderRegistry;
+
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.JavaPsiFacade;
@@ -42,14 +45,13 @@ public class GlobalVariableIndex implements CachedValueProvider<Map<String, Glob
     private static final Key<CachedValue<Map<String, GlobalVariableDefinition>>> GLOBAL_VARIABLES_KEY =
             Key.create("GLOBAL_VARIABLES_KEY");
 
+    private static final String MODEL_PROVIDER_REGISTRY_CLASS_FQN = ModelProviderRegistry.class.getName();
     @NonNls
-    private static final String MODEL_PROVIDER_REGISTRY_FQN = "ool.web.model.ondemand.ModelProviderRegistry";
+    private static final String REGISTER_METHOD = "register";
+
+    private static final String GLOBAL_MODEL_PROVIDER_CLASS_FQN = GlobalModelProvider.class.getName();
     @NonNls
-    private static final String GLOBAL_MODEL_PROVIDER_FQN = "ool.web.model.ondemand.GlobalModelProvider";
-    @NonNls
-    private static final String REGISTER_METHOD_NAME = "register";
-    @NonNls
-    private static final String GET_NAME_METHOD_NAME = "getName";
+    private static final String GET_NAME_METHOD = "getName";
     @NonNls
     private static final String REGISTRAR_BEANS_FILE_NAME = "web.xml";
 
@@ -96,8 +98,8 @@ public class GlobalVariableIndex implements CachedValueProvider<Map<String, Glob
         Collections.addAll(cacheDependencies, FilenameIndex.getFilesByName(project, REGISTRAR_BEANS_FILE_NAME,
                 ProjectScope.getProjectScope(project), false));
 
-        if ((registryClass = JavaPsiFacade.getInstance(project).findClass(MODEL_PROVIDER_REGISTRY_FQN, scope)) != null
-                && (methods = registryClass.findMethodsByName(REGISTER_METHOD_NAME, false)).length > 0)
+        if ((registryClass = JavaPsiFacade.getInstance(project).findClass(MODEL_PROVIDER_REGISTRY_CLASS_FQN, scope)) != null
+                && (methods = registryClass.findMethodsByName(REGISTER_METHOD, false)).length > 0)
         {
             cacheDependencies.add(registryClass);
 
@@ -107,9 +109,8 @@ public class GlobalVariableIndex implements CachedValueProvider<Map<String, Glob
             {
                 element = reference.getElement();
 
-                if (element == null || ! (element.getParent() instanceof PsiMethodCallExpression)
-                        || (element = ((PsiMethodCallExpression) element.getParent()).getArgumentList()) == null
-                        || ((PsiExpressionList) element).getExpressions().length != 2)
+                if ( ! (element.getParent() instanceof PsiMethodCallExpression) || ((PsiExpressionList) (element =
+                        ((PsiMethodCallExpression) element.getParent()).getArgumentList())).getExpressions().length != 2)
                 {
                     continue;
                 }
@@ -127,8 +128,8 @@ public class GlobalVariableIndex implements CachedValueProvider<Map<String, Glob
             }
         }
 
-        if ((registryClass = JavaPsiFacade.getInstance(project).findClass(GLOBAL_MODEL_PROVIDER_FQN, scope)) != null
-                && (methods = registryClass.findMethodsByName(GET_NAME_METHOD_NAME, false)).length > 0)
+        if ((registryClass = JavaPsiFacade.getInstance(project).findClass(GLOBAL_MODEL_PROVIDER_CLASS_FQN, scope)) != null
+                && (methods = registryClass.findMethodsByName(GET_NAME_METHOD, false)).length > 0)
         {
             cacheDependencies.add(registryClass);
 

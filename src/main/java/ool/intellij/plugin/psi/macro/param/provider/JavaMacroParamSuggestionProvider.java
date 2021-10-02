@@ -19,6 +19,7 @@ import com.intellij.psi.PsiTypeElement;
 import com.intellij.psi.impl.JavaConstantExpressionEvaluator;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiTreeUtil;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,9 +30,24 @@ import org.jetbrains.annotations.Nullable;
  */
 public class JavaMacroParamSuggestionProvider extends ParamSuggestionProvider<PsiClass>
 {
-    public static final String MACRO_EVENT_FQN = MacroEvent.class.getName();
+    @NonNls
+    private static final String EXECUTE_METHOD = "execute";
 
-    public static final String MACRO_PARAM_HELPER_FQN = MacroParameterHelper.class.getName();
+    public static final String MACRO_EVENT_CLASS_FQN = MacroEvent.class.getName();
+
+    public static final String MACRO_PARAM_HELPER_CLASS_FQN = MacroParameterHelper.class.getName();
+    @NonNls
+    private static final String PARAMETER_METHOD = "parameter";
+    @NonNls
+    private static final String PULL_PARAMETER_METHOD = "pullParameter";
+    @NonNls
+    private static final String PULL_INTEGER_VALUE_METHOD = "pullIntegerValue";
+    @NonNls
+    private static final String PULL_BOOLEAN_VALUE_METHOD = "pullBooleanValue";
+    @NonNls
+    private static final String SET_NON_NULL_METHOD = "setNonNull";
+    @NonNls
+    private static final String SET_REQUIRED_METHOD = "setRequired";
 
     public JavaMacroParamSuggestionProvider(@NotNull PsiClass macro)
     {
@@ -44,13 +60,13 @@ public class JavaMacroParamSuggestionProvider extends ParamSuggestionProvider<Ps
     {
         MacroParamSuggestionSet params = new MacroParamSuggestionSet();
 
-        PsiMethod[] methods = macro.findMethodsByName("execute", true);
+        PsiMethod[] methods = macro.findMethodsByName(EXECUTE_METHOD, true);
         PsiMethod executeMethod;
         PsiParameter eventParam;
 
         // current and / or superclass(es) + interface method
         if (methods.length < 2 || (executeMethod = methods[0]).getParameterList().getParametersCount() < 1
-                || (eventParam = executeMethod.getParameterList().getParameters()[0]) == null || ! eventParam.getType().equalsToText(MACRO_EVENT_FQN))
+                || (eventParam = executeMethod.getParameterList().getParameters()[0]) == null || ! eventParam.getType().equalsToText(MACRO_EVENT_CLASS_FQN))
         {
             return params;
         }
@@ -59,7 +75,7 @@ public class JavaMacroParamSuggestionProvider extends ParamSuggestionProvider<Ps
         {
             PsiLocalVariable localVariable = PsiTreeUtil.getParentOfType(reference.getElement(), PsiLocalVariable.class);
 
-            if (localVariable == null || ! localVariable.getType().equalsToText(MACRO_PARAM_HELPER_FQN))
+            if (localVariable == null || ! localVariable.getType().equalsToText(MACRO_PARAM_HELPER_CLASS_FQN))
             {
                 continue;
             }
@@ -106,8 +122,8 @@ public class JavaMacroParamSuggestionProvider extends ParamSuggestionProvider<Ps
 
                     switch (methodReference.getReferenceName())
                     {
-                        case "parameter":
-                        case "pullParameter":
+                        case PARAMETER_METHOD:
+                        case PULL_PARAMETER_METHOD:
                             parameterName = getExpressionValue(expressions[0]);
 
                             if (expressions.length == 2 && expressions[1].getFirstChild() instanceof PsiTypeElement)
@@ -118,7 +134,7 @@ public class JavaMacroParamSuggestionProvider extends ParamSuggestionProvider<Ps
 
                             break;
 
-                        case "pullIntegerValue":
+                        case PULL_INTEGER_VALUE_METHOD:
 
                             parameterName = getExpressionValue(expressions[0]);
 
@@ -133,7 +149,7 @@ public class JavaMacroParamSuggestionProvider extends ParamSuggestionProvider<Ps
 
                             break;
 
-                        case "pullBooleanValue":
+                        case PULL_BOOLEAN_VALUE_METHOD:
 
                             parameterName = getExpressionValue(expressions[0]);
 
@@ -148,12 +164,12 @@ public class JavaMacroParamSuggestionProvider extends ParamSuggestionProvider<Ps
 
                             break;
 
-                        case "setNonNull":
-                            notNull = Boolean.valueOf(expressions[0].getText());
+                        case SET_NON_NULL_METHOD:
+                            notNull = Boolean.parseBoolean(expressions[0].getText());
                             break;
 
-                        case "setRequired":
-                            required = Boolean.valueOf(expressions[0].getText());
+                        case SET_REQUIRED_METHOD:
+                            required = Boolean.parseBoolean(expressions[0].getText());
                             break;
                     }
 

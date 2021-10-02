@@ -8,9 +8,9 @@ import java.util.stream.Collectors;
 
 import ool.intellij.plugin.editor.completion.handler.TrailingPatternConsumer;
 import ool.intellij.plugin.lang.OxyTemplateInnerJs;
-import ool.intellij.plugin.psi.reference.innerjs.ExtenderProvider;
-import ool.web.model.BaseExtender;
-import ool.web.model.Extender;
+import ool.intellij.plugin.psi.reference.innerjs.ExtenderIndex;
+import ool.common.web.model.BaseExtender;
+import ool.common.web.model.Extender;
 
 import com.intellij.codeInsight.completion.CompletionContributor;
 import com.intellij.codeInsight.completion.CompletionParameters;
@@ -49,7 +49,7 @@ public class JavaContext extends CompletionContributor
 
     private final String EXTENDER_INTERFACE_FQN = Extender.class.getName();
 
-    private final String EXTENDER_BASE_CLASS_FQN = BaseExtender.class.getName();
+    private final String BASE_EXTENDER_CLASS_FQN = BaseExtender.class.getName();
 
     private final List<String> shippedBaseExtenderMethods = Arrays.asList("getObject", "getValue", "isVisibleProperty",
             "containsProperty", "getPropertyKeys", "toString");
@@ -126,7 +126,7 @@ public class JavaContext extends CompletionContributor
             if ((aClass = facade.findClass(possibleType, scope)) != null)
             {
                 possibleInstancesOf.add(aClass);
-                possibleInstancesOf.addAll(ExtenderProvider.getExtenders(aClass));
+                possibleInstancesOf.addAll(ExtenderIndex.getExtenders(aClass));
             }
         }
 
@@ -140,7 +140,7 @@ public class JavaContext extends CompletionContributor
                         || method.getReturnType() == null || shippedBaseExtenderMethods.contains(method.getName())
                         || ! method.getModifierList().hasModifierProperty(PsiModifier.PUBLIC)
                         || InheritanceUtil.isInheritor(method.getContainingClass(), EXTENDER_INTERFACE_FQN)
-                            && ! InheritanceUtil.isInheritor(method.getContainingClass(), EXTENDER_BASE_CLASS_FQN))
+                            && ! InheritanceUtil.isInheritor(method.getContainingClass(), BASE_EXTENDER_CLASS_FQN))
                 {
                     continue;
                 }

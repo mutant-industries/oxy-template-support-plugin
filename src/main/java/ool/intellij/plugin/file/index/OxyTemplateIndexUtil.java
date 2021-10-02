@@ -68,7 +68,7 @@ public class OxyTemplateIndexUtil
 
         final String namespace = macroName.substring(0, macroName.indexOf("."));
         final String javaMacroName = StringUtils.capitalize(macroName.substring(macroName.indexOf(".") + 1)) +
-                MacroIndex.JAVA_MACRO_SUFFIX;
+                MacroIndex.MACRO_CLASS_NAME_SUFFIX;
 
         if (StringUtils.isEmpty(javaMacroName) || MacroIndex.macrosInDebugNamespace.contains(javaMacroName)
                 && ! MacroIndex.DEBUG_NAMESPACE.equals(namespace))
@@ -153,7 +153,7 @@ public class OxyTemplateIndexUtil
         }
 
         for (PsiClass javaMacro : ClassInheritorsSearch.INSTANCE.createQuery(new ClassInheritorsSearch.SearchParameters(macroInterface,
-                allScope, true, true, false, name -> name.endsWith(MacroIndex.JAVA_MACRO_SUFFIX))).findAll())
+                allScope, true, true, false, name -> name.endsWith(MacroIndex.MACRO_CLASS_NAME_SUFFIX))).findAll())
         {
             if (javaMacro.isInterface() || javaMacro.getModifierList() == null
                     || javaMacro.getModifierList().hasModifierProperty(PsiModifier.ABSTRACT))
@@ -162,7 +162,7 @@ public class OxyTemplateIndexUtil
             }
 
             result.put((MacroIndex.macrosInDebugNamespace.contains(javaMacro.getName()) ? MacroIndex.DEBUG_NAMESPACE : MacroIndex.DEFAULT_NAMESPACE)
-                    + "." + StringUtil.decapitalize(javaMacro.getName().replaceFirst(MacroIndex.JAVA_MACRO_SUFFIX + "$", "")), javaMacro);
+                    + "." + StringUtil.decapitalize(javaMacro.getName().replaceFirst(MacroIndex.MACRO_CLASS_NAME_SUFFIX + "$", "")), javaMacro);
         }
 
         return result;

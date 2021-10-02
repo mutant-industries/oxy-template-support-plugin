@@ -104,7 +104,7 @@ public class SimplifiedClassNameResolver extends JSRecursiveTypeVisitor
             for (PsiClass aClass : classes)
             {
                 if (OxyTemplateHelper.hasAnnotation(aClass, HIBERNATE_ENTITY_ANNOTATION_FQN)
-                        || ExtenderProvider.getExtenders(aClass).size() != 0)
+                        || ExtenderIndex.getExtenders(aClass).size() != 0)
                 {
                     return aClass;
                 }

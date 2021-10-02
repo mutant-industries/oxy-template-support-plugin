@@ -7,7 +7,7 @@ plugins {
 }
 
 group 'ool.intellij.plugin'
-version '1.6.0'
+version '1.6.1'
 
 repositories {
     maven { url='https://plugins.gradle.org/m2/' }
@@ -22,8 +22,8 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 
-    // template language itself is closed source, at least empty classes must be included in plugin
-    implementation name: "common-web-stub"
+    // template language itself is proprietary, at least empty classes must be included in plugin
+    implementation name: "oxy-template-engine-core"
 }
 
 sourceSets {
@@ -90,7 +90,15 @@ compileJava {
 
 patchPluginXml {
 
+    untilBuild = ''
+
     changeNotes = """
+        <b>1.6.1</b>
+        <ul>
+            <li>
+                přizpůsobení refactoringu v šablonovacím systému
+            </li>
+        </ul>
         <b>1.6.0</b>
         <ul>
             <li>

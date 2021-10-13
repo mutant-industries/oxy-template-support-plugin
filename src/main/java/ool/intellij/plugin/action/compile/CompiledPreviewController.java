@@ -8,9 +8,9 @@ import ool.intellij.plugin.file.type.CompiledPreviewFileType;
 import ool.intellij.plugin.file.type.OxyTemplateFileType;
 import ool.intellij.plugin.lang.CompiledPreview;
 import ool.intellij.plugin.lang.I18nSupport;
-import ool.web.template.exception.CouldNotResolveSourceException;
-import ool.web.template.exception.ErrorInformation;
-import ool.web.template.exception.TemplateCompilerException;
+import ool.template.core.exception.CouldNotResolveSourceException;
+import ool.template.core.exception.ErrorInformation;
+import ool.template.core.exception.TemplateCompilerException;
 
 import com.intellij.execution.filters.TextConsoleBuilder;
 import com.intellij.execution.filters.TextConsoleBuilderFactory;

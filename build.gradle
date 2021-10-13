@@ -7,7 +7,7 @@ plugins {
 }
 
 group 'ool.intellij.plugin'
-version '1.6.2'
+version '1.6.3'
 
 repositories {
     maven { url='https://plugins.gradle.org/m2/' }

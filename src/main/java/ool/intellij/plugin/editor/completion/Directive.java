@@ -6,9 +6,9 @@ import ool.intellij.plugin.editor.completion.handler.TrailingPatternConsumer;
 import ool.intellij.plugin.psi.DirectiveOpenStatement;
 import ool.intellij.plugin.psi.DirectiveParamWrapper;
 import ool.intellij.plugin.psi.OxyTemplateTypes;
-import ool.web.template.impl.chunk.directive.IncludeDirective;
-import ool.web.template.impl.chunk.directive.IncludeOnceDirective;
-import ool.web.template.impl.chunk.directive.LayoutDirective;
+import ool.template.core.impl.chunk.directive.IncludeDirective;
+import ool.template.core.impl.chunk.directive.IncludeOnceDirective;
+import ool.template.core.impl.chunk.directive.LayoutDirective;
 
 import com.intellij.codeInsight.AutoPopupController;
 import com.intellij.codeInsight.completion.CompletionContributor;

@@ -11,7 +11,7 @@ import ool.intellij.plugin.file.OxyTemplateFile;
 import ool.intellij.plugin.lang.parser.definition.OxyTemplateParserDefinition;
 import ool.intellij.plugin.psi.DirectiveStatement;
 import ool.intellij.plugin.psi.OxyTemplateHelper;
-import ool.web.template.impl.chunk.directive.IncludeOnceDirective;
+import ool.template.core.impl.chunk.directive.IncludeOnceDirective;
 
 import com.intellij.lang.ImportOptimizer;
 import com.intellij.lang.javascript.psi.JSElement;

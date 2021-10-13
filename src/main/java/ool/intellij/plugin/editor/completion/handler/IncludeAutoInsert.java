@@ -5,7 +5,7 @@ import ool.intellij.plugin.lang.OxyTemplate;
 import ool.intellij.plugin.psi.DirectiveStatement;
 import ool.intellij.plugin.psi.OxyTemplateElementFactory;
 import ool.intellij.plugin.psi.OxyTemplateHelper;
-import ool.web.template.impl.chunk.directive.IncludeOnceDirective;
+import ool.template.core.impl.chunk.directive.IncludeOnceDirective;
 
 import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.codeInsight.lookup.InsertHandlerDecorator;

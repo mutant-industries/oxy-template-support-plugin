@@ -1,10 +1,10 @@
 package ool.intellij.plugin.action.compile;
 
-import ool.web.template.CompilationContext;
-import ool.web.template.exception.CouldNotResolveSourceException;
-import ool.web.template.exception.TemplateCompilerException;
-import ool.web.template.impl.Preprocessor;
-import ool.web.template.source.Source;
+import ool.template.core.CompilationContext;
+import ool.template.core.exception.CouldNotResolveSourceException;
+import ool.template.core.exception.TemplateCompilerException;
+import ool.template.core.impl.Preprocessor;
+import ool.template.core.source.Source;
 
 import com.intellij.psi.PsiFile;
 import org.apache.commons.io.FilenameUtils;

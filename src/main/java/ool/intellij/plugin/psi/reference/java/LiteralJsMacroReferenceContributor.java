@@ -1,7 +1,7 @@
 package ool.intellij.plugin.psi.reference.java;
 
 import ool.intellij.plugin.psi.reference.MacroReferenceSet;
-import ool.web.template.MacroCall;
+import ool.template.core.MacroCall;
 
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;

@@ -4,9 +4,9 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import ool.web.template.exception.CouldNotResolveSourceException;
-import ool.web.template.source.Source;
-import ool.web.template.source.SourceResolver;
+import ool.template.core.exception.CouldNotResolveSourceException;
+import ool.template.core.source.Source;
+import ool.template.core.source.SourceResolver;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.vfs.LocalFileSystem;

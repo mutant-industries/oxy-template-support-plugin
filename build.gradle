@@ -7,7 +7,7 @@ plugins {
 }
 
 group 'ool.intellij.plugin'
-version '1.6.1'
+version '1.6.2'
 
 repositories {
     maven { url='https://plugins.gradle.org/m2/' }
@@ -93,6 +93,12 @@ patchPluginXml {
     untilBuild = ''
 
     changeNotes = """
+        <b>1.6.2</b>
+        <ul>
+            <li>
+                funkční preprocesor šablon bez dalších nutných úprav
+            </li>
+        </ul>
         <b>1.6.1</b>
         <ul>
             <li>

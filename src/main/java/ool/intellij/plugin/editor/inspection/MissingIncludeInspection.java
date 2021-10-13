@@ -7,8 +7,8 @@ import java.util.Map;
 import ool.intellij.plugin.editor.inspection.fix.MissingIncludeDirectiveQuickFix;
 import ool.intellij.plugin.lang.I18nSupport;
 import ool.intellij.plugin.psi.OxyTemplateHelper;
-import ool.web.template.impl.chunk.directive.IncludeDirective;
-import ool.web.template.impl.chunk.directive.IncludeOnceDirective;
+import ool.template.core.impl.chunk.directive.IncludeDirective;
+import ool.template.core.impl.chunk.directive.IncludeOnceDirective;
 
 import com.intellij.codeInspection.InspectionManager;
 import com.intellij.codeInspection.LocalInspectionTool;

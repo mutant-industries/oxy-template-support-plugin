@@ -3,8 +3,8 @@ package ool.intellij.plugin.psi.macro.param.provider;
 import ool.intellij.plugin.psi.macro.param.MacroParamSuggestionSet;
 import ool.intellij.plugin.psi.macro.param.descriptor.JavaMacroParamDescriptor;
 import ool.intellij.plugin.psi.reference.innerjs.InnerJsJavaTypeConverter;
-import ool.web.template.MacroEvent;
-import ool.web.template.MacroParameterHelper;
+import ool.template.core.MacroEvent;
+import ool.template.core.MacroParameterHelper;
 
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.psi.PsiClass;

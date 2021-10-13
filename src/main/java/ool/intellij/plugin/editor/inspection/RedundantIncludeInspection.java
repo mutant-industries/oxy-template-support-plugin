@@ -9,7 +9,7 @@ import ool.intellij.plugin.psi.DirectiveParamFileReference;
 import ool.intellij.plugin.psi.DirectiveStatement;
 import ool.intellij.plugin.psi.OxyTemplateElementVisitor;
 import ool.intellij.plugin.psi.OxyTemplateHelper;
-import ool.web.template.impl.chunk.directive.IncludeOnceDirective;
+import ool.template.core.impl.chunk.directive.IncludeOnceDirective;
 
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.ProblemHighlightType;
